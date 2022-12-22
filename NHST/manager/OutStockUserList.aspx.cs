@@ -12,6 +12,8 @@ using System.Web.Script.Serialization;
 using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using static NHST.WebService1;
+using static Telerik.Web.UI.OrgChartStyles;
 
 namespace NHST.manager
 {
@@ -39,7 +41,7 @@ namespace NHST.manager
         {
             string search = search_name.Text.Trim();
             string fd = "";
-            string td = "";          
+            string td = "";
             string stt = ddlStatus.SelectedValue;
             if (!string.IsNullOrEmpty(rFD.Text))
             {
@@ -52,13 +54,13 @@ namespace NHST.manager
             Response.Redirect("OutStockUserList.aspx?&s=" + search + "&stt=" + stt + "&fd=" + fd + "&td=" + td);
         }
         public void LoadData()
-        {           
+        {
             int page = 0;
             Int32 Page = GetIntFromQueryString("Page");
             if (Page > 0)
             {
                 page = Page - 1;
-            }          
+            }
             int status = -1;
             if (Request.QueryString["stt"] != null)
                 status = Convert.ToInt32(Request.QueryString["stt"]);
@@ -105,9 +107,55 @@ namespace NHST.manager
                     var item = acs[i];
 
                     string OrderCode = "";
-                    var os = OutStockSessionPackageController.GetAllByOutStockUserID(item.ID);
-                    if (os.Count > 0)
+                    if (item.OrderTransactionCode != null)
                     {
+                        string[] os = item.OrderTransactionCode.Split('|');
+                        if (os.Length > 0)
+                        {
+                            OrderCode += "<table class=\"table table-bordered table-hover\">";
+                            OrderCode += "<tr>";
+                            OrderCode += "<th>Mã bưu kiện</th>";
+                            OrderCode += "<th>Cân nặng (kg)</th>";
+                            OrderCode += "</tr>";
+
+                            double canNang = 0;
+                            for (int j = 0; j < os.Length; j++)
+                            {
+                                OrderCode += "<tr>";
+                                if (!string.IsNullOrEmpty(os[j]) || !string.IsNullOrWhiteSpace(os[j]))
+                                {
+                                    OrderCode += "<td>" + os[j] + "</td>";
+                                    var smallPackage = SmallPackageController.GetByOrderTransactionCode(os[j]);
+                                    double compareSize = 0;
+                                    double weight = Convert.ToDouble(smallPackage.Weight);
+
+                                    double pDai = Convert.ToDouble(smallPackage.Length);
+                                    double pRong = Convert.ToDouble(smallPackage.Width);
+                                    double pCao = Convert.ToDouble(smallPackage.Height);
+                                    if (pDai > 0 && pRong > 0 && pCao > 0)
+                                    {
+                                        compareSize = (pDai * pRong * pCao) / 6000;
+                                    }
+
+                                    if (weight >= compareSize)
+                                    {
+                                        canNang = Math.Round(weight, 5);
+                                    }
+                                    else
+                                    {
+                                        canNang += Math.Round(compareSize, 5);
+                                    }
+                                    OrderCode += "<td>" + canNang + "</td>";
+                                    OrderCode += "<tr>";
+                                }
+                            }
+                            OrderCode += "</table>";
+
+                        }
+                    }
+                    else
+                    {
+                        var os = OutStockSessionPackageController.GetAllByOutStockUserID(item.ID);
                         OrderCode += "<table class=\"table table-bordered table-hover\">";
                         OrderCode += "<tr>";
                         OrderCode += "<th>Mã bưu kiện</th>";
@@ -122,20 +170,23 @@ namespace NHST.manager
                         }
                         OrderCode += "</table>";
                     }
+                    string StatusName = "<span class=\"badge red darken-2 white-text border-radius-2\">Yêu cầu mới<span>";
+                    if (item.Status == 2)
+                        StatusName = "<span class=\"badge blue darken-2 white-text border-radius-2\">Đã xử lý<span>";
 
-                    string StatusName = "<span class=\"badge red darken-2 white-text border-radius-2\">Yêu cầu mới<span>";         
-                    if (item.Status == 2)                    
-                        StatusName = "<span class=\"badge blue darken-2 white-text border-radius-2\">Đã xử lý<span>";                     
-
+                    string note = "";
+                    if (item.Note != null)
+                        note = item.Note;
                     hcm.Append("<tr>");
                     hcm.Append("<td>" + item.ID + "</td>");
-                    hcm.Append("<td>" + item.Username + "</td>");                  
-                    hcm.Append("<td>" + item.MainOrderString + "</td>");    
+                    hcm.Append("<td>" + item.Username + "</td>");
+                    hcm.Append("<td>" + item.MainOrderString + "</td>");
                     hcm.Append("<td>" + string.Format("{0:N0}", Convert.ToDouble(item.TotalPay)) + "</td>");
                     hcm.Append("<td>" + OrderCode + "</td>");
                     hcm.Append("<td>" + item.TongKien + "</td>");
-                    hcm.Append("<td>" + item.TongCan + "</td>");                   
+                    hcm.Append("<td>" + item.TongCan + "</td>");
                     hcm.Append("<td>" + StatusName + "</td>");
+                    hcm.Append("<td>" + note + "</td>");
                     hcm.Append("<td>" + item.CreatedDate.ToString("dd/MM/yyyy HH:mm") + "</td>");
 
                     hcm.Append("<td>");
@@ -309,7 +360,7 @@ namespace NHST.manager
                 if (ph != null)
                 {
                     string kq = OutStockSessionController.UpdateStatusUser(ph.ID, 2, username, DateTime.Now);
-                    string [] MainOrderString = ph.MainOrderID.Split('|');
+                    string[] MainOrderString = ph.MainOrderID.Split('|');
                     int MainOrderID = 0;
                     if (MainOrderString.Length > 0)
                     {
@@ -320,10 +371,10 @@ namespace NHST.manager
                             if (mo != null)
                             {
                                 MainOrderController.UpdateYCG(MainOrderID, false);
-                            }    
-                        }   
-                    }    
-                   
+                            }
+                        }
+                    }
+
                     if (kq.ToInt(0) > 0)
                     {
                         return "ok";
@@ -338,6 +389,73 @@ namespace NHST.manager
             }
             else
                 return null;
+        }
+
+        protected void btnSaveAdd_Click(object sender, EventArgs e)
+        {
+            string username_current = Session["userLoginSystem"].ToString();
+            var ac = AccountController.GetByUsername(username_current);
+            DateTime currentDate = DateTime.Now;
+            if (ac != null)
+            {
+                if (ac.RoleID == 0 || ac.RoleID == 2 || ac.RoleID == 9)
+                {
+                    int mainOrderID = Convert.ToInt32(txtMainOrderID.Text);
+                    string note = txtNote.Text;
+                    var mainOrder = MainOrderController.GetByID(mainOrderID);
+                    if (mainOrder != null)
+                    {
+                        var acc = AccountController.GetByID(mainOrder.UID ?? 0);
+
+                        double tongCan = 0;
+                        int tongKien = 0;
+
+                        string listmvd = hdfCodeTransactionListMVD.Value;
+                        string[] list;
+                        if (!string.IsNullOrEmpty(listmvd))
+                        {
+                            list = listmvd.Split('|');
+                            for (int i = 0; i < list.Length; i++)
+                            {
+                                tongKien++;
+                                var smallPackage = SmallPackageController.GetByOrderTransactionCode(list[i]);
+                                if (smallPackage == null)
+                                    PJUtils.ShowMessageBoxSwAlert($"Mã vận đơn {list[i]} không tồn tại", "e", true, Page);
+                                if(smallPackage.Status != 3)
+                                    PJUtils.ShowMessageBoxSwAlert($"Mã vận đơn {list[i]} không ở kho VN", "e", true, Page);
+
+                                double compareSize = 0;
+                                double weight = Convert.ToDouble(smallPackage.Weight);
+
+                                double pDai = Convert.ToDouble(smallPackage.Length);
+                                double pRong = Convert.ToDouble(smallPackage.Width);
+                                double pCao = Convert.ToDouble(smallPackage.Height);
+                                if (pDai > 0 && pRong > 0 && pCao > 0)
+                                {
+                                    compareSize = (pDai * pRong * pCao) / 6000;
+                                }
+
+                                if (weight >= compareSize)
+                                {
+                                    tongCan += Math.Round(weight, 5);
+                                }
+                                else
+                                {
+                                    tongCan += Math.Round(compareSize, 5);
+                                }
+                            }
+                        }
+
+                        double tienCanTT = Convert.ToDouble(mainOrder.TotalPriceVND) - Convert.ToDouble(mainOrder.Deposit);
+                        string kq = OutStockUserController.Insert(acc.ID, acc.Username, tongCan, tongKien, 0, currentDate, username_current, mainOrderID.ToString(), tienCanTT, listmvd, note);
+                        PJUtils.ShowMessageBoxSwAlert("Tạo yêu cầu giao thành công", "s", true, Page);
+                    }
+                    else
+                    {
+                        PJUtils.ShowMessageBoxSwAlert("Mã đơn hàng không tồn tại", "e", true, Page);
+                    }
+                }
+            }
         }
     }
 }

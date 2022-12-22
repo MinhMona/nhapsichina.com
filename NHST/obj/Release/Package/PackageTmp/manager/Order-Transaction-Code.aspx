@@ -41,6 +41,7 @@
                                     <asp:ListItem Value="2">Đã về kho TQ</asp:ListItem>
                                     <asp:ListItem Value="3">Đã về kho VN</asp:ListItem>
                                     <asp:ListItem Value="4">Đã giao cho khách</asp:ListItem>
+                                    <asp:ListItem Value="5">Đang về kho đích</asp:ListItem>
                                 </asp:ListBox>
                                 <label for="status">Trạng thái</label>
                             </div>

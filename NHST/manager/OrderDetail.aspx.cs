@@ -41,7 +41,11 @@ namespace NHST.manager
                         Response.Redirect("/trang-chu");
                     else
                     {
-                        if (RoleID == 4 || RoleID == 5 || RoleID == 8)
+                        //if (RoleID == 4 || RoleID == 5 || RoleID == 8)
+                        //{
+                        //    Response.Redirect("/manager/home.aspx");
+                        //}
+                        if (RoleID == 5 || RoleID == 8)
                         {
                             Response.Redirect("/manager/home.aspx");
                         }
@@ -1388,6 +1392,7 @@ namespace NHST.manager
                             pShipHome.Enabled = true;
                             pCNShipFeeReal.Enabled = false;
                             ltr_OrderFee_UserInfo.Visible = false;
+                            ltr_OrderFee_UserName.Visible = false;
                             pnAdmin.Enabled = false;
                             ltr_AddressReceive.Visible = false;
                             //btnUpdate.Visible = true;
@@ -1414,6 +1419,7 @@ namespace NHST.manager
                             ddlStatus.Enabled = false;
                             rTotalPriceReal.Enabled = true;
                             pCNShipFeeReal.Enabled = true;
+                            ltr_OrderFee_UserName.Visible = false;
 
                             if (o.Status > 4)
                             {
@@ -1571,9 +1577,12 @@ namespace NHST.manager
 
                             pShipHome.Enabled = false;
                             ltr_OrderFee_UserInfo.Visible = false;
+                            ltr_OrderFee_UserName.Visible = true;
+
                             ltr_AddressReceive.Visible = false;
 
                             txtOrderWeight.Enabled = true;
+                            ltrBtnUpdate.Text = "<a href=\"javascript:;\" class=\"btn mt-2\" onclick=\"UpdateOrder()\">CẬP NHẬT</a>";
 
                             ////pShipHomeNDT.Visible = false;
                         }
@@ -1651,6 +1660,8 @@ namespace NHST.manager
                             pShipHome.Enabled = false;
 
                             ltr_OrderFee_UserInfo.Visible = false;
+                            ltr_OrderFee_UserName.Visible = false;
+
                             ltr_AddressReceive.Visible = false;
                             txtOrderWeight.Enabled = true;
 
@@ -1676,10 +1687,12 @@ namespace NHST.manager
                             ddlWarehouseFrom.Enabled = true;
                             ddlReceivePlace.Enabled = true;
                             ddlShippingType.Enabled = true;
+                            ltr_OrderFee_UserName.Visible = false;
 
-                            if (o.Status > 2)
-                            {
-                                if (obj_user.ID == 1 || obj_user.ID == 22 || obj_user.ID == 941)
+
+                            //if (o.Status > 2)
+                            //{
+                                if (obj_user.ID == 1 || obj_user.ID == 22)
                                 {
                                     pDeposit.Enabled = true;
                                     pAmountDeposit.Enabled = true;
@@ -1689,7 +1702,7 @@ namespace NHST.manager
                                     pDeposit.Enabled = false;
                                     pAmountDeposit.Enabled = false;
                                 }
-                            }
+                            //}
 
                             ltrBtnUpdate.Text = "<a href=\"javascript:;\" class=\"btn mt-2\" onclick=\"UpdateOrder()\">CẬP NHẬT</a>";
                         }
@@ -1730,6 +1743,7 @@ namespace NHST.manager
                             ddlShippingType.Enabled = true;
                             pnCurrentCNYVN.Visible = false;
                             pnAdmin.Enabled = false;
+                            ltr_OrderFee_UserName.Visible = false;
 
                             ltrBtnUpdate.Text = "<a href=\"javascript:;\" class=\"btn mt-2\" onclick=\"UpdateOrder()\">CẬP NHẬT</a>";
                         }
@@ -1772,6 +1786,8 @@ namespace NHST.manager
                             phuphi.Visible = false;
                             pHHCYN.Visible = false;
                             pHHVND.Visible = false;
+                            ltr_OrderFee_UserName.Visible = false;
+
                             //txtComment.Visible = true;
                             ////ddlTypeComment.Visible = true;
                             //btnSend.Visible = true;
@@ -1828,6 +1844,8 @@ namespace NHST.manager
                             ddlWarehouseFrom.Enabled = true;
                             ddlReceivePlace.Enabled = true;
                             ddlShippingType.Enabled = true;
+                            ltr_OrderFee_UserName.Visible = false;
+
                             ltrBtnUpdate.Text = "<a href=\"javascript:;\" class=\"btn mt-2\" onclick=\"UpdateOrder()\">CẬP NHẬT</a>";
                         }
                         else if (RoleID == 8)
@@ -1839,6 +1857,7 @@ namespace NHST.manager
                             //ddlStatus.Items.Add(new ListItem("Đang về Việt Nam", "6"));
                             //ddlStatus.Items.Add(new ListItem("Đã nhận hàng tại VN", "7"));
                             //ddlStatus.Items.Add(new ListItem("Chờ thanh toán", "8"));
+                            ltr_OrderFee_UserName.Visible = false;
                             ddlStatus.Items.Add(new ListItem("Đã thanh toán", "9"));
                             ddlStatus.Items.Add(new ListItem("Đã hoàn thành", "10"));
                             ddlStatus.Enabled = true;
@@ -1936,6 +1955,7 @@ namespace NHST.manager
                         if (RoleID != 8)
                         {
                             StringBuilder customerInfo = new StringBuilder();
+                            StringBuilder customerName = new StringBuilder();
                             if (RoleID == 9)
                             {
                                 customerInfo.Append("<span>Tài khoản không đủ quyền xem thông tin này</span>");
@@ -1987,10 +2007,18 @@ namespace NHST.manager
                                     customerInfo.Append("    </tbody>");
                                     customerInfo.Append("</table>");
 
-
+                                    customerName.Append("<table class=\"table\">");
+                                    customerName.Append("    <tbody>");
+                                    customerName.Append("        <tr>");
+                                    customerName.Append("            <td>Username</td>");
+                                    customerName.Append("            <td>" + AccountController.GetByID(Convert.ToInt32(o.UID)).Username + "</td>");
+                                    customerName.Append("        </tr>");
+                                    customerName.Append("    </tbody>");
+                                    customerName.Append("</table>");
                                 }
                             }
                             ltr_OrderFee_UserInfo.Text = customerInfo.ToString();
+                            ltr_OrderFee_UserName.Text = customerName.ToString();
                         }
 
                         ltr_OrderCode.Text += "<div class=\"order-panel\">";

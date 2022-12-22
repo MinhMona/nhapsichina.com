@@ -659,7 +659,8 @@ namespace NHST
                             {
                                 if (item.Status == 0)
                                 {
-                                    //ltr.Text += "    <a href=\"javascript:;\" onclick=\"depositOrder('" + item.ID + "')\" class=\"bg-green\" style=\"float:left;width:100%;margin-bottom:5px;\">Đặt cọc</a><br/>";
+                                    //ltr.Text += "    <a href=\"javascript:;\" onclick=\"depositOrder('" + item.ID + "')\" class=\"bg-green\" style=\"float:left;width:100%;margin-bottom:5px;\">
+                                    //</a><br/>";
                                     //html.Append("    <a href=\"javascript:;\" onclick=\"depositOrder('" + item.ID + "', $(this))\" data-position=\"top\" ><i class=\"material-icons\">attach_money</i><span>Đặt cọc</span></a>");
                                     html.Append("    <a href=\"javascript:;\" onclick=\"depositOrder100('" + item.ID + "', $(this))\" data-position=\"top\"><i class=\"material-icons\">attach_money</i><span>Đặt cọc 90%</span></a>");
                                     html.Append("    <a href=\"javascript:;\" onclick=\"depositOrder80('" + item.ID + "', $(this))\" data-position=\"top\"><i class=\"material-icons\">attach_money</i><span>Đặt cọc 70%</span></a>");

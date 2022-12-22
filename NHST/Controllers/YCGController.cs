@@ -58,6 +58,69 @@ namespace NHST.Controllers
             }
         }
 
+        public static int GetTotalUser(int UID)
+        {
+            var sql = @"select Total=Count(*) ";
+            sql += "from tbl_YCG ";
+            sql += "Where UID=" + UID + "";
+            var reader = (IDataReader)SqlHelper.ExecuteDataReader(sql);
+            int a = 0;
+            while (reader.Read())
+            {
+                if (reader["Total"] != DBNull.Value)
+                    a = reader["Total"].ToString().ToInt(0);
+            }
+            reader.Close();
+            return a;
+        }
+
+        public static List<tbl_YCG> GetAllUser(int UID, int pageIndex, int pageSize)
+        {
+            var sql = @"select * ";
+            sql += "from tbl_YCG ";
+            sql += "Where UID=" + UID + "";
+            sql += "order by id DESC OFFSET " + pageIndex + "*" + pageSize + " ROWS FETCH NEXT " + pageSize + " ROWS ONLY";
+            var reader = (IDataReader)SqlHelper.ExecuteDataReader(sql);
+            List<tbl_YCG> a = new List<tbl_YCG>();
+            while (reader.Read())
+            {
+                var entity = new tbl_YCG();
+                if (reader["ID"] != DBNull.Value)
+                    entity.ID = reader["ID"].ToString().ToInt(0);
+
+                if (reader["UID"] != DBNull.Value)
+                    entity.UID = reader["UID"].ToString().ToInt(0);
+
+                if (reader["CreatedBy"] != DBNull.Value)
+                    entity.CreatedBy = reader["CreatedBy"].ToString();
+
+                if (reader["MainOrderID"] != DBNull.Value)
+                    entity.MainOrderID = reader["MainOrderID"].ToString().ToInt(0);
+
+                if (reader["Status"] != DBNull.Value)
+                    entity.Status = Convert.ToInt32(reader["Status"].ToString());
+
+                if (reader["FullName"] != DBNull.Value)
+                    entity.FullName = reader["FullName"].ToString();
+
+                if (reader["Phone"] != DBNull.Value)
+                    entity.Phone = reader["Phone"].ToString();
+
+                if (reader["Address"] != DBNull.Value)
+                    entity.Address = reader["Address"].ToString();
+
+                if (reader["Note"] != DBNull.Value)
+                    entity.Note = reader["Note"].ToString();
+
+                if (reader["CreatedDate"] != DBNull.Value)
+                    entity.CreatedDate = Convert.ToDateTime(reader["CreatedDate"].ToString());
+
+                a.Add(entity);
+            }
+            reader.Close();
+            return a;
+        }
+
         public static tbl_YCG GetByID(int ID)
         {
             using (var db = new NHSTEntities())

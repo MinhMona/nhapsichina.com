@@ -357,8 +357,8 @@ namespace NHST.manager
                         AccountController.updateWallet(u.ID, wallet, currentDate, username);
                         HistoryPayWalletController.Insert(u.ID, u.Username, 0, money, u.Username + " đã được nạp tiền vào tài khoản.", wallet, 2, 4, currentDate, username);
                         NotificationController.Inser(u.ID, u.Username, Convert.ToInt32(u.ID), u.Username, 0, u.Username + " đã được nạp tiền vào tài khoản.", 0, 2, currentDate, username, false);
-
-                        PJUtils.ShowMessageBoxSwAlert("Cập nhật thành công.", "s", true, Page);
+                        Response.Redirect("/manager/HistorySendWallet");
+                        //PJUtils.ShowMessageBoxSwAlert("Cập nhật thành công.", "s", true, Page);
                     }
                 }
             }

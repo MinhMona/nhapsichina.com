@@ -70,6 +70,14 @@ namespace NHST.Controllers
                 return lb;
             }
         }
+        public static List<tbl_Bank> GetAllNotHidden()
+        {
+            using (var db = new NHSTEntities())
+            {
+                var lb = db.tbl_Bank.Where(x => x.IsHidden != true).OrderByDescending(x => x.ID).ToList();
+                return lb;
+            }
+        }
 
         public static string Delete(int ID)
         {

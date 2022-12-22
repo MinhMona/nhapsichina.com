@@ -143,6 +143,8 @@ namespace NHST.manager
                             {
                                 string kq = AdminSendUserWalletController.Insert(user_wallet.ID, user_wallet.Username, money, status, Convert.ToInt32(ddlBank.SelectedValue), content, currentdate, username_current);
                                 AdminSendUserWalletController.UpdateCongNo(kq.ToInt(0), IsLoan, false);
+                                AdminSendUserWalletController.UpdateModify(kq.ToInt(0), username_current, currentdate);
+
                                 AccountController.updateWallet(user_wallet.ID, wallet, currentdate, username_current);
                                 if (string.IsNullOrEmpty(content))
                                     HistoryPayWalletController.Insert(user_wallet.ID, user_wallet.Username, 0, money, user_wallet.Username + " đã được nạp tiền vào tài khoản.", wallet, 2, 4, currentdate, username_current);

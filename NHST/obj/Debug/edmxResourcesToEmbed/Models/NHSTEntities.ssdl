@@ -1081,6 +1081,8 @@
     <Property Name="ModifiedDate" Type="datetime" />
     <Property Name="MainOrderID" Type="nvarchar(max)" />
     <Property Name="TotalPrice" Type="float" />
+    <Property Name="OrderTransactionCode" Type="nvarchar(max)" />
+    <Property Name="Note" Type="nvarchar(max)" />
   </EntityType>
   <EntityType Name="tbl_OutStockUserPackage">
     <Key>

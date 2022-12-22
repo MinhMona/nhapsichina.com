@@ -929,9 +929,9 @@ namespace NHST.manager
                         double TotalPriceVND = FeeShipCN + FeeBuyPro + FeeWeight + IsCheckProductPrice + IsPackedPrice
                                   + TotalFeeSupport + IsFastDeliveryPrice + PriceVND + InsuranceMoney + IsPriceSepcial;
                         TotalPriceVND = Math.Round(TotalPriceVND, 0);
-                        MainOrderController.UpdateFee(mainorder.ID, Deposit.ToString(), FeeShipCN.ToString(), FeeBuyPro.ToString(), FeeWeight.ToString(),
-                        IsCheckProductPrice.ToString(),IsPackedPrice.ToString(), IsFastDeliveryPrice.ToString(), TotalPriceVND.ToString(), IsPriceSepcial.ToString());
-                        totalweight = Math.Round(totalweight, 5);
+                        //MainOrderController.UpdateFee(mainorder.ID, Deposit.ToString(), FeeShipCN.ToString(), FeeBuyPro.ToString(), FeeWeight.ToString(),
+                        //IsCheckProductPrice.ToString(),IsPackedPrice.ToString(), IsFastDeliveryPrice.ToString(), TotalPriceVND.ToString(), IsPriceSepcial.ToString());
+                        //totalweight = Math.Round(totalweight, 5);
                         MainOrderController.UpdateTotalWeightandTongCanNang(mainorder.ID, totalweight.ToString(), totalweight.ToString(), TongCanNang.ToString());
                         var accChangeData = AccountController.GetByUsername(username_current);
                         if (accChangeData != null)
@@ -1287,8 +1287,10 @@ namespace NHST.manager
                             string Phone = "";
                             b.Weight = string.Empty;
                             var sm = SmallPackageController.GetByOrderTransactionCode(barcode);
+                            string kichThuoc = "";
                             if (sm != null)
                             {
+                                kichThuoc = $"{sm.Length} x {sm.Width} x {sm.Height}";
                                 if (Convert.ToDouble(sm.Weight) > 0)
                                     b.Weight = sm.Weight.ToString();
                                 if (Convert.ToInt32(sm.MainOrderID) > 0)
@@ -1322,7 +1324,7 @@ namespace NHST.manager
 
                             b.Username = Username;
                             b.Phone = Phone;
-
+                            b.KichThuoc = kichThuoc;
 
                             string barcodeIMG = "/Uploads/smallpackagebarcode/" + barcode + ".Png";
                             System.Drawing.Image barCode = PJUtils.MakeBarcodeImage(barcode, 2, true);
@@ -1360,6 +1362,7 @@ namespace NHST.manager
             public string Weight { get; set; }
             public string Phone { get; set; }
             public string Username { get; set; }
+            public string KichThuoc { get; set; }
         }
 
         [WebMethod]

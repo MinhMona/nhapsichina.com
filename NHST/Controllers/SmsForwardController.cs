@@ -80,6 +80,16 @@ namespace NHST.Controllers
                 return c;
             }
         }
+
+        public static tbl_SmsForward CheckMaGD(string ten_bank, string ma_gd)
+        {
+            using (var db = new NHSTEntities())
+            {
+                var c = db.tbl_SmsForward.Where(x => x.ten_bank == ten_bank && x.ma_gd.ToLower().Equals(ma_gd.ToLower())).FirstOrDefault();
+                return c;
+            }
+        }
+
         public static int GetTotal(string Username, string fd, string td, int stt)
         {
             var sql = @"select Total=Count(*) from tbl_SmsForward as sms

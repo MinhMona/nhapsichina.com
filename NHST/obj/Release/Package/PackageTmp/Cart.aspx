@@ -449,7 +449,7 @@
                     $("#THVND" + id + "-" + shopid).text(msg.d.vnd);
                     $("#Tienhang" + shopid).text(msg.d.tong);
                     $("#Tongtinh" + shopid).text(msg.d.tong);
-                    location.reload();
+                    location.reload(true);
 
                 },
                 error: function (xmlhttprequest, textstatus, errorthrow) {

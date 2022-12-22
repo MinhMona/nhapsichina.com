@@ -76,6 +76,23 @@ namespace NHST.Controllers
                     return null;
             }
         }
+        public static string UpdateModify(int ID, string modifiedBy, DateTime modifiDate)
+        {
+            using (var dbe = new NHSTEntities())
+            {
+                dbe.Configuration.ValidateOnSaveEnabled = false;
+                tbl_AdminSendUserWallet a = dbe.tbl_AdminSendUserWallet.Where(ad => ad.ID == ID).FirstOrDefault();
+                if (a != null)
+                {
+                    a.ModifiedBy = modifiedBy;
+                    a.ModifiedDate = modifiDate;
+                    string kq = dbe.SaveChanges().ToString();
+                    return kq;
+                }
+                else
+                    return null;
+            }
+        }
 
         public static string UpdateStatus(int ID, int Status, string Content, DateTime ModifiedDate, string ModifiedBy)
         {

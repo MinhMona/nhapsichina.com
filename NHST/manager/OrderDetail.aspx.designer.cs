@@ -213,6 +213,15 @@ namespace NHST.manager
         protected global::System.Web.UI.WebControls.Literal ltr_OrderFee_UserInfo;
 
         /// <summary>
+        /// ltr_OrderFee_UserName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal ltr_OrderFee_UserName;
+
+        /// <summary>
         /// ltr_AddressReceive control.
         /// </summary>
         /// <remarks>

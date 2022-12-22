@@ -780,6 +780,7 @@ namespace NHST
                                 ltrProducts.Text += "<p class=\"grey-text font-weight-500\">¥" + string.Format("{0:0.##}", price) + "</p>";
                                 ltrProducts.Text += "<p class=\"grey-text font-weight-500\">" + string.Format("{0:N0}", vndprice) + " VNĐ</p>";
                                 ltrProducts.Text += "</div>";
+                                ltrProducts.Text += "<div class=\"item-num column\"><span class=\"black-text\"><strong>Tổng tiền</strong></span><p>" + string.Format("{0:N0}", vndprice * Convert.ToInt32(item.quantity)) + " VNĐ</p><p></p></div>";
                                 ltrProducts.Text += "<div class=\"item-status column\"><span class=\"black-text\"><strong>Trạng thái</strong></span>";
                                 if (!string.IsNullOrEmpty(item.ProductStatus.ToString()))
                                 {

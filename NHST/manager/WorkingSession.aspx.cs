@@ -414,6 +414,8 @@ namespace NHST.manager
                             double totalWeight = 0;
                             foreach (var item in smallpackage)
                             {
+                                if (item.Status != 3)
+                                    continue;
                                 double compareSize = 0;
                                 double weightcn = Convert.ToDouble(item.Weight);
 
@@ -463,11 +465,12 @@ namespace NHST.manager
                             }
 
                             cannangdonggo = totalWeight;
-                            TongCanNang = totalWeight;
+                            TongCanNang = Convert.ToDouble(mainorder.TongCanNang) + totalWeight; 
                           
                             foreach (var item in smallpackage)
                             {
-
+                                if (item.Status != 3)
+                                    continue;
                                 double compareSize = 0;
                                 double weightcn = Convert.ToDouble(item.Weight);
 
@@ -560,6 +563,76 @@ namespace NHST.manager
 
                         double Deposit = Math.Round(Convert.ToDouble(mainorder.Deposit), 0);
 
+                        double additonWeight = 0;
+                        double weightPaid = 0;
+                        TongCanNang = 0;
+                        foreach (var item in smallpackage)
+                        {
+                            if (item.Status == 3 || item.Status == 4 || item.Status == 6)
+                            {
+                                double compareSize = 0;
+                                double weightSm = Convert.ToDouble(item.Weight);
+
+                                double pDai = Convert.ToDouble(item.Length);
+                                double pRong = Convert.ToDouble(item.Width);
+                                double pCao = Convert.ToDouble(item.Height);
+                                if (pDai > 0 && pRong > 0 && pCao > 0)
+                                {
+                                    compareSize = (pDai * pRong * pCao) / 6000;
+                                }
+
+                                if (weightSm >= compareSize)
+                                {
+                                    TongCanNang += Math.Round(weightSm, 5);
+                                    additonWeight += Math.Round(weightSm, 5);
+                                    if (item.Status != 3)
+                                    {
+                                        weightPaid += Math.Round(weightSm, 5);
+                                    }
+                                }
+                                else
+                                {
+                                    TongCanNang += Math.Round(compareSize, 5);
+                                    additonWeight += Math.Round(compareSize, 5);
+                                    if (item.Status != 3)
+                                    {
+                                        weightPaid += Math.Round(compareSize, 5);
+                                    }
+                                }
+
+                            }
+                        }
+                        totalweight = additonWeight;
+
+                        double priceWeightPaid = 0;
+                        if (!string.IsNullOrEmpty(usercreate.FeeTQVNPerWeight))
+                        {
+                            double feetqvn = 0;
+                            if (usercreate.FeeTQVNPerWeight.ToFloat(0) > 0)
+                            {
+                                feetqvn = Convert.ToDouble(usercreate.FeeTQVNPerWeight);
+                                pricePerWeight = feetqvn;
+                            }
+                            priceWeightPaid = weightPaid * feetqvn;
+                        }
+                        else
+                        {
+
+                            var fee = WarehouseFeeController.GetByAndWarehouseFromAndToWarehouseAndShippingTypeAndAndHelpMoving(warehouseFrom, warehouse, shipping, false);
+                            if (fee.Count > 0)
+                            {
+                                foreach (var f in fee)
+                                {
+                                    if (Convert.ToDouble(mainorder.PriceVND) > f.WeightFrom && Convert.ToDouble(mainorder.PriceVND) <= f.WeightTo)
+                                    {
+                                        pricePerWeight = Convert.ToDouble(f.Price);
+                                        priceWeightPaid = weightPaid * Convert.ToDouble(f.Price);
+                                    }
+                                }
+                            }
+                        }
+
+                        FeeWeight += priceWeightPaid;
                         double TotalPriceVND = FeeShipCN + FeeBuyPro + FeeWeight + IsCheckProductPrice + IsPackedPrice
                                   + IsFastDeliveryPrice + PriceVND + TotalFeeSupport + InsuranceMoney + IsPriceSepcial;
 

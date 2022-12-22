@@ -770,7 +770,7 @@ namespace NHST.manager
                     hcm.Append("<td style=\"font-weight:bold\">");
                     hcm.Append("<p class=\"s-txt  \"><span>" + item.Uname + "</span></p>");
                     hcm.Append("<p class=\"s-txt  \"><span>" + acif.FirstName + " " + acif.LastName + "</span></p>");
-                    if (obj_user.RoleID != 3)
+                    if (obj_user.RoleID != 3 && obj_user.RoleID != 4)
                     {
                         hcm.Append("<p class=\"s-txt  \"><span>" + acif.Email + "</span></p>");
                         hcm.Append("<p class=\"s-txt  \"><span>" + acif.Phone + "</span></p>");

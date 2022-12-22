@@ -154,6 +154,9 @@
                                 <a href="/khieu-nai"><i class="material-icons">report</i><span>Khiếu nại</span></a>
                             </li>
                             <li>
+                                <a href="/danh-sach-yeu-cau-giao"><i class="material-icons">library_books</i><span>Yêu cầu giao</span></a>
+                            </li>
+                            <li>
                                 <a href="/tracking-mvd"><i class="material-icons">local_shipping</i><span>Tracking</span></a>
 
                             </li>

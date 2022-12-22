@@ -273,6 +273,7 @@
                                         </div>
                                         <div class="order-owner">
                                             <asp:Literal ID="ltr_OrderFee_UserInfo" runat="server"></asp:Literal>
+                                            <asp:Literal ID="ltr_OrderFee_UserName" runat="server"></asp:Literal>
                                         </div>
                                     </div>
                                     <div class="col s12 m6" style="display: none;">
@@ -846,11 +847,11 @@
                                                 <div class="right-content">
                                                     <div class="row">
                                                         <div class="input-field col s12 m6">
-                                                            <asp:TextBox runat="server" ID="pWeightNDT" placeholder="0" type="text" onkeyup="returnWeightFee()" value=""></asp:TextBox>
+                                                            <asp:TextBox runat="server" ID="pWeightNDT" placeholder="0" type="text" value=""></asp:TextBox>
                                                             <label>Cân nặng (Kg)</label>
                                                         </div>
                                                         <div class="input-field col s12 m6">
-                                                            <asp:TextBox runat="server" ID="pWeight" placeholder="0" type="text" onkeyup="returnWeightFee()" value=""></asp:TextBox>
+                                                            <asp:TextBox runat="server" ID="pWeight" placeholder="0" type="text" value=""></asp:TextBox>
                                                             <label>Việt Nam Đồng (VNĐ)</label>
                                                         </div>
                                                     </div>

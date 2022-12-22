@@ -651,6 +651,7 @@ namespace NHST.Controllers
                     return null;
             }
         }
+
         public static string UpdateStatus(int ID, int UID, int Status)
         {
             using (var dbe = new NHSTEntities())

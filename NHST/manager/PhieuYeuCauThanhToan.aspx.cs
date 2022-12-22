@@ -31,7 +31,7 @@ namespace NHST.manager
                     Response.Redirect("/trang-chu");
                 }
                 else
-                {                    
+                {
                     string username_current = Session["userLoginSystem"].ToString();
                     tbl_Account ac = AccountController.GetByUsername(username_current);
                     if (ac != null)
@@ -43,7 +43,7 @@ namespace NHST.manager
                         else
                         {
                             Response.Redirect("/manager/orderlist");
-                        }                               
+                        }
                         if (ac.RoleID == 0)
                         {
                             pnStaff.Visible = true;
@@ -63,7 +63,7 @@ namespace NHST.manager
             }
         }
         public void loadFilter()
-        {           
+        {
             ddlStatus.SelectedValue = "-1";
             var salers = AccountController.GetAllByRoleID(6);
             ddlStaffSaler.Items.Clear();
@@ -315,7 +315,7 @@ namespace NHST.manager
                 var list = HttpContext.Current.Session["ListStaff"] as List<ListID>;
                 for (int i = 0; i < acs.Count; i++)
                 {
-                    var item = acs[i];                          
+                    var item = acs[i];
 
                     hcm.Append("<tr>");
 
@@ -361,8 +361,8 @@ namespace NHST.manager
                     hcm.Append("<span class=\"update-info\" style=\"width:100%; clear:both; float:left; color: green; display:none\">Cập nhật thành công</span></td>");
 
                     hcm.Append("<td style=\"font-weight:bold\">");
-                    hcm.Append("<p class=\"s-txt  s-txt no-wrap\"><span>" + item.Uname + "</span></p>");                    
-                    hcm.Append("</td>");                  
+                    hcm.Append("<p class=\"s-txt  s-txt no-wrap\"><span>" + item.Uname + "</span></p>");
+                    hcm.Append("</td>");
 
                     #region NV đặt hàng
                     hcm.Append("<td style=\"pointer-events: none;\">");
@@ -398,7 +398,7 @@ namespace NHST.manager
                     }
 
                     hcm.Append("<td>");
-                    hcm.Append(" <div class=\"action-table\">");                   
+                    hcm.Append(" <div class=\"action-table\">");
                     if (list != null)
                     {
                         var check = list.Where(x => x.MainOrderID == item.ID).FirstOrDefault();
@@ -536,62 +536,68 @@ namespace NHST.manager
                     {
                         foreach (var item1 in list1)
                         {
-                            var a = MainOrderController.GetByID(item1.MainOrderID);     
-                            string orderstatus = "";
-                            int currentOrderStatus = Convert.ToInt32(a.Status);
-                            switch (currentOrderStatus)
+                            var a = MainOrderController.GetByID(item1.MainOrderID);
+                            if (a != null)
                             {
-                                case 0:
-                                    orderstatus = "Đơn mới";
-                                    break;
-                                case 1:
-                                    orderstatus = "Đơn hàng hủy";
-                                    break;
-                                case 2:
-                                    orderstatus = "Đơn đã cọc";
-                                    break;
-                                case 3:
-                                    orderstatus = "Đơn người bán giao";
-                                    break;
-                                case 4:
-                                    orderstatus = "Đơn chờ mua hàng";
-                                    break;
-                                case 5:
-                                    orderstatus = "Đơn đã mua hàng";
-                                    break;
-                                case 6:
-                                    orderstatus = "Kho Trung Quốc nhận hàng";
-                                    break;
-                                case 7:
-                                    orderstatus = "Trên đường về Việt Nam";
-                                    break;
-                                case 8:
-                                    orderstatus = "Trong kho Hà Nội";
-                                    break;
-                                case 9:
-                                    orderstatus = "Đã thanh toán";
-                                    break;
-                                case 10:
-                                    orderstatus = "Đã hoàn thành";
-                                    break;
-                                case 11:
-                                    orderstatus = "Đang giao hàng";
-                                    break;
-                                case 12:
-                                    orderstatus = "Đơn khiếu nại";
-                                    break;
-                                default:
-                                    break;
-                            }
+                                if (a.Status == 4 && a.OrderDone == true)
+                                {
+                                    string orderstatus = "";
+                                    int currentOrderStatus = Convert.ToInt32(a.Status);
+                                    switch (currentOrderStatus)
+                                    {
+                                        case 0:
+                                            orderstatus = "Đơn mới";
+                                            break;
+                                        case 1:
+                                            orderstatus = "Đơn hàng hủy";
+                                            break;
+                                        case 2:
+                                            orderstatus = "Đơn đã cọc";
+                                            break;
+                                        case 3:
+                                            orderstatus = "Đơn người bán giao";
+                                            break;
+                                        case 4:
+                                            orderstatus = "Đơn chờ mua hàng";
+                                            break;
+                                        case 5:
+                                            orderstatus = "Đơn đã mua hàng";
+                                            break;
+                                        case 6:
+                                            orderstatus = "Kho Trung Quốc nhận hàng";
+                                            break;
+                                        case 7:
+                                            orderstatus = "Trên đường về Việt Nam";
+                                            break;
+                                        case 8:
+                                            orderstatus = "Trong kho Hà Nội";
+                                            break;
+                                        case 9:
+                                            orderstatus = "Đã thanh toán";
+                                            break;
+                                        case 10:
+                                            orderstatus = "Đã hoàn thành";
+                                            break;
+                                        case 11:
+                                            orderstatus = "Đang giao hàng";
+                                            break;
+                                        case 12:
+                                            orderstatus = "Đơn khiếu nại";
+                                            break;
+                                        default:
+                                            break;
+                                    }                                   
+                                    if (a.Status < 5 && a.Status != 3)
+                                    {
+                                        HistoryOrderChangeController.Insert(item1.MainOrderID, Convert.ToInt32(a.UID), ac.Username, ac.Username +
+                                            " đã đổi trạng thái của đơn hàng ID là: " + item1.MainOrderID + ", từ: " + orderstatus + ", sang: " + "Đơn đã mua hàng" + "", 0, DateTime.Now);
+                                        MainOrderController.UpdateStatus(item1.MainOrderID, Convert.ToInt32(a.UID), 5);
+                                        if (a.DateBuyOK == null)
+                                            MainOrderController.UpdateDateBuyOK(a.ID, DateTime.Now);
+                                    }                                   
 
-                            if (currentOrderStatus != 5)
-                            {
-                                HistoryOrderChangeController.Insert(item1.MainOrderID, Convert.ToInt32(a.UID), ac.Username, ac.Username +
-                                " đã đổi trạng thái của đơn hàng ID là: " + item1.MainOrderID + ", từ: " + orderstatus + ", sang: " + "Đơn đã mua hàng" + "", 0, DateTime.Now);
-                            }       
-                            if (a.DateBuyOK == null)                            
-                                MainOrderController.UpdateDateBuyOK(a.ID, DateTime.Now);                           
-                            MainOrderController.UpdateStatus(item1.MainOrderID, Convert.ToInt32(a.UID), 5);
+                                }
+                            }
                         }
                         //PJUtils.ShowMessageBoxSwAlert("Thanh toán yêu cầu thành công!", "s", true, Page);
                         Response.Redirect("/manager/PhieuYeuCauThanhToan.aspx");

@@ -2461,7 +2461,8 @@
             pwa.document.open();
             pwa.document.write(VoucherSourcetoPrint(source));
             pwa.document.close();
-        }
+        }
+
         function printBarcode(barcode) {
             //var barcode = "12341234-4123412342134";
             console.log(barcode);
@@ -2486,16 +2487,20 @@
                     //html += "           <label>" + code + "</label>";
                     html += "       </div>";
                     html += "       <div class=\"bill-row\" style=\"display:inline-flex;border-bottom: solid 1px #000; margin-bottom: 10px; font-size: 18px;\">";
-                    html += "           <label class=\"row-name\" style=\"width:50%\">Username: </label>";
-                    html += "           <label class=\"row-info\">" + data.Username + "</label>";
+                    html += "           <label class=\"row-name\" style=\"width:20%\">Username: </label>";
+                    html += "           <label class=\"row-info\" style=\"font-size: 80px;\">" + data.Username + "</label>";
                     html += "       </div>";
-                    html += "       <div class=\"bill-row\" style=\"display:inline-flex;border-bottom: solid 1px #000; margin-bottom: 10px; font-size: 18px;\">";
-                    html += "           <label class=\"row-name\" style=\"width:50%\">Số điện thoại: </label>";
-                    html += "           <label class=\"row-info\">" + data.Phone + "</label>";
-                    html += "       </div>";
+                    //html += "       <div class=\"bill-row\" style=\"display:inline-flex;border-bottom: solid 1px #000; margin-bottom: 10px; font-size: 18px;\">";
+                    //html += "           <label class=\"row-name\" style=\"width:50%\">Số điện thoại: </label>";
+                    //html += "           <label class=\"row-info\">" + data.Phone + "</label>";
+                    //html += "       </div>";
                     html += "       <div class=\"bill-row\" style=\"display:inline-flex;border-bottom: solid 1px #000;margin-bottom: 10px; font-size: 18px;\">";
                     html += "           <label class=\"row-name\" style=\"width:50%\">Cân nặng (Kg): </label>";
                     html += "           <label class=\"row-info\">" + data.Weight + "</label>";
+                    html += "       </div>";
+                    html += "       <div class=\"bill-row\" style=\"display:inline-flex;border-bottom: solid 1px #000;margin-bottom: 10px; font-size: 18px;\">";
+                    html += "           <label class=\"row-name\" style=\"width:50%\">Kích thước (DxRxC): </label>";
+                    html += "           <label class=\"row-info\">" + data.KichThuoc + "</label>";
                     html += "       </div>";
 
                     html += "</div>";

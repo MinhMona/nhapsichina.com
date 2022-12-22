@@ -263,7 +263,7 @@ namespace NHST.Controllers
         }
         public static List<OutStockNew> GetDataOutStockUser(string UserName, int status, string fd, string td, int pageIndex, int pageSize)
         {
-            var sql = @"select ID, UID, Username, TongCan, TongKien, Status, MainOrderID, CreatedDate, TotalPrice ";
+            var sql = @"select ID, UID, Username, TongCan, TongKien, Status, MainOrderID, CreatedDate, TotalPrice,  OrderTransactionCode, Note ";
             sql += "from tbl_OutStockUser ";
             sql += "where Username LIKE N'%" + UserName + "%' ";
             if (status > -1)
@@ -312,6 +312,12 @@ namespace NHST.Controllers
 
                 if (reader["CreatedDate"] != DBNull.Value)
                     entity.CreatedDate = Convert.ToDateTime(reader["CreatedDate"].ToString());
+
+                if (reader["OrderTransactionCode"] != DBNull.Value)
+                    entity.OrderTransactionCode = reader["OrderTransactionCode"].ToString();
+
+                if (reader["Note"] != DBNull.Value)
+                    entity.Note = reader["Note"].ToString();
 
                 a.Add(entity);
             }
@@ -693,6 +699,8 @@ namespace NHST.Controllers
             public string CreatedDateString { get; set; }
             public int MainOrderID { get; set; }
             public bool CheckPrice { get; set; }
+            public string OrderTransactionCode { get; set; }
+            public string Note { get; set; }
         }
         #endregion
 

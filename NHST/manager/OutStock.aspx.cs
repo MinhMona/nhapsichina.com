@@ -11,6 +11,7 @@ using System.Web.Script.Serialization;
 using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using static Telerik.Web.UI.OrgChartStyles;
 
 namespace NHST.manager
 {

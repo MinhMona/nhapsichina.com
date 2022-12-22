@@ -3741,7 +3741,9 @@ namespace NHST
                             data = Encoding.UTF8.GetString(stream.ToArray());
                         }
                         //Root casso = JsonSerializer.Deserialize<Root>(data);
+
                         Root casso = JsonConvert.DeserializeObject<Root>(data);
+
                         if (casso != null)
                         {
                             if (casso.data.Count > 0)
@@ -3749,15 +3751,22 @@ namespace NHST
                                 foreach (var item in casso.data)
                                 {
                                     var checksms = SmsForwardController.Check(item.ten_bank, item.trans_id, item.ma_gd, item.so_tien, item.soDu_bank);
-                                    if (checksms == null)
+                                    var checkMaDG = SmsForwardController.CheckMaGD(item.ten_bank, item.ma_gd);
+                                    if (checksms == null && checkMaDG == null)
                                     {
                                         DateTime time_st = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(Math.Round(Convert.ToDouble(item.time_stamp) / 1000d)).ToLocalTime();
                                         DateTime timeToUse = new DateTime(2022, 07, 06, 10, 20, 00);
                                         if (time_st > timeToUse)
                                         {
-                                            string sID = SmsForwardController.Insert(item.so_tien.ToString(), item.ten_bank, item.ma_gd, item.noi_dung, item.soDu_bank.ToString(), item.thoi_gian, item.trans_id, header, item.Type.ToInt(1));
+                                            string sID = null;
+                                            var banks = BankController.GetAllNotHidden();
+                                            foreach (var bank in banks)
+                                            {
+                                                if (bank.BankName.ToLower().Contains(item.ten_bank.ToLower()))
+                                                    sID = SmsForwardController.Insert(item.so_tien.ToString(), item.ten_bank, item.ma_gd, item.noi_dung, item.soDu_bank.ToString(), time_st.ToString(), item.trans_id, header, item.Type.ToInt(1));
+                                            }
 
-                                            if (sID != null)
+                                            if (sID != null && !string.IsNullOrEmpty(sID) && Convert.ToInt32(sID) > 0)
                                             {
                                                 if (item.Type.ToInt(0) == 1)
                                                 {
@@ -3776,127 +3785,258 @@ namespace NHST
                                                         }
                                                         if (item.ten_bank.ToLower() == "tpbank")
                                                         {
-                                                            BankID = 5;
+                                                            BankID = 8;
                                                         }
-                                                        else if (item.ten_bank.ToLower() == "techcombank")
+                                                        else if (item.ten_bank.ToLower() == "vietinbank")
                                                         {
-                                                            BankID = 6;
+                                                            BankID = 9;
                                                         }
-                                                        if (!string.IsNullOrEmpty(noidung))
+
+                                                        if (BankID == 8)
                                                         {
-                                                            var temp = noidung.Split(' ');
-                                                            string key = temp[0].ToLower();
-                                                            if (key.ToLower() == "nsc")
+                                                            if (!string.IsNullOrEmpty(noidung))
                                                             {
-                                                                string username = temp[1].ToLower();
-                                                                // string phone = temp[2].ToLower();
-                                                                var u = AccountController.GetByUsername(username);
-                                                                if (u != null)
+                                                                var temp = noidung.Split(' ');
+                                                                string key = temp[0].ToLower();
+                                                                if (key.ToLower() == "nsc")
                                                                 {
-                                                                    double money = Convert.ToDouble(item.so_tien.Replace(",", ""));
-                                                                    double wallet = Math.Round(Convert.ToDouble(u.Wallet), 0);
-                                                                    money = Math.Round(money, 0);
-                                                                    wallet = wallet + money;
-                                                                    wallet = Math.Round(wallet, 0);
-
-                                                                    var kq = AdminSendUserWalletController.InsertNew(u.ID, u.Username, money, 2, item.noi_dung, currentdate, "Auto", sID.ToInt(0), BankID);
-                                                                    AccountController.updateWallet(u.ID, wallet, currentdate, "Auto");
-
-                                                                    HistoryPayWalletController.Insert(u.ID, u.Username, 0, money, u.Username + " đã được nạp tiền vào tài khoản.", wallet, 2, 4, currentdate, "Auto");
-
-                                                                    var setNoti = SendNotiEmailController.GetByID(3);
-                                                                    if (setNoti != null)
+                                                                    string username = temp[1].ToLower();
+                                                                    // string phone = temp[2].ToLower();
+                                                                    var u = AccountController.GetByUsername(username);
+                                                                    if (u != null)
                                                                     {
-                                                                        if (setNoti.IsSentNotiUser == true)
-                                                                        {
-                                                                            NotificationsController.Inser(Convert.ToInt32(u.ID),
-                                                                                                    u.Username, 0,
-                                                                                                    "Bạn vừa được nạp " + string.Format("{0:N0}", money) + " VNĐ vào tài khoản.",
-                                                                                                    2, currentdate, u.Username, true);
-                                                                        }
+                                                                        double money = Convert.ToDouble(item.so_tien.Replace(",", ""));
+                                                                        double wallet = Math.Round(Convert.ToDouble(u.Wallet), 0);
+                                                                        money = Math.Round(money, 0);
+                                                                        wallet = wallet + money;
+                                                                        wallet = Math.Round(wallet, 0);
 
-                                                                        if (setNoti.IsSendEmailUser == true)
+                                                                        var kq = AdminSendUserWalletController.InsertNew(u.ID, u.Username, money, 2, item.noi_dung, currentdate, "Auto", sID.ToInt(0), BankID);
+                                                                        AccountController.updateWallet(u.ID, wallet, currentdate, "Auto");
+
+                                                                        HistoryPayWalletController.Insert(u.ID, u.Username, 0, money, u.Username + " đã được nạp tiền vào tài khoản.", wallet, 2, 4, currentdate, "Auto");
+
+                                                                        var setNoti = SendNotiEmailController.GetByID(3);
+                                                                        if (setNoti != null)
                                                                         {
-                                                                            try
+                                                                            if (setNoti.IsSentNotiUser == true)
                                                                             {
-                                                                                StringBuilder html = new StringBuilder();
-                                                                                html.Append("<!DOCTYPE html>");
-                                                                                html.Append("<html lang=\"en\">");
-                                                                                html.Append("<head>");
-                                                                                html.Append("   <meta charset=\"UTF-8\">");
-                                                                                html.Append("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">");
-                                                                                html.Append("<meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">");
-                                                                                html.Append("<title>Document</title>");
-                                                                                html.Append("</head>");
-                                                                                html.Append("<body style=\"margin: 0; padding:0\">");
-                                                                                html.Append("<table style=\"font-family: sans-serif; font-size: 14px; border-collapse: collapse; width: 500px; max-width: 100%; margin: auto\">");
-                                                                                html.Append("<tr>");
-                                                                                html.Append("<td style=\"padding: 10px; background-color: #fca777; color: #fff; text-align: center\"><strong><p>KÍNH CHÀO QUÝ KHÁCH!</p><p><a style=\"text-decoration: none\" href=\"https://NHAPSICHINA.COM/\" target=\"_blank\"><strong>NHAPSICHINA.COM<strong></a> THÔNG BÁO NẠP VÍ THÀNH CÔNG</p></strong></td>");
-                                                                                html.Append("</tr>");
-                                                                                html.Append("<tr>");
-                                                                                html.Append("<td>THÔNG TIN GIAO DỊCH</td>");
-                                                                                html.Append("</tr>");
-                                                                                html.Append("<tr>");
-                                                                                html.Append("<td>Tên KH: " + AccountInfoController.GetByUserID(u.ID).FirstName + " " + AccountInfoController.GetByUserID(u.ID).LastName + " </td>");
-                                                                                html.Append("</tr>");
-                                                                                html.Append("<tr>");
-                                                                                html.Append("<td>SĐT:  " + AccountInfoController.GetByUserID(u.ID).Phone + "</td>");
-                                                                                html.Append("</tr>");
-                                                                                html.Append("<tr>");
-                                                                                html.Append("<td>Username: " + u.Username + "</td>");
-                                                                                html.Append("</tr>");
-                                                                                html.Append("<tr>");
-                                                                                html.Append("<td>Số tiền nạp ví: " + string.Format("{0:N0}", (Convert.ToDouble(money))) + " VNĐ</td>");
-                                                                                html.Append("</tr>");
-                                                                                html.Append("<tr>");
-                                                                                html.Append("<td>Số dư hiện tại: " + string.Format("{0:N0}", wallet) + " VNĐ</td>");
-                                                                                html.Append("</tr>");
-                                                                                html.Append("<tr>");
-                                                                                html.Append("<td>ID nạp ví: " + kq.ToInt() + "</td>");
-                                                                                html.Append("</tr>");
-                                                                                html.Append("<tr>");
-                                                                                html.Append("<td>Thời gian: " + currentdate + "</td>");
-                                                                                html.Append("</tr>");
-                                                                                html.Append("<tr>");
-                                                                                html.Append("<td>Quý khách vui lòng truy cập tài khoản để kiểm tra chi tiết.</td>");
-                                                                                html.Append("</tr>");
-                                                                                html.Append("<tr>");
-                                                                                html.Append("<td><a style=\"text-decoration: none\" href=\"https://NHAPSICHINA.COM/\" target=\"_blank\"><strong>NHAPSICHINA.COM<strong></a> chân thành cảm ơn!</td>");
-                                                                                html.Append("</tr>");
-                                                                                html.Append("<tr>");
-                                                                                html.Append("<td>==============================</td>");
-                                                                                html.Append("<tr>");
-                                                                                html.Append("<td>Mọi thắc mắc xin vui lòng liên hệ: <a href=\"tel:0785601688\">0785601688</a></td>");
-                                                                                html.Append("</tr>");
-                                                                                html.Append("</tr>");
-                                                                                html.Append("</table>");
-                                                                                html.Append("</body>");
-                                                                                html.Append("</html>");
-
-                                                                                //"NHAPSICHINA.COM THÔNG BÁO NẠP VÍ THÀNH CÔNG",
-                                                                                //                        "Kính Chào Quý Khách! <br>" +
-                                                                                //                        "THÔNG TIN GIAO DỊCH <br>" +
-                                                                                //                        "Tên KH: " + AccountInfoController.GetByUserID(u.ID).LastName + "<br>" +
-                                                                                //                        "SĐT: " + AccountInfoController.GetByUserID(u.ID).Phone + "<br>" +
-                                                                                //                        "Username: " + u.Username + "<br>" +
-                                                                                //                        "Số tiền nạp ví: " + string.Format("{0:N0}", (Convert.ToDouble(pAmount.Value))).Replace(",", ".") + " VNĐ" + "<br>" +
-                                                                                //                        //"Số dư hiện tại: " + string.Format("{0:N0}", u.Wallet).Replace(",", ".") + " VNĐ"  +"<br>" +
-                                                                                //                        "ID nạp ví: " + u.ID + "<br>" +
-                                                                                //                        "Thời gian: " + AdminSendUserWalletController.GetByUID_New(u.ID).CreatedDate + "<br>" +
-                                                                                //                        "Quý khách vui lòng truy cập tài khoản để kiểm tra chi tiết.<br>" +
-                                                                                //                        "BEE - SHIP.com chân thành cảm ơn! <br>" +
-                                                                                //                        "Mọi thắc mắc xin vui lòng liên hệ: 09879 04 078", "");
-
-
-                                                                                PJUtils.SendMailGmail("cskh.thuonghai@gmail.com.vn.net", "jrbhnznozmlrmwvy", u.Email, "NHAPSICHINA.COM THÔNG BÁO NẠP VÍ THÀNH CÔNG", html.ToString(), "");
-
+                                                                                NotificationsController.Inser(Convert.ToInt32(u.ID),
+                                                                                                        u.Username, 0,
+                                                                                                        "Bạn vừa được nạp " + string.Format("{0:N0}", money) + " VNĐ vào tài khoản.",
+                                                                                                        2, currentdate, u.Username, true);
                                                                             }
-                                                                            catch { }
+
+                                                                            if (setNoti.IsSendEmailUser == true)
+                                                                            {
+                                                                                try
+                                                                                {
+                                                                                    StringBuilder html = new StringBuilder();
+                                                                                    html.Append("<!DOCTYPE html>");
+                                                                                    html.Append("<html lang=\"en\">");
+                                                                                    html.Append("<head>");
+                                                                                    html.Append("   <meta charset=\"UTF-8\">");
+                                                                                    html.Append("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">");
+                                                                                    html.Append("<meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">");
+                                                                                    html.Append("<title>Document</title>");
+                                                                                    html.Append("</head>");
+                                                                                    html.Append("<body style=\"margin: 0; padding:0\">");
+                                                                                    html.Append("<table style=\"font-family: sans-serif; font-size: 14px; border-collapse: collapse; width: 500px; max-width: 100%; margin: auto\">");
+                                                                                    html.Append("<tr>");
+                                                                                    html.Append("<td style=\"padding: 10px; background-color: #fca777; color: #fff; text-align: center\"><strong><p>KÍNH CHÀO QUÝ KHÁCH!</p><p><a style=\"text-decoration: none\" href=\"https://NHAPSICHINA.COM/\" target=\"_blank\"><strong>NHAPSICHINA.COM<strong></a> THÔNG BÁO NẠP VÍ THÀNH CÔNG</p></strong></td>");
+                                                                                    html.Append("</tr>");
+                                                                                    html.Append("<tr>");
+                                                                                    html.Append("<td>THÔNG TIN GIAO DỊCH</td>");
+                                                                                    html.Append("</tr>");
+                                                                                    html.Append("<tr>");
+                                                                                    html.Append("<td>Tên KH: " + AccountInfoController.GetByUserID(u.ID).FirstName + " " + AccountInfoController.GetByUserID(u.ID).LastName + " </td>");
+                                                                                    html.Append("</tr>");
+                                                                                    html.Append("<tr>");
+                                                                                    html.Append("<td>SĐT:  " + AccountInfoController.GetByUserID(u.ID).Phone + "</td>");
+                                                                                    html.Append("</tr>");
+                                                                                    html.Append("<tr>");
+                                                                                    html.Append("<td>Username: " + u.Username + "</td>");
+                                                                                    html.Append("</tr>");
+                                                                                    html.Append("<tr>");
+                                                                                    html.Append("<td>Số tiền nạp ví: " + string.Format("{0:N0}", (Convert.ToDouble(money))) + " VNĐ</td>");
+                                                                                    html.Append("</tr>");
+                                                                                    html.Append("<tr>");
+                                                                                    html.Append("<td>Số dư hiện tại: " + string.Format("{0:N0}", wallet) + " VNĐ</td>");
+                                                                                    html.Append("</tr>");
+                                                                                    html.Append("<tr>");
+                                                                                    html.Append("<td>ID nạp ví: " + kq.ToInt() + "</td>");
+                                                                                    html.Append("</tr>");
+                                                                                    html.Append("<tr>");
+                                                                                    html.Append("<td>Thời gian: " + currentdate + "</td>");
+                                                                                    html.Append("</tr>");
+                                                                                    html.Append("<tr>");
+                                                                                    html.Append("<td>Quý khách vui lòng truy cập tài khoản để kiểm tra chi tiết.</td>");
+                                                                                    html.Append("</tr>");
+                                                                                    html.Append("<tr>");
+                                                                                    html.Append("<td><a style=\"text-decoration: none\" href=\"https://NHAPSICHINA.COM/\" target=\"_blank\"><strong>NHAPSICHINA.COM<strong></a> chân thành cảm ơn!</td>");
+                                                                                    html.Append("</tr>");
+                                                                                    html.Append("<tr>");
+                                                                                    html.Append("<td>==============================</td>");
+                                                                                    html.Append("<tr>");
+                                                                                    html.Append("<td>Mọi thắc mắc xin vui lòng liên hệ: <a href=\"tel:0785601688\">0785601688</a></td>");
+                                                                                    html.Append("</tr>");
+                                                                                    html.Append("</tr>");
+                                                                                    html.Append("</table>");
+                                                                                    html.Append("</body>");
+                                                                                    html.Append("</html>");
+
+                                                                                    //"NHAPSICHINA.COM THÔNG BÁO NẠP VÍ THÀNH CÔNG",
+                                                                                    //                        "Kính Chào Quý Khách! <br>" +
+                                                                                    //                        "THÔNG TIN GIAO DỊCH <br>" +
+                                                                                    //                        "Tên KH: " + AccountInfoController.GetByUserID(u.ID).LastName + "<br>" +
+                                                                                    //                        "SĐT: " + AccountInfoController.GetByUserID(u.ID).Phone + "<br>" +
+                                                                                    //                        "Username: " + u.Username + "<br>" +
+                                                                                    //                        "Số tiền nạp ví: " + string.Format("{0:N0}", (Convert.ToDouble(pAmount.Value))).Replace(",", ".") + " VNĐ" + "<br>" +
+                                                                                    //                        //"Số dư hiện tại: " + string.Format("{0:N0}", u.Wallet).Replace(",", ".") + " VNĐ"  +"<br>" +
+                                                                                    //                        "ID nạp ví: " + u.ID + "<br>" +
+                                                                                    //                        "Thời gian: " + AdminSendUserWalletController.GetByUID_New(u.ID).CreatedDate + "<br>" +
+                                                                                    //                        "Quý khách vui lòng truy cập tài khoản để kiểm tra chi tiết.<br>" +
+                                                                                    //                        "BEE - SHIP.com chân thành cảm ơn! <br>" +
+                                                                                    //                        "Mọi thắc mắc xin vui lòng liên hệ: 09879 04 078", "");
+
+
+                                                                                    PJUtils.SendMailGmail("cskh.thuonghai@gmail.com.vn.net", "jrbhnznozmlrmwvy", u.Email, "NHAPSICHINA.COM THÔNG BÁO NẠP VÍ THÀNH CÔNG", html.ToString(), "");
+
+                                                                                }
+                                                                                catch { }
+                                                                            }
                                                                         }
+
+                                                                        //}
+
                                                                     }
+                                                                }
+                                                            }
+                                                        }
+                                                        else if (BankID == 9)
+                                                        {
+                                                            RegexOptions options1 = RegexOptions.IgnoreCase | RegexOptions.Multiline;
+                                                            string pattern1 = @"NSC *(\w*)";
+                                                            Regex regex = new Regex(pattern1, options1);
+                                                            Match match = regex.Match(noidung);
+                                                            noidung = match.Value.ToString();
+                                                            if (!string.IsNullOrEmpty(noidung))
+                                                            {
 
-                                                                    //}
+                                                                var temp = noidung.Split(' ');
+                                                                string key = temp[0].ToLower();
+                                                                if (key.ToLower() == "nsc")
+                                                                {
+                                                                    string username = temp[1].ToLower();
+                                                                    // string phone = temp[2].ToLower();
+                                                                    var u = AccountController.GetByUsername(username);
+                                                                    if (u != null)
+                                                                    {
+                                                                        double money = Convert.ToDouble(item.so_tien.Replace(",", ""));
+                                                                        double wallet = Math.Round(Convert.ToDouble(u.Wallet), 0);
+                                                                        money = Math.Round(money, 0);
+                                                                        wallet = wallet + money;
+                                                                        wallet = Math.Round(wallet, 0);
 
+                                                                        var kq = AdminSendUserWalletController.InsertNew(u.ID, u.Username, money, 2, noidung, currentdate, "Auto", sID.ToInt(0), BankID);
+                                                                        AccountController.updateWallet(u.ID, wallet, currentdate, "Auto");
+
+                                                                        HistoryPayWalletController.Insert(u.ID, u.Username, 0, money, u.Username + " đã được nạp tiền vào tài khoản.", wallet, 2, 4, currentdate, "Auto");
+
+                                                                        var setNoti = SendNotiEmailController.GetByID(3);
+                                                                        if (setNoti != null)
+                                                                        {
+                                                                            if (setNoti.IsSentNotiUser == true)
+                                                                            {
+                                                                                NotificationsController.Inser(Convert.ToInt32(u.ID),
+                                                                                                        u.Username, 0,
+                                                                                                        "Bạn vừa được nạp " + string.Format("{0:N0}", money) + " VNĐ vào tài khoản.",
+                                                                                                        2, currentdate, u.Username, true);
+                                                                            }
+
+                                                                            if (setNoti.IsSendEmailUser == true)
+                                                                            {
+                                                                                try
+                                                                                {
+                                                                                    StringBuilder html = new StringBuilder();
+                                                                                    html.Append("<!DOCTYPE html>");
+                                                                                    html.Append("<html lang=\"en\">");
+                                                                                    html.Append("<head>");
+                                                                                    html.Append("   <meta charset=\"UTF-8\">");
+                                                                                    html.Append("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">");
+                                                                                    html.Append("<meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">");
+                                                                                    html.Append("<title>Document</title>");
+                                                                                    html.Append("</head>");
+                                                                                    html.Append("<body style=\"margin: 0; padding:0\">");
+                                                                                    html.Append("<table style=\"font-family: sans-serif; font-size: 14px; border-collapse: collapse; width: 500px; max-width: 100%; margin: auto\">");
+                                                                                    html.Append("<tr>");
+                                                                                    html.Append("<td style=\"padding: 10px; background-color: #fca777; color: #fff; text-align: center\"><strong><p>KÍNH CHÀO QUÝ KHÁCH!</p><p><a style=\"text-decoration: none\" href=\"https://NHAPSICHINA.COM/\" target=\"_blank\"><strong>NHAPSICHINA.COM<strong></a> THÔNG BÁO NẠP VÍ THÀNH CÔNG</p></strong></td>");
+                                                                                    html.Append("</tr>");
+                                                                                    html.Append("<tr>");
+                                                                                    html.Append("<td>THÔNG TIN GIAO DỊCH</td>");
+                                                                                    html.Append("</tr>");
+                                                                                    html.Append("<tr>");
+                                                                                    html.Append("<td>Tên KH: " + AccountInfoController.GetByUserID(u.ID).FirstName + " " + AccountInfoController.GetByUserID(u.ID).LastName + " </td>");
+                                                                                    html.Append("</tr>");
+                                                                                    html.Append("<tr>");
+                                                                                    html.Append("<td>SĐT:  " + AccountInfoController.GetByUserID(u.ID).Phone + "</td>");
+                                                                                    html.Append("</tr>");
+                                                                                    html.Append("<tr>");
+                                                                                    html.Append("<td>Username: " + u.Username + "</td>");
+                                                                                    html.Append("</tr>");
+                                                                                    html.Append("<tr>");
+                                                                                    html.Append("<td>Số tiền nạp ví: " + string.Format("{0:N0}", (Convert.ToDouble(money))) + " VNĐ</td>");
+                                                                                    html.Append("</tr>");
+                                                                                    html.Append("<tr>");
+                                                                                    html.Append("<td>Số dư hiện tại: " + string.Format("{0:N0}", wallet) + " VNĐ</td>");
+                                                                                    html.Append("</tr>");
+                                                                                    html.Append("<tr>");
+                                                                                    html.Append("<td>ID nạp ví: " + kq.ToInt() + "</td>");
+                                                                                    html.Append("</tr>");
+                                                                                    html.Append("<tr>");
+                                                                                    html.Append("<td>Thời gian: " + currentdate + "</td>");
+                                                                                    html.Append("</tr>");
+                                                                                    html.Append("<tr>");
+                                                                                    html.Append("<td>Quý khách vui lòng truy cập tài khoản để kiểm tra chi tiết.</td>");
+                                                                                    html.Append("</tr>");
+                                                                                    html.Append("<tr>");
+                                                                                    html.Append("<td><a style=\"text-decoration: none\" href=\"https://NHAPSICHINA.COM/\" target=\"_blank\"><strong>NHAPSICHINA.COM<strong></a> chân thành cảm ơn!</td>");
+                                                                                    html.Append("</tr>");
+                                                                                    html.Append("<tr>");
+                                                                                    html.Append("<td>==============================</td>");
+                                                                                    html.Append("<tr>");
+                                                                                    html.Append("<td>Mọi thắc mắc xin vui lòng liên hệ: <a href=\"tel:0785601688\">0785601688</a></td>");
+                                                                                    html.Append("</tr>");
+                                                                                    html.Append("</tr>");
+                                                                                    html.Append("</table>");
+                                                                                    html.Append("</body>");
+                                                                                    html.Append("</html>");
+
+                                                                                    //"NHAPSICHINA.COM THÔNG BÁO NẠP VÍ THÀNH CÔNG",
+                                                                                    //                        "Kính Chào Quý Khách! <br>" +
+                                                                                    //                        "THÔNG TIN GIAO DỊCH <br>" +
+                                                                                    //                        "Tên KH: " + AccountInfoController.GetByUserID(u.ID).LastName + "<br>" +
+                                                                                    //                        "SĐT: " + AccountInfoController.GetByUserID(u.ID).Phone + "<br>" +
+                                                                                    //                        "Username: " + u.Username + "<br>" +
+                                                                                    //                        "Số tiền nạp ví: " + string.Format("{0:N0}", (Convert.ToDouble(pAmount.Value))).Replace(",", ".") + " VNĐ" + "<br>" +
+                                                                                    //                        //"Số dư hiện tại: " + string.Format("{0:N0}", u.Wallet).Replace(",", ".") + " VNĐ"  +"<br>" +
+                                                                                    //                        "ID nạp ví: " + u.ID + "<br>" +
+                                                                                    //                        "Thời gian: " + AdminSendUserWalletController.GetByUID_New(u.ID).CreatedDate + "<br>" +
+                                                                                    //                        "Quý khách vui lòng truy cập tài khoản để kiểm tra chi tiết.<br>" +
+                                                                                    //                        "BEE - SHIP.com chân thành cảm ơn! <br>" +
+                                                                                    //                        "Mọi thắc mắc xin vui lòng liên hệ: 09879 04 078", "");
+
+
+                                                                                    PJUtils.SendMailGmail("cskh.thuonghai@gmail.com.vn.net", "jrbhnznozmlrmwvy", u.Email, "NHAPSICHINA.COM THÔNG BÁO NẠP VÍ THÀNH CÔNG", html.ToString(), "");
+
+                                                                                }
+                                                                                catch { }
+                                                                            }
+                                                                        }
+
+                                                                        //}
+
+                                                                    }
                                                                 }
                                                             }
                                                         }
@@ -3931,7 +4071,7 @@ namespace NHST
                 Context.Response.Write(JsonConvert.SerializeObject(rs, Formatting.Indented));
                 Context.Response.Flush();
                 Context.Response.End();
-            }            
+            }
         }
 
         public class Root

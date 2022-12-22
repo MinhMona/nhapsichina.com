@@ -1193,6 +1193,8 @@
     <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
     <Property Name="MainOrderID" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
     <Property Name="TotalPrice" Type="Double" />
+    <Property Name="OrderTransactionCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
   </EntityType>
   <EntityType Name="tbl_OutStockUserPackage">
     <Key>

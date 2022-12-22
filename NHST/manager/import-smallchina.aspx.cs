@@ -39,9 +39,9 @@ namespace NHST.manager
                 else
                 {
                     _FileTempPlan = null;
-                }                
+                }
             }
-        }        
+        }
 
         private void UploadToTemp()
         {
@@ -122,7 +122,7 @@ namespace NHST.manager
                                     if (drRow["CanNang"] != DBNull.Value)
                                     {
                                         Weight = Convert.ToDouble(drRow["CanNang"]);
-                                    }                                   
+                                    }
                                     if (!string.IsNullOrEmpty(checkMVD))
                                     {
                                         int smallID = 0;
@@ -130,230 +130,234 @@ namespace NHST.manager
                                         var check = SmallPackageController.GetByOrderTransactionCode(checkMVD);
                                         if (check != null)
                                         {
-                                            smallID = Convert.ToInt32(check.ID);
-                                            MainOrderID = Convert.ToInt32(check.MainOrderID);
-
-                                            SmallPackageController.UpdateImportOutChina(smallID, Weight, 5, obj_user.Username, currentDate, STT);
-                                            if (MainOrderID > 0)
+                                            //Kiểm tra mã vận đơn đã xuất kho hoặc đã về kho VN thì không cho import
+                                            if (check.Status < 3 || check.Status == 5)
                                             {
-                                                var mo = MainOrderController.GetAllByID(Convert.ToInt32(MainOrderID));
-                                                if (mo != null)
+                                                smallID = Convert.ToInt32(check.ID);
+                                                MainOrderID = Convert.ToInt32(check.MainOrderID);
+
+                                                SmallPackageController.UpdateImportOutChina(smallID, Weight, 5, obj_user.Username, currentDate, STT);
+                                                if (MainOrderID > 0)
                                                 {
-                                                    string orderstatus = "";
-                                                    int currentOrderStatus = Convert.ToInt32(mo.Status);
-                                                    switch (currentOrderStatus)
+                                                    var mo = MainOrderController.GetAllByID(Convert.ToInt32(MainOrderID));
+                                                    if (mo != null)
                                                     {
-                                                        case 0:
-                                                            orderstatus = "Đơn mới";
-                                                            break;
-                                                        case 1:
-                                                            orderstatus = "Đơn hàng hủy";
-                                                            break;
-                                                        case 2:
-                                                            orderstatus = "Đơn đã cọc";
-                                                            break;
-                                                        case 3:
-                                                            orderstatus = "Đơn người bán giao";
-                                                            break;
-                                                        case 4:
-                                                            orderstatus = "Đơn chờ mua hàng";
-                                                            break;
-                                                        case 5:
-                                                            orderstatus = "Đơn đã mua hàng";
-                                                            break;
-                                                        case 6:
-                                                            orderstatus = "Kho Trung Quốc nhận hàng";
-                                                            break;
-                                                        case 7:
-                                                            orderstatus = "Trên đường về Việt Nam";
-                                                            break;
-                                                        case 8:
-                                                            orderstatus = "Trong kho Hà Nội";
-                                                            break;
-                                                        case 9:
-                                                            orderstatus = "Đã thanh toán";
-                                                            break;
-                                                        case 10:
-                                                            orderstatus = "Đã hoàn thành";
-                                                            break;
-                                                        case 11:
-                                                            orderstatus = "Đang giao hàng";
-                                                            break;
-                                                        case 12:
-                                                            orderstatus = "Đơn khiếu nại";
-                                                            break;
-                                                        default:
-                                                            break;
-                                                    }
-
-                                                    if (mo.Status < 7)
-                                                    {
-                                                        MainOrderController.UpdateStatus(mo.ID, mo.UID.Value, 7);
-                                                        HistoryOrderChangeController.Insert(mo.ID, obj_user.ID, obj_user.Username, obj_user.Username +
-                                                        " đã import đổi trạng thái của đơn hàng ID là: " + mo.ID + ", từ: " + orderstatus + ", sang: Hàng xuất kho Trung - đang trên đường về VN", 0, currentDate);
-                                                        if (mo.DateToVN == null)
+                                                        string orderstatus = "";
+                                                        int currentOrderStatus = Convert.ToInt32(mo.Status);
+                                                        switch (currentOrderStatus)
                                                         {
-                                                            MainOrderController.UpdateDateToVN(mo.ID, currentDate);
+                                                            case 0:
+                                                                orderstatus = "Đơn mới";
+                                                                break;
+                                                            case 1:
+                                                                orderstatus = "Đơn hàng hủy";
+                                                                break;
+                                                            case 2:
+                                                                orderstatus = "Đơn đã cọc";
+                                                                break;
+                                                            case 3:
+                                                                orderstatus = "Đơn người bán giao";
+                                                                break;
+                                                            case 4:
+                                                                orderstatus = "Đơn chờ mua hàng";
+                                                                break;
+                                                            case 5:
+                                                                orderstatus = "Đơn đã mua hàng";
+                                                                break;
+                                                            case 6:
+                                                                orderstatus = "Kho Trung Quốc nhận hàng";
+                                                                break;
+                                                            case 7:
+                                                                orderstatus = "Trên đường về Việt Nam";
+                                                                break;
+                                                            case 8:
+                                                                orderstatus = "Trong kho Hà Nội";
+                                                                break;
+                                                            case 9:
+                                                                orderstatus = "Đã thanh toán";
+                                                                break;
+                                                            case 10:
+                                                                orderstatus = "Đã hoàn thành";
+                                                                break;
+                                                            case 11:
+                                                                orderstatus = "Đang giao hàng";
+                                                                break;
+                                                            case 12:
+                                                                orderstatus = "Đơn khiếu nại";
+                                                                break;
+                                                            default:
+                                                                break;
                                                         }
-                                                    }
 
-                                                    double FeeWeight = 0;
-                                                    double FeeWeightDiscount = 0;                                                    
-                                                    double returnprice = 0;
-                                                    double pricePerWeight = 0;
-                                                    double finalPriceOfPackage = 0;
-                                                    double cannangdonggo = 0;
-                                                    double TongCanNang = 0;
-
-                                                    int warehouse = mo.ReceivePlace.ToInt(1);
-                                                    int shipping = Convert.ToInt32(mo.ShippingType);
-                                                    int warehouseFrom = Convert.ToInt32(mo.FromPlace);
-                                                    var usercreate = AccountController.GetByID(Convert.ToInt32(mo.UID));
-                                                    double ckFeeWeight = Convert.ToDouble(UserLevelController.GetByID(usercreate.LevelID.ToString().ToInt()).FeeWeight.ToString());
-
-                                                    var smallpackage = SmallPackageController.GetByMainOrderID(MainOrderID);
-                                                    if (smallpackage.Count > 0)
-                                                    {
-                                                        double totalWeight = 0;
-                                                        foreach (var item in smallpackage)
+                                                        if (mo.Status < 7)
                                                         {
-                                                            double totalWeightCN = Math.Round(Convert.ToDouble(item.Weight), 5);
-                                                            double totalWeightTT = 0;
-                                                            double pDai = Convert.ToDouble(item.Length);
-                                                            double pRong = Convert.ToDouble(item.Width);
-                                                            double pCao = Convert.ToDouble(item.Height);
-                                                            if (pDai > 0 && pRong > 0 && pCao > 0)
+                                                            MainOrderController.UpdateStatus(mo.ID, mo.UID.Value, 7);
+                                                            HistoryOrderChangeController.Insert(mo.ID, obj_user.ID, obj_user.Username, obj_user.Username +
+                                                            " đã import đổi trạng thái của đơn hàng ID là: " + mo.ID + ", từ: " + orderstatus + ", sang: Hàng xuất kho Trung - đang trên đường về VN", 0, currentDate);
+                                                            if (mo.DateToVN == null)
                                                             {
-                                                                totalWeightTT = (pDai * pRong * pCao) / 6000;
+                                                                MainOrderController.UpdateDateToVN(mo.ID, currentDate);
                                                             }
-                                                            if (totalWeightCN > totalWeightTT)
+                                                        }
+
+                                                        double FeeWeight = 0;
+                                                        double FeeWeightDiscount = 0;
+                                                        double returnprice = 0;
+                                                        double pricePerWeight = 0;
+                                                        double finalPriceOfPackage = 0;
+                                                        double cannangdonggo = 0;
+                                                        double TongCanNang = 0;
+
+                                                        int warehouse = mo.ReceivePlace.ToInt(1);
+                                                        int shipping = Convert.ToInt32(mo.ShippingType);
+                                                        int warehouseFrom = Convert.ToInt32(mo.FromPlace);
+                                                        var usercreate = AccountController.GetByID(Convert.ToInt32(mo.UID));
+                                                        double ckFeeWeight = Convert.ToDouble(UserLevelController.GetByID(usercreate.LevelID.ToString().ToInt()).FeeWeight.ToString());
+
+                                                        var smallpackage = SmallPackageController.GetByMainOrderID(MainOrderID);
+                                                        if (smallpackage.Count > 0)
+                                                        {
+                                                            double totalWeight = 0;
+                                                            foreach (var item in smallpackage)
                                                             {
-                                                                totalWeight += totalWeightCN;
+                                                                double totalWeightCN = Math.Round(Convert.ToDouble(item.Weight), 5);
+                                                                double totalWeightTT = 0;
+                                                                double pDai = Convert.ToDouble(item.Length);
+                                                                double pRong = Convert.ToDouble(item.Width);
+                                                                double pCao = Convert.ToDouble(item.Height);
+                                                                if (pDai > 0 && pRong > 0 && pCao > 0)
+                                                                {
+                                                                    totalWeightTT = (pDai * pRong * pCao) / 6000;
+                                                                }
+                                                                if (totalWeightCN > totalWeightTT)
+                                                                {
+                                                                    totalWeight += totalWeightCN;
+                                                                }
+                                                                else
+                                                                {
+                                                                    totalWeight += totalWeightTT;
+                                                                }
+                                                            }
+                                                            if (!string.IsNullOrEmpty(usercreate.FeeTQVNPerWeight))
+                                                            {
+                                                                double feetqvn = 0;
+                                                                if (usercreate.FeeTQVNPerWeight.ToFloat(0) > 0)
+                                                                {
+                                                                    feetqvn = Convert.ToDouble(usercreate.FeeTQVNPerWeight);
+                                                                    pricePerWeight = Convert.ToDouble(usercreate.FeeTQVNPerWeight);
+                                                                }
+                                                                returnprice = totalWeight * feetqvn;
                                                             }
                                                             else
                                                             {
-                                                                totalWeight += totalWeightTT;
-                                                            }
-                                                        }
-                                                        if (!string.IsNullOrEmpty(usercreate.FeeTQVNPerWeight))
-                                                        {
-                                                            double feetqvn = 0;
-                                                            if (usercreate.FeeTQVNPerWeight.ToFloat(0) > 0)
-                                                            {
-                                                                feetqvn = Convert.ToDouble(usercreate.FeeTQVNPerWeight);
-                                                                pricePerWeight = Convert.ToDouble(usercreate.FeeTQVNPerWeight);
-                                                            }
-                                                            returnprice = totalWeight * feetqvn;
-                                                        }
-                                                        else
-                                                        {
-                                                            var fee = WarehouseFeeController.GetByAndWarehouseFromAndToWarehouseAndShippingTypeAndAndHelpMoving(warehouseFrom, warehouse, shipping, false);
-                                                            if (fee.Count > 0)
-                                                            {
-                                                                foreach (var f in fee)
+                                                                var fee = WarehouseFeeController.GetByAndWarehouseFromAndToWarehouseAndShippingTypeAndAndHelpMoving(warehouseFrom, warehouse, shipping, false);
+                                                                if (fee.Count > 0)
                                                                 {
-                                                                    if (Convert.ToDouble(mo.PriceVND) > f.WeightFrom && Convert.ToDouble(mo.PriceVND) <= f.WeightTo)
+                                                                    foreach (var f in fee)
                                                                     {
-                                                                        pricePerWeight = Convert.ToDouble(f.Price);
-                                                                        returnprice = totalWeight * Convert.ToDouble(f.Price);
-                                                                        break;
+                                                                        if (Convert.ToDouble(mo.PriceVND) > f.WeightFrom && Convert.ToDouble(mo.PriceVND) <= f.WeightTo)
+                                                                        {
+                                                                            pricePerWeight = Convert.ToDouble(f.Price);
+                                                                            returnprice = totalWeight * Convert.ToDouble(f.Price);
+                                                                            break;
+                                                                        }
                                                                     }
                                                                 }
                                                             }
-                                                        }                                                        
 
-                                                        foreach (var item in smallpackage)
+                                                            foreach (var item in smallpackage)
+                                                            {
+                                                                double compareweight = 0;
+                                                                double compareSize = 0;
+
+                                                                double weight = Math.Round(Convert.ToDouble(item.Weight), 5);
+                                                                compareweight = weight * pricePerWeight;
+
+                                                                double weigthTT = 0;
+                                                                double pDai = Convert.ToDouble(item.Length);
+                                                                double pRong = Convert.ToDouble(item.Width);
+                                                                double pCao = Convert.ToDouble(item.Height);
+                                                                if (pDai > 0 && pRong > 0 && pCao > 0)
+                                                                {
+                                                                    weigthTT = (pDai * pRong * pCao) / 6000;
+                                                                }
+                                                                weigthTT = Math.Round(weigthTT, 5);
+                                                                compareSize = weigthTT * pricePerWeight;
+
+                                                                if (compareweight >= compareSize)
+                                                                {
+                                                                    finalPriceOfPackage += compareweight;
+                                                                    SmallPackageController.UpdateTotalPrice(item.ID, compareweight);
+                                                                }
+                                                                else
+                                                                {
+                                                                    finalPriceOfPackage += compareSize;
+                                                                    SmallPackageController.UpdateTotalPrice(item.ID, compareSize);
+                                                                }
+                                                            }
+
+                                                            cannangdonggo = totalWeight;
+                                                            TongCanNang = totalWeight;
+                                                        }
+
+                                                        returnprice = Math.Round(finalPriceOfPackage, 0);
+                                                        FeeWeight = returnprice;
+                                                        FeeWeightDiscount = FeeWeight * ckFeeWeight / 100;
+                                                        FeeWeight = Math.Round(FeeWeight - FeeWeightDiscount, 0);
+
+                                                        cannangdonggo = Math.Round(cannangdonggo, 5);
+                                                        TongCanNang = Math.Round(TongCanNang, 5);
+
+                                                        var conf = ConfigurationController.GetByTop1();
+
+                                                        double IsPackedPrice = 0;
+                                                        if (mo.IsPacked == true)
                                                         {
-                                                            double compareweight = 0;
-                                                            double compareSize = 0;
-
-                                                            double weight = Math.Round(Convert.ToDouble(item.Weight), 5);
-                                                            compareweight = weight * pricePerWeight;
-
-                                                            double weigthTT = 0;
-                                                            double pDai = Convert.ToDouble(item.Length);
-                                                            double pRong = Convert.ToDouble(item.Width);
-                                                            double pCao = Convert.ToDouble(item.Height);
-                                                            if (pDai > 0 && pRong > 0 && pCao > 0)
+                                                            if (cannangdonggo > 0)
                                                             {
-                                                                weigthTT = (pDai * pRong * pCao) / 6000;
+                                                                if (cannangdonggo <= 1)
+                                                                {
+                                                                    IsPackedPrice = Convert.ToDouble(conf.FeeDongGoKgDau);
+                                                                }
+                                                                else
+                                                                {
+                                                                    cannangdonggo = cannangdonggo - 1;
+                                                                    cannangdonggo = Math.Round(cannangdonggo, 5);
+                                                                    IsPackedPrice = Convert.ToDouble(conf.FeeDongGoKgDau) + (cannangdonggo * Convert.ToDouble(conf.FeeDongGoKgSau));
+                                                                }
                                                             }
-                                                            weigthTT = Math.Round(weigthTT, 5);
-                                                            compareSize = weigthTT * pricePerWeight;
-
-                                                            if (compareweight >= compareSize)
+                                                        }
+                                                        double IsPriceSepcial = 0;
+                                                        if (mo.IsCheckSpecial1 == true)
+                                                        {
+                                                            if (TongCanNang > 0)
                                                             {
-                                                                finalPriceOfPackage += compareweight;
-                                                                SmallPackageController.UpdateTotalPrice(item.ID, compareweight);
+                                                                IsPriceSepcial = (TongCanNang * Convert.ToDouble(conf.FeeDacBiet1));
                                                             }
-                                                            else
+                                                        }
+                                                        if (mo.IsCheckSpecial2 == true)
+                                                        {
+                                                            if (TongCanNang > 0)
                                                             {
-                                                                finalPriceOfPackage += compareSize;
-                                                                SmallPackageController.UpdateTotalPrice(item.ID, compareSize);
+                                                                IsPriceSepcial = (TongCanNang * Convert.ToDouble(conf.FeeDacBiet2));
+                                                            }
+                                                        }
+                                                        if (mo.IsCheckSpecial1 == true && mo.IsCheckSpecial2 == true)
+                                                        {
+                                                            if (TongCanNang > 0)
+                                                            {
+                                                                IsPriceSepcial = (TongCanNang * (Convert.ToDouble(conf.FeeDacBiet1) + Convert.ToDouble(conf.FeeDacBiet2)));
                                                             }
                                                         }
 
-                                                        cannangdonggo = totalWeight;
-                                                        TongCanNang = totalWeight;                                                       
+                                                        double TotalPriceVND = Convert.ToDouble(mo.PriceVND) + Convert.ToDouble(mo.FeeBuyPro) + Convert.ToDouble(mo.InsuranceMoney) + Convert.ToDouble(mo.FeeShipCN) + FeeWeight + Convert.ToDouble(mo.IsCheckProductPrice) +
+                                                        Convert.ToDouble(mo.InsuranceMoney) + Convert.ToDouble(mo.TotalFeeSupport) + Convert.ToDouble(IsPackedPrice) + Convert.ToDouble(IsPriceSepcial) + Convert.ToDouble(mo.IsFastDeliveryPrice);
+                                                        TotalPriceVND = Math.Round(TotalPriceVND, 0);
+                                                        //MainOrderController.UpdateFeeImport(MainOrderID, FeeWeight.ToString(), IsPackedPrice.ToString(), IsPriceSepcial.ToString(), TotalPriceVND.ToString());
+                                                        MainOrderController.UpdateTotalWeightandTongCanNang(MainOrderID, TongCanNang.ToString(), TongCanNang.ToString(), TongCanNang.ToString());
                                                     }
-
-                                                    returnprice = Math.Round(finalPriceOfPackage, 0);
-                                                    FeeWeight = returnprice;
-                                                    FeeWeightDiscount = FeeWeight * ckFeeWeight / 100;
-                                                    FeeWeight = Math.Round(FeeWeight - FeeWeightDiscount, 0);
-
-                                                    cannangdonggo = Math.Round(cannangdonggo, 5);
-                                                    TongCanNang = Math.Round(TongCanNang, 5);
-
-                                                    var conf = ConfigurationController.GetByTop1();
-
-                                                    double IsPackedPrice = 0;
-                                                    if (mo.IsPacked == true)
-                                                    {
-                                                        if (cannangdonggo > 0)
-                                                        {
-                                                            if (cannangdonggo <= 1)
-                                                            {
-                                                                IsPackedPrice = Convert.ToDouble(conf.FeeDongGoKgDau);
-                                                            }
-                                                            else
-                                                            {
-                                                                cannangdonggo = cannangdonggo - 1;
-                                                                cannangdonggo = Math.Round(cannangdonggo, 5);
-                                                                IsPackedPrice = Convert.ToDouble(conf.FeeDongGoKgDau) + (cannangdonggo * Convert.ToDouble(conf.FeeDongGoKgSau));
-                                                            }
-                                                        }
-                                                    }
-                                                    double IsPriceSepcial = 0;
-                                                    if (mo.IsCheckSpecial1 == true)
-                                                    {
-                                                        if (TongCanNang > 0)
-                                                        {
-                                                            IsPriceSepcial = (TongCanNang * Convert.ToDouble(conf.FeeDacBiet1));
-                                                        }
-                                                    }
-                                                    if (mo.IsCheckSpecial2 == true)
-                                                    {
-                                                        if (TongCanNang > 0)
-                                                        {
-                                                            IsPriceSepcial = (TongCanNang * Convert.ToDouble(conf.FeeDacBiet2));
-                                                        }
-                                                    }
-                                                    if (mo.IsCheckSpecial1 == true && mo.IsCheckSpecial2 == true)
-                                                    {
-                                                        if (TongCanNang > 0)
-                                                        {
-                                                            IsPriceSepcial = (TongCanNang * (Convert.ToDouble(conf.FeeDacBiet1) + Convert.ToDouble(conf.FeeDacBiet2)));
-                                                        }
-                                                    }
-
-                                                    double TotalPriceVND = Convert.ToDouble(mo.PriceVND) + Convert.ToDouble(mo.FeeBuyPro) + Convert.ToDouble(mo.InsuranceMoney) + Convert.ToDouble(mo.FeeShipCN) + FeeWeight + Convert.ToDouble(mo.IsCheckProductPrice) +
-                                                    Convert.ToDouble(mo.InsuranceMoney) + Convert.ToDouble(mo.TotalFeeSupport) + Convert.ToDouble(IsPackedPrice) + Convert.ToDouble(IsPriceSepcial) + Convert.ToDouble(mo.IsFastDeliveryPrice);
-                                                    TotalPriceVND = Math.Round(TotalPriceVND, 0);
-                                                    MainOrderController.UpdateFeeImport(MainOrderID, FeeWeight.ToString(), IsPackedPrice.ToString(), IsPriceSepcial.ToString(), TotalPriceVND.ToString());
-                                                    MainOrderController.UpdateTotalWeightandTongCanNang(MainOrderID, TongCanNang.ToString(), TongCanNang.ToString(), TongCanNang.ToString());
                                                 }
-                                            }                                           
+                                            }
                                         }
                                         else if (check == null)
                                         {

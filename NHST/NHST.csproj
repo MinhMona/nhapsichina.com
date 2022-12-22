@@ -6449,6 +6449,7 @@
     <Content Include="chinh-sach.aspx" />
     <Content Include="cong-cu-dat-hang.aspx" />
     <Content Include="cong-cu.aspx" />
+    <Content Include="Content\Site.css" />
     <Content Include="dang-ky.aspx" />
     <Content Include="dang-nhap.aspx" />
     <Content Include="dang-xuat-staff.aspx" />
@@ -6461,6 +6462,7 @@
     <Content Include="danh-sach-kien-yeu-cau-ky-gui.aspx" />
     <Content Include="danh-sach-san-pham.aspx" />
     <Content Include="danh-sach-thanh-toan-ho.aspx" />
+    <Content Include="danh-sach-yeu-cau-giao.aspx" />
     <Content Include="dashboard.aspx" />
     <Content Include="dat-hang-ngoai-he-thong-app.aspx" />
     <Content Include="dat-hang-thanh-cong.aspx" />
@@ -8371,6 +8373,7 @@
     <Compile Include="Controllers\OrderShopTempController.cs" />
     <Compile Include="Controllers\OrderTempController.cs" />
     <Compile Include="Controllers\OTPController.cs" />
+    <Compile Include="Controllers\OutStockUserController.cs" />
     <Compile Include="Controllers\OutStockSessionController.cs" />
     <Compile Include="Controllers\OutStockSessionPackageController.cs" />
     <Compile Include="Controllers\PageController.cs" />
@@ -8502,6 +8505,13 @@
     </Compile>
     <Compile Include="danh-sach-thanh-toan-ho.aspx.designer.cs">
       <DependentUpon>danh-sach-thanh-toan-ho.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="danh-sach-yeu-cau-giao.aspx.cs">
+      <DependentUpon>danh-sach-yeu-cau-giao.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="danh-sach-yeu-cau-giao.aspx.designer.cs">
+      <DependentUpon>danh-sach-yeu-cau-giao.aspx</DependentUpon>
     </Compile>
     <Compile Include="dashboard.aspx.cs">
       <DependentUpon>dashboard.aspx</DependentUpon>
@@ -10549,6 +10559,10 @@
     <None Include="scripts\jquery-1.10.2.intellisense.js" />
     <None Include="scripts\_references.js" />
     <Content Include="UserMasterNew.Master" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\web.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -10560,6 +10574,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="App_Themes\AdminNew45\assets\css\themes\" />
     <Folder Include="App_Themes\UserNew45\assets\css\themes\" />
+    <Folder Include="Data\" />
     <Folder Include="Uploads\BannerIMG\" />
     <Folder Include="Uploads\ChatIMG\" />
     <Folder Include="Uploads\hotroIMG\" />
@@ -10568,6 +10583,7 @@
     <Folder Include="Uploads\ProductIMG\" />
     <Folder Include="Uploads\smallpackagebarcode\" />
     <Folder Include="Uploads\smallpackageIMG\" />
+    <Folder Include="Views\OutStock\" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />

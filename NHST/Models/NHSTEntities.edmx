@@ -1086,6 +1086,8 @@
           <Property Name="ModifiedDate" Type="datetime" />
           <Property Name="MainOrderID" Type="nvarchar(max)" />
           <Property Name="TotalPrice" Type="float" />
+          <Property Name="OrderTransactionCode" Type="nvarchar(max)" />
+          <Property Name="Note" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="tbl_OutStockUserPackage">
           <Key>
@@ -3936,6 +3938,8 @@ warning 6002: The table/view 'nhapsichina_com.dbo.View_UserListWithWallet' does 
           <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
           <Property Name="MainOrderID" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="TotalPrice" Type="Double" />
+          <Property Name="OrderTransactionCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="tbl_OutStockUserPackage">
           <Key>
@@ -6281,6 +6285,8 @@ warning 6002: The table/view 'nhapsichina_com.dbo.View_UserListWithWallet' does 
           <EntitySetMapping Name="tbl_OutStockUser">
             <EntityTypeMapping TypeName="NHSTModel.tbl_OutStockUser">
               <MappingFragment StoreEntitySet="tbl_OutStockUser">
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="OrderTransactionCode" ColumnName="OrderTransactionCode" />
                 <ScalarProperty Name="TotalPrice" ColumnName="TotalPrice" />
                 <ScalarProperty Name="MainOrderID" ColumnName="MainOrderID" />
                 <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />

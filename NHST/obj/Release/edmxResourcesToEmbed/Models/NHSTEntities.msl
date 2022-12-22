@@ -1119,6 +1119,8 @@
     <EntitySetMapping Name="tbl_OutStockUser">
       <EntityTypeMapping TypeName="NHSTModel.tbl_OutStockUser">
         <MappingFragment StoreEntitySet="tbl_OutStockUser">
+          <ScalarProperty Name="Note" ColumnName="Note" />
+          <ScalarProperty Name="OrderTransactionCode" ColumnName="OrderTransactionCode" />
           <ScalarProperty Name="TotalPrice" ColumnName="TotalPrice" />
           <ScalarProperty Name="MainOrderID" ColumnName="MainOrderID" />
           <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />

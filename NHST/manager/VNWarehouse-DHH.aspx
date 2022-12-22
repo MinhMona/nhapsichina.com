@@ -544,7 +544,8 @@
                                                         html += "<div class=\"package-item pb-2\">";
                                                         html += "<div class=\"wrap-top-action\">";
                                                         html += "<div class=\"owner\">";
-                                                        html += "<span>" + Username + "</span> | <span>" + Phone + "</span>";
+                                                        html += "<span>" + Username + "</span>";
+                                                        //html += "<span>" + Username + "</span> | <span>" + Phone + "</span>";
                                                         html += "</div>";
                                                         html += "<div class=\"action-all\">";
                                                         html += "<a href=\"javascript:;\" onclick=\"RemoveAllByUID(" + UID + ",'" + Username + "')\" style=\"margin-right:5px;\" class=\"btn\">Ẩn tất cả</a>";
@@ -1172,7 +1173,8 @@
                                                     html += "<div class=\"package-item pb-2\">";
                                                     html += "<div class=\"wrap-top-action\">";
                                                     html += "<div class=\"owner\">";
-                                                    html += "<span>" + Username + "</span> | <span>" + Phone + "</span>";
+                                                    html += "<span>" + Username + "</span>";
+                                                    //html += "<span>" + Username + "</span> | <span>" + Phone + "</span>";
                                                     html += "</div>";
                                                     html += "<div class=\"action-all\">";
                                                     html += "<a href=\"javascript:;\" onclick=\"RemoveAllByUID(" + UID + ",'" + Username + "')\" style=\"margin-right:5px;\" class=\"btn\">Ẩn tất cả</a>";
@@ -1869,17 +1871,20 @@
                     html += "       </div>";
                     html += "       <div class=\"bill-row\" style=\"display:inline-flex;border-bottom: solid 1px #000;\">";
                     html += "           <label class=\"row-name\" style=\"width:50%\">Username: </label>";
-                    html += "           <label class=\"row-info\">" + data.Username + "</label>";
+                    html += "           <label class=\"row-info\" style=\"font-size: 80px;\">" + data.Username + "</label>";
                     html += "       </div>";
-                    html += "       <div class=\"bill-row\" style=\"display:inline-flex;border-bottom: solid 1px #000;\">";
-                    html += "           <label class=\"row-name\" style=\"width:50%\">Số điện thoại: </label>";
-                    html += "           <label class=\"row-info\">" + data.Phone + "</label>";
-                    html += "       </div>";
+                    //html += "       <div class=\"bill-row\" style=\"display:inline-flex;border-bottom: solid 1px #000;\">";
+                    //html += "           <label class=\"row-name\" style=\"width:50%\">Số điện thoại: </label>";
+                    //html += "           <label class=\"row-info\">" + data.Phone + "</label>";
+                    //html += "       </div>";
                     html += "       <div class=\"bill-row\" style=\"display:inline-flex;border-bottom: solid 1px #000;\">";
                     html += "           <label class=\"row-name\" style=\"width:50%\">Cân nặng (Kg): </label>";
                     html += "           <label class=\"row-info\">" + data.Weight + "</label>";
                     html += "       </div>";
-
+                    html += "       <div class=\"bill-row\" style=\"display:inline-flex;border-bottom: solid 1px #000;margin-bottom: 10px; font-size: 18px;\">";
+                    html += "           <label class=\"row-name\" style=\"width:50%\">Kích thước (DxRxC): </label>";
+                    html += "           <label class=\"row-info\">" + data.KichThuoc + "</label>";
+                    html += "       </div>";
                     html += "</div>";
                     html += "</div>";
 
@@ -2192,7 +2197,8 @@
                                                     html += "<div class=\"package-item pb-2\">";
                                                     html += "<div class=\"wrap-top-action\">";
                                                     html += "<div class=\"owner\">";
-                                                    html += "<span>" + Username + "</span> | <span>" + Phone + "</span>";
+                                                    html += "<span>" + Username + "</span>";
+                                                    //html += "<span>" + Username + "</span> | <span>" + Phone + "</span>";
                                                     html += "</div>";
                                                     html += "<div class=\"action-all\">";
                                                     html += "<a href=\"javascript:;\" onclick=\"RemoveAllByUID(" + UID + ",'" + Username + "')\" style=\"margin-right:5px;\" class=\"btn\">Ẩn tất cả</a>";
@@ -2792,7 +2798,8 @@
                                                     html += "<div class=\"package-item pb-2\">";
                                                     html += "<div class=\"wrap-top-action\">";
                                                     html += "<div class=\"owner\">";
-                                                    html += "<span>" + Username + "</span> | <span>" + Phone + "</span>";
+                                                    html += "<span>" + Username + "</span>";
+                                                    //html += "<span>" + Username + "</span> | <span>" + Phone + "</span>";
                                                     html += "</div>";
                                                     html += "<div class=\"action-all\">";
                                                     html += "<a href=\"javascript:;\" onclick=\"RemoveAllByUID(" + UID + ",'" + Username + "')\" style=\"margin-right:5px;\" class=\"btn\">Ẩn tất cả</a>";

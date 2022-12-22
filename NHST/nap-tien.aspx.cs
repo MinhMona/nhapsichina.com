@@ -34,7 +34,7 @@ namespace NHST
         public void LoadBank()
         {
             List<Bank> lb = new List<Bank>();
-            var bank = BankController.GetAll();
+            var bank = BankController.GetAllNotHidden();
             if (bank.Count > 0)
             {
                 foreach (var item in bank)

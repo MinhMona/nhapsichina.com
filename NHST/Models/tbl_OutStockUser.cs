@@ -26,5 +26,7 @@ namespace NHST.Models
         public Nullable<System.DateTime> ModifiedDate { get; set; }
         public string MainOrderID { get; set; }
         public Nullable<double> TotalPrice { get; set; }
+        public string OrderTransactionCode { get; set; }
+        public string Note { get; set; }
     }
 }
