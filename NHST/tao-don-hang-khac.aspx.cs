@@ -170,7 +170,6 @@ namespace NHST
                 double userdeposit = 0;
                 double phantramdichvu = 0;
                 double phantramcoc = 0;
-
                 if (!string.IsNullOrEmpty(obj_user.Deposit.ToString()))
                 {
                     userdeposit = Convert.ToDouble(obj_user.Deposit);
@@ -179,39 +178,26 @@ namespace NHST
                 {
                     userbuypro = Convert.ToDouble(obj_user.FeeBuyPro);
                 }
-
-                int Percent = ddlPercent.SelectedValue.ToString().ToInt();
+                //int Percent = ddlPercent.SelectedValue.ToString().ToInt();
                 if (userdeposit > 0)
                 {
                     if (userbuypro > 0)
                     {
                         phantramdichvu = userbuypro;
                     }
-                    else if (priceVND < 6000000)
+                    else if (priceVND >= 0 && priceVND <= 3000000)
                     {
-                        phantramdichvu = 3;
+                        phantramdichvu = 2.5;
                     }
-                    else
+                    else if (priceVND > 3000000 && priceVND <= 6000000)
                     {
-                        phantramdichvu = 1.8;
-                    }
-                    phantramcoc = userdeposit;
-                }
-                else if (Percent == 1)
-                {
-                    if (userbuypro > 0)
-                    {
-                        phantramdichvu = userbuypro;
-                    }
-                    else if (priceVND < 6000000)
-                    {
-                        phantramdichvu = 2;
+                        phantramdichvu = 1.5;
                     }
                     else
                     {
                         phantramdichvu = 0.9;
                     }
-                    phantramcoc = 100;
+                    phantramcoc = userdeposit;
                 }
                 else
                 {
@@ -219,22 +205,24 @@ namespace NHST
                     {
                         phantramdichvu = userbuypro;
                     }
-                    else if (priceVND < 6000000)
+                    else if (priceVND >= 0 && priceVND <= 3000000)
                     {
-                        phantramdichvu = 3;
+                        phantramdichvu = 2.5;
+                    }
+                    else if (priceVND > 3000000 && priceVND <= 6000000)
+                    {
+                        phantramdichvu = 1.5;
                     }
                     else
                     {
-                        phantramdichvu = 1.8;
+                        phantramdichvu = 0.9;
                     }
-                    phantramcoc = 80;
+                    phantramcoc = 90;
                 }
-
                 double feebp = priceVND * phantramdichvu / 100;
+
                 if (feebp < 20000)
-                {
                     feebp = 20000;
-                }
 
                 double TotalPriceVND = Math.Round(priceVND + feebp, 0);
                 string AmountDeposit = (priceVND * phantramcoc / 100).ToString();
@@ -364,7 +352,22 @@ namespace NHST
                     MainOrderController.UpdateIsCheckNotiPrice(idkq, UID, true);
                     MainOrderController.UpdateLinkImage(idkq, linkimage);
                     MainOrderController.UpdateCSKHID(idkq, cskhID);
+                    MainOrderController.UpdatePercentDeposit(idkq, phantramcoc.ToString());
 
+                    string UserFullName = "";
+                    string UserPhone = "";
+                    string UserAdress = "";
+                    string UserEmail = "";
+
+                    var accinfor = AccountInfoController.GetByUserID(UID);
+                    if (accinfor != null)
+                    {
+                        UserFullName = accinfor.FirstName + " " + accinfor.LastName;
+                        UserPhone = accinfor.Phone;
+                        UserAdress = accinfor.Address;
+                        UserEmail = accinfor.Email;
+                    }
+                    MainOrderController.UpdateInfor(idkq, obj_user.Username, UserFullName, UserPhone, UserEmail, UserAdress);
                     var setNoti = SendNotiEmailController.GetByID(5);
                     if (setNoti != null)
                     {

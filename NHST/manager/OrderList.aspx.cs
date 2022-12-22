@@ -436,7 +436,7 @@ namespace NHST.manager
                 if (OrderType > 0)
                 {
                     int total = 0;
-                    var la = MainOrderController.GetByUserIDInSQLHelperWithFilterOrderList(Convert.ToInt32(ac.RoleID), Convert.ToInt32(ac.ID), OrderType, search, stype, fd, td, priceFrom, priceTo, st, Convert.ToBoolean(hasVMD), page, 20, mvd, mdh, sort, Role, nvdh, nvkd, nvcs);
+                    var la = MainOrderController.GetByUserIDInSQLHelperWithFilterOrderList(Convert.ToInt32(ac.RoleID), Convert.ToInt32(ac.ID), OrderType, search, stype, fd, td, priceFrom, priceTo, st, Convert.ToBoolean(hasVMD), page, 50, mvd, mdh, sort, Role, nvdh, nvkd, nvcs);
                     if (la.Count > 0)
                         total = la[0].totalrow;
                     pagingall(la, total);
@@ -692,7 +692,7 @@ namespace NHST.manager
         {
             string username_current = Session["userLoginSystem"].ToString();
             tbl_Account acc = AccountController.GetByUsername(username_current);
-            int PageSize = 20;
+            int PageSize = 50;
             if (total > 0)
             {
                 tbl_Account obj_user = AccountController.GetByUsername(username_current);
@@ -709,34 +709,22 @@ namespace NHST.manager
                 int ToRow = Page * PageSize - 1;
                 if (ToRow >= TotalItems)
                     ToRow = TotalItems - 1;
-                StringBuilder hcm = new StringBuilder();
-                double tongtien = 0;
-                double tiendacoc = 0;
+                StringBuilder hcm = new StringBuilder();               
                 var list = HttpContext.Current.Session["ListStaff"] as List<ListID>;
                 for (int i = 0; i < acs.Count; i++)
                 {
-                    var item = acs[i];
-                    tongtien += Convert.ToDouble(item.TotalPriceVND);
-                    tiendacoc += Convert.ToDouble(item.Deposit);
+                    var item = acs[i];                   
                     hcm.Append("<tr>");
-
-
-
                     hcm.Append("<td>");
                     hcm.Append("<a href =\"OrderDetail.aspx?id=" + item.ID + "\" target=\"_blank\" data-position=\"top\" ><p class=\"s-txt no-wrap\"><span class=\"total\">ID:</span><span>" + item.ID + "</span></p></a>");
-
                     if (!string.IsNullOrEmpty(item.MaDonTruoc.ToString()))
                     {
                         if (item.MaDonTruoc > 0)
                         {
                             hcm.Append("<a href =\"OrderDetail.aspx?id=" + item.MaDonTruoc + "\" target=\"_blank\" data-position=\"top\" ><p class=\"s-txt no-wrap\"><span class=\"total\">Được tạo từ đơn:</span><span>" + item.MaDonTruoc + "</span></p></a>");
-
                         }
                     }
-
-
                     hcm.Append("<hr width=\"100%\" />");
-
                     hcm.Append(item.Cancel);
                     hcm.Append(item.Created);
                     hcm.Append(item.DepostiDate);
@@ -751,6 +739,7 @@ namespace NHST.manager
                     hcm.Append(item.CompleteDate);
                     hcm.Append(item.DateToCancel);
                     hcm.Append("</td>");
+
                     hcm.Append("<td>" + item.anhsanpham + "</td>");
 
                     hcm.Append("<td style=\"font-weight:bold\">");
@@ -761,20 +750,17 @@ namespace NHST.manager
                     hcm.Append("<p class=\"s-txt red-text no-wrap\"><span class=\"total\">Còn lại:</span><span>" + string.Format("{0:N0}", Math.Round(Convert.ToDouble(item.TotalPriceVND) - Convert.ToDouble(item.Deposit))) + " Đ</span></p>");
                     hcm.Append("<p class=\"s-txt  no-wrap\"><span class=\"total\">Shop TQ:</span><span>" + item.ShopName + "</span></p>");
                     hcm.Append("<p class=\"s-txt  no-wrap\"><span class=\"total\">Website:</span><span>" + item.Site + "</span></p>");
-                    hcm.Append("<p class=\"s-txt  no-wrap\"><span class=\"total\">TK thanh toán:</span><span> " + item.StaffNote + "</span></p>");
-                    hcm.Append("</td>");
-
-                    //hcm.Append("<td>" + string.Format("{0:N0}", Convert.ToDouble(item.Deposit)) + " VNĐ</td>");
-                    var ac = AccountController.GetByUsername(item.Uname);
-                    var acif = AccountInfoController.GetByUserID(ac.ID);
+                    //hcm.Append("<p class=\"s-txt  no-wrap\"><span class=\"total\">TK thanh toán:</span><span> " + item.StaffNote + "</span></p>");
+                    hcm.Append("</td>");                   
+                   
                     hcm.Append("<td style=\"font-weight:bold\">");
-                    hcm.Append("<p class=\"s-txt  \"><span>" + item.Uname + "</span></p>");
-                    hcm.Append("<p class=\"s-txt  \"><span>" + acif.FirstName + " " + acif.LastName + "</span></p>");
+                    hcm.Append("<p class=\"s-txt  \"><span>" + item.Username + "</span></p>");
+                    hcm.Append("<p class=\"s-txt  \"><span>" + item.UserFullName + "</span></p>");
                     if (obj_user.RoleID != 3 && obj_user.RoleID != 4)
                     {
-                        hcm.Append("<p class=\"s-txt  \"><span>" + acif.Email + "</span></p>");
-                        hcm.Append("<p class=\"s-txt  \"><span>" + acif.Phone + "</span></p>");
-                        hcm.Append("<p class=\"s-txt  \"><span>" + acif.Address + "</span></p>");
+                        hcm.Append("<p class=\"s-txt  \"><span>" + item.UserEmail + "</span></p>");
+                        hcm.Append("<p class=\"s-txt  \"><span>" + item.UserPhone + "</span></p>");
+                        hcm.Append("<p class=\"s-txt  \"><span>" + item.UserAddress + "</span></p>");
                     }
                     hcm.Append("</td>");
 
@@ -837,8 +823,6 @@ namespace NHST.manager
 
                     hcm.Append("</td>");
                     #endregion
-
-
 
                     if (item.Status != 1)
                     {

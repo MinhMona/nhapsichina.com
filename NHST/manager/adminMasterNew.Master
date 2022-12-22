@@ -306,6 +306,87 @@
                 };
 
             }
+
+            window.addEventListener('DOMContentLoaded', (event) => {
+                $.ajax({
+                    type: "POST",
+                    url: "/manager/home.aspx/getcountnoti",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (msg) {
+                        $('#noti-count').append(msg.d);
+                        $('#noti-count2').append(msg.d);
+                    },
+                    error: function (xmlhttprequest, textstatus, errorthrow) {
+                        alert(xmlhttprequest);
+                    }
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: "/manager/home.aspx/getallnoti",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (msg) {
+                        $('#noti-all').append(msg.d);
+                    },
+                    error: function (xmlhttprequest, textstatus, errorthrow) {
+                        alert(xmlhttprequest);
+                    }
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: "/manager/home.aspx/getnotitc",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (msg) {
+                        $('#noti-tc').append(msg.d);
+                    },
+                    error: function (xmlhttprequest, textstatus, errorthrow) {
+                        alert(xmlhttprequest);
+                    }
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: "/manager/home.aspx/getnotimessage",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (msg) {
+                        $('#noti-message').append(msg.d);
+                    },
+                    error: function (xmlhttprequest, textstatus, errorthrow) {
+                        alert(xmlhttprequest);
+                    }
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: "/manager/home.aspx/getnotiorder",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (msg) {
+                        $('#noti-order').append(msg.d);
+                    },
+                    error: function (xmlhttprequest, textstatus, errorthrow) {
+                        alert(xmlhttprequest);
+                    }
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: "/manager/home.aspx/getnotireport",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (msg) {
+                        $('#noti-report').append(msg.d);
+                    },
+                    error: function (xmlhttprequest, textstatus, errorthrow) {
+                        alert(xmlhttprequest);
+                    }
+                });
+            });
         </script>
     </form>
 </body>

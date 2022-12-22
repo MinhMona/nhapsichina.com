@@ -124,5 +124,10 @@ namespace NHST.Models
         public string PercentDeposit { get; set; }
         public Nullable<int> CSID { get; set; }
         public string BankPayment { get; set; }
+        public string Username { get; set; }
+        public string UserAddress { get; set; }
+        public string UserPhone { get; set; }
+        public string UserEmail { get; set; }
+        public string UserFullName { get; set; }
     }
 }

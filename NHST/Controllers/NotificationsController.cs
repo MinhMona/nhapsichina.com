@@ -5,6 +5,7 @@ using System.Web;
 using NHST.Models;
 using System.Data;
 using Microsoft.ApplicationBlocks.Data;
+using MB.Extensions;
 
 namespace NHST.Controllers
 {
@@ -121,5 +122,30 @@ namespace NHST.Controllers
             }
         }
         #endregion
+
+        public static int GetCountNotReadByUID_SQL(int UID)
+        {
+            int Count = 0;
+            var sql = @"SELECT COUNT(*) as Total from tbl_Notification ";
+            sql += " Where ReceivedID = " + UID + " and status = 1";
+            var reader = (IDataReader)WebUI.Business.SqlHelper.ExecuteDataReader(sql);
+            while (reader.Read())
+            {
+                Count = reader["Total"].ToString().ToInt();
+            }
+            reader.Close();
+            return Count;
+        }
+
+        public static List<tbl_Notification> GetTop10(int UID)
+        {
+            using (var dbe = new NHSTEntities())
+            {
+                var n = dbe.tbl_Notification.Where(x => x.ReceivedID == UID && x.Status == 1).OrderByDescending(x => x.ID).Take(10).ToList();
+                if (n != null)
+                    return n;
+                return null;
+            }
+        }
     }
 }

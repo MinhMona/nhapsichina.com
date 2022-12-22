@@ -758,6 +758,11 @@
           <Property Name="PercentDeposit" Type="nvarchar(max)" />
           <Property Name="CSID" Type="int" />
           <Property Name="BankPayment" Type="nvarchar(max)" />
+          <Property Name="Username" Type="nvarchar(max)" />
+          <Property Name="UserAddress" Type="nvarchar(max)" />
+          <Property Name="UserPhone" Type="nvarchar(max)" />
+          <Property Name="UserEmail" Type="nvarchar(max)" />
+          <Property Name="UserFullName" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="tbl_MainOrderCode">
           <Key>
@@ -3610,6 +3615,11 @@ warning 6002: The table/view 'nhapsichina_com.dbo.View_UserListWithWallet' does 
           <Property Name="PercentDeposit" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="CSID" Type="Int32" />
           <Property Name="BankPayment" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Username" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="UserAddress" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="UserPhone" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="UserEmail" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="UserFullName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="tbl_MainOrderCode">
           <Key>
@@ -5845,6 +5855,11 @@ warning 6002: The table/view 'nhapsichina_com.dbo.View_UserListWithWallet' does 
           <EntitySetMapping Name="tbl_MainOder">
             <EntityTypeMapping TypeName="NHSTModel.tbl_MainOder">
               <MappingFragment StoreEntitySet="tbl_MainOder">
+                <ScalarProperty Name="UserFullName" ColumnName="UserFullName" />
+                <ScalarProperty Name="UserEmail" ColumnName="UserEmail" />
+                <ScalarProperty Name="UserPhone" ColumnName="UserPhone" />
+                <ScalarProperty Name="UserAddress" ColumnName="UserAddress" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
                 <ScalarProperty Name="BankPayment" ColumnName="BankPayment" />
                 <ScalarProperty Name="CSID" ColumnName="CSID" />
                 <ScalarProperty Name="PercentDeposit" ColumnName="PercentDeposit" />

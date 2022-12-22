@@ -859,6 +859,21 @@ namespace NHST
                                         MainOrderController.UpdatePercentDeposit(idkq, phantramcoc.ToString());
                                         MainOrderController.UpdateCSKHID(idkq, cskhID);
 
+                                        string UserFullName = "";
+                                        string UserPhone = "";
+                                        string UserAdress = "";
+                                        string UserEmail = "";
+
+                                        var accinfor = AccountInfoController.GetByUserID(UID);
+                                        if (accinfor != null)
+                                        {
+                                            UserFullName = accinfor.FirstName + " " + accinfor.LastName;
+                                            UserPhone = accinfor.Phone;
+                                            UserAdress = accinfor.Address;
+                                            UserEmail = accinfor.Email;
+                                        }    
+                                        MainOrderController.UpdateInfor(idkq, obj_user.Username, UserFullName, UserPhone, UserEmail, UserAdress);
+
                                         if (setNoti != null)
                                         {
                                             if (setNoti.IsSentNotiAdmin == true)

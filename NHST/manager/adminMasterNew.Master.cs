@@ -619,7 +619,6 @@ namespace NHST.manager
                 var config = ConfigurationController.GetByTop1();
                 if (config != null)
                 {
-
                     string uImage = "";
                     var ui = AccountInfoController.GetByUserID(obj_user.ID);
                     if (ui != null)
@@ -641,24 +640,16 @@ namespace NHST.manager
                         }
                     }
 
-                    var noti = NotificationsController.GetAll(obj_user.ID);               
-                    
                     ltrinfo.Text += "<li class=\"hide-on-med-and-down\"><a class=\"waves-effect waves-block waves-light toggle-fullscreen\" href=\"javascript:void(0);\"><i class=\"material-icons\">settings_overscan</i></a></li>";
-                    ltrinfo.Text += "<li><a class=\"waves-effect waves-block waves-light notification-button\" href=\"javascript:void(0);\" data-target=\"notifications-dropdown\"><i class=\"material-icons\">notifications_none<small class=\"notification-badge orange accent-3\">" + noti.Where(x => x.Status == 1).ToList().Count + "</small></i></a></li>";
+                    ltrinfo.Text += "<li><a class=\"waves-effect waves-block waves-light notification-button\" href=\"javascript:void(0);\" data-target=\"notifications-dropdown\"><i class=\"material-icons\">notifications_none<small class=\"notification-badge orange accent-3\" id=\"noti-count\"></small></i></a></li>";
                     ltrinfo.Text += "<li><a class=\"waves-effect waves-block waves-light profile-button\" href=\"javascript:void(0);\" data-target=\"profile-dropdown\"><span class=\"avatar-status avatar-online\"><img src=\"" + uImage + "\" alt=\"avatar\"><i></i></span></a></li>";
 
                     List<tbl_Notification> all = new List<tbl_Notification>();
 
                     StringBuilder html = new StringBuilder();
-                    var dh = NotificationsController.GetAllByNotifType(1, obj_user.ID).Take(10).ToList();
-                    var tc = NotificationsController.GetAllByNotifType(2, obj_user.ID).Take(10).ToList();
-                    var kn = NotificationsController.GetAllByNotifType(5, obj_user.ID).Take(10).ToList();
-                    var mess = NotificationsController.GetAllByNotifType(7, obj_user.ID).Take(10).ToList();
-
-                    all = NotificationsController.GetAll(obj_user.ID).Where(x => x.Status == 1).OrderByDescending(x => x.ID).Take(20).ToList();
 
                     html.Append("<li>");
-                    html.Append("<h6>Thông báo<span class=\"new badge\">" + noti.Where(x => x.Status == 1).ToList().Count + "</span></h6>");
+                    html.Append("<h6>Thông báo<span class=\"new badge\" id=\"noti-count\" ></span></h6>");
                     html.Append("</li>");
                     html.Append("<li class=\"divider\"></li>");
                     html.Append("<li style=\"height:500px;overflow-y:auto\">");
@@ -672,135 +663,220 @@ namespace NHST.manager
                     html.Append("</ul>");
 
                     html.Append("<ul id=\"noti-all\">");
-                    if (all.Count > 0)
-                    {
-                        foreach (var item in all)
-                        {
-                            html.Append("<li>");
-                            if (item.NotifType == 1)
-                            {
-                                html.Append("<a class=\"grey-text text-darken-2\" onclick=\"checkisRead('" + item.ID + "','/manager/OrderDetail.aspx?id=" + item.OrderID + "')\">");
-                            }
-                            else if (item.NotifType == 2)
-                            {
-                                html.Append("<a class=\"grey-text text-darken-2\" onclick=\"checkisRead('" + item.ID + "','/manager/HistorySendWallet')\">");
-                            }
-                            else if (item.NotifType == 5)
-                            {
-                                html.Append("<a class=\"grey-text text-darken-2\" onclick=\"checkisRead('" + item.ID + "','/manager/ComplainList')\">");
-                            }
-                            else if (item.NotifType == 7)
-                            {
-                                html.Append("<a class=\"grey-text text-darken-2\" onclick=\"checkisRead('" + item.ID + "','/manager/OrderDetail.aspx?id=" + item.OrderID + "')\">");
-                            }
-                            else
-                            {
-                                html.Append("<a class=\"grey-text text-darken-2\" onclick=\"checkisRead('" + item.ID + "','/manager/admin-noti')\">");
-                            }
-
-                            html.Append("<div class=\"icon-noti\">");
-                            html.Append("<span class=\"material-icons icon-bg-circle cyan small\">add_shopping_cart</span>");
-                            html.Append("</div>");
-                            html.Append("<div class=\"noti-content\">");
-                            html.Append("<p class=\"content\">" + item.Message + "</p>");
-                            html.Append("<time class=\"media-meta\" datetime=\"2015-06-12T20:50:48+08:00\">" + string.Format("{0:dd/MM/yyyy HH:mm}", item.CreatedDate) + "</time>");
-                            html.Append("</div>");
-                            html.Append("</a>");
-                            html.Append("</li>");
-                        }
-                    }
                     html.Append("</ul>");
 
                     html.Append("<ul id=\"noti-tc\"> ");
-                    if (tc.Count > 0)
-                    {
-                        foreach (var item in tc)
-                        {
-                            html.Append("<li>");
-                            html.Append("<a class=\"grey-text text-darken-2\" onclick=\"checkisRead('" + item.ID + "','/manager/HistorySendWallet')\"> ");
-                            html.Append("<div class=\"icon-noti\">");
-                            html.Append("<span class=\"material-icons icon-bg-circle cyan small\">add_shopping_cart</span>  ");
-                            html.Append("</div>");
-                            html.Append("<div class=\"noti-content\">");
-                            html.Append("<p class=\"content\">" + item.Message + "</p>");
-                            html.Append("<time class=\"media-meta\" datetime=\"2015-06-12T20:50:48+08:00\">" + string.Format("{0:dd/MM/yyyy HH:mm}", item.CreatedDate) + "</time>");
-                            html.Append("</div>");
-                            html.Append("</a>");
-                            html.Append("</li>");
-                        }
-                    }
+                    html.Append("</ul>");
+
+                    html.Append("<ul id=\"noti-rut\"> ");
                     html.Append("</ul>");
 
                     html.Append("<ul id=\"noti-order\">");
-                    if (dh.Count > 0)
-                    {
-                        foreach (var item in dh)
-                        {
-                            html.Append("<li>");
-                            html.Append("<a class=\"grey-text text-darken-2\" onclick=\"checkisRead('" + item.ID + "','/manager/OrderDetail.aspx?id=" + item.OrderID + "')\">");
-                            html.Append("<div class=\"icon-noti\">");
-                            html.Append("<span class=\"material-icons icon-bg-circle cyan small\">add_shopping_cart</span> ");
-                            html.Append("</div>");
-                            html.Append("<div class=\"noti-content\">");
-                            html.Append("<p class=\"content\">" + item.Message + "</p>");
-                            html.Append("<time class=\"media-meta\" datetime=\"2015-06-12T20:50:48+08:00\">" + string.Format("{0:dd/MM/yyyy HH:mm}", item.CreatedDate) + "</time>");
-                            html.Append("</div>");
-                            html.Append("</a>");
-                            html.Append("</li>");
-                        }
-                    }
                     html.Append("</ul>");
 
                     html.Append("<ul id=\"noti-report\">");
-                    if (kn.Count > 0)
-                    {
-                        foreach (var item in kn)
-                        {
-                            html.Append("<li>");
-                            html.Append("<a class=\"grey-text text-darken-2\" onclick=\"checkisRead('" + item.ID + "','/manager/ComplainList')\">");
-                            html.Append("<div class=\"icon-noti\">");
-                            html.Append("<span class=\"material-icons icon-bg-circle cyan small\">add_shopping_cart</span>   ");
-                            html.Append("</div>");
-                            html.Append("<div class=\"noti-content\">");
-                            html.Append("<p class=\"content\">" + item.Message + "</p>");
-                            html.Append("<time class=\"media-meta\" datetime=\"2015-06-12T20:50:48+08:00\">" + string.Format("{0:dd/MM/yyyy HH:mm}", item.CreatedDate) + "</time>");
-                            html.Append("</div>");
-                            html.Append("</a>");
-                            html.Append("</li>");
-                        }
-                    }
-                    html.Append("</ul>");
-
-                    html.Append("<ul id=\"noti-message\">");
-                    if (mess.Count > 0)
-                    {
-                        foreach (var item in mess)
-                        {                          
-                            html.Append("<li>");
-                            html.Append("<a class=\"grey-text text-darken-2\" onclick=\"checkisRead('" + item.ID + "','/manager/OrderDetail.aspx?id=" + item.OrderID + "')\">");
-                            html.Append("<div class=\"icon-noti\">");
-                            html.Append("<span class=\"material-icons icon-bg-circle cyan small\">add_shopping_cart</span>   ");
-                            html.Append("</div>");
-                            html.Append("<div class=\"noti-content\">");
-                            html.Append("<p class=\"content\">" + item.Message + "</p>");
-                            html.Append("<time class=\"media-meta\" datetime=\"2015-06-12T20:50:48+08:00\">" + string.Format("{0:dd/MM/yyyy HH:mm}", item.CreatedDate) + "</time>");
-                            html.Append("</div>");
-                            html.Append("</a>");
-                            html.Append("</li>");
-                        }
-                    }
                     html.Append("</ul>");
 
                     html.Append("</div>");
                     html.Append("</li>");
 
                     html.Append("<li><a href=\"/manager/admin-noti\" class=\"teal-text text-darken-4 center-align padding-2 viewall\">Xem tất cả</a></li>");
-
                     ltrNoti.Text = html.ToString();
-
                 }
             }
         }
+
+        //public void LoadNotification()
+        //{
+        //    string username_current = Session["userLoginSystem"].ToString();
+        //    var obj_user = AccountController.GetByUsername(username_current);
+        //    if (obj_user != null)
+        //    {
+        //        var config = ConfigurationController.GetByTop1();
+        //        if (config != null)
+        //        {
+
+        //            string uImage = "";
+        //            var ui = AccountInfoController.GetByUserID(obj_user.ID);
+        //            if (ui != null)
+        //            {
+        //                if (!string.IsNullOrEmpty(ui.IMGUser))
+        //                {
+        //                    if (File.Exists(Server.MapPath("" + ui.IMGUser + "")))
+        //                    {
+        //                        uImage = ui.IMGUser;
+        //                    }
+        //                    else
+        //                    {
+        //                        uImage = "/NO-IMAGE.jpg";
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    uImage = "/NO-IMAGE.jpg";
+        //                }
+        //            }
+
+        //            var noti = NotificationsController.GetAll(obj_user.ID);               
+                    
+        //            ltrinfo.Text += "<li class=\"hide-on-med-and-down\"><a class=\"waves-effect waves-block waves-light toggle-fullscreen\" href=\"javascript:void(0);\"><i class=\"material-icons\">settings_overscan</i></a></li>";
+        //            ltrinfo.Text += "<li><a class=\"waves-effect waves-block waves-light notification-button\" href=\"javascript:void(0);\" data-target=\"notifications-dropdown\"><i class=\"material-icons\">notifications_none<small class=\"notification-badge orange accent-3\">" + noti.Where(x => x.Status == 1).ToList().Count + "</small></i></a></li>";
+        //            ltrinfo.Text += "<li><a class=\"waves-effect waves-block waves-light profile-button\" href=\"javascript:void(0);\" data-target=\"profile-dropdown\"><span class=\"avatar-status avatar-online\"><img src=\"" + uImage + "\" alt=\"avatar\"><i></i></span></a></li>";
+
+        //            List<tbl_Notification> all = new List<tbl_Notification>();
+
+        //            StringBuilder html = new StringBuilder();
+        //            var dh = NotificationsController.GetAllByNotifType(1, obj_user.ID).Take(10).ToList();
+        //            var tc = NotificationsController.GetAllByNotifType(2, obj_user.ID).Take(10).ToList();
+        //            var kn = NotificationsController.GetAllByNotifType(5, obj_user.ID).Take(10).ToList();
+        //            var mess = NotificationsController.GetAllByNotifType(7, obj_user.ID).Take(10).ToList();
+
+        //            all = NotificationsController.GetAll(obj_user.ID).Where(x => x.Status == 1).OrderByDescending(x => x.ID).Take(20).ToList();
+
+        //            html.Append("<li>");
+        //            html.Append("<h6>Thông báo<span class=\"new badge\">" + noti.Where(x => x.Status == 1).ToList().Count + "</span></h6>");
+        //            html.Append("</li>");
+        //            html.Append("<li class=\"divider\"></li>");
+        //            html.Append("<li style=\"height:500px;overflow-y:auto\">");
+        //            html.Append("<div class=\"tab-wrap green lighten-2\"> ");
+        //            html.Append("<ul class=\"tabs\">");
+        //            html.Append("<li class=\"tab col m3\"><a class=\"active\" href=\"#noti-all\">Tất cả</a></li>");
+        //            html.Append("<li class=\"tab col m3\"><a class=\"\" href=\"#noti-tc\">Tài chính</a></li>");
+        //            html.Append("<li class=\"tab col m3\"><a class=\"\" href=\"#noti-order\">Đơn hàng</a></li>");
+        //            html.Append("<li class=\"tab col m3\"><a class=\"\" href=\"#noti-report\">Khiếu nại</a></li>");
+        //            html.Append("<li class=\"tab col m3\"><a class=\"\" href=\"#noti-message\">Tin nhắn</a></li>");
+        //            html.Append("</ul>");
+
+        //            html.Append("<ul id=\"noti-all\">");
+        //            if (all.Count > 0)
+        //            {
+        //                foreach (var item in all)
+        //                {
+        //                    html.Append("<li>");
+        //                    if (item.NotifType == 1)
+        //                    {
+        //                        html.Append("<a class=\"grey-text text-darken-2\" onclick=\"checkisRead('" + item.ID + "','/manager/OrderDetail.aspx?id=" + item.OrderID + "')\">");
+        //                    }
+        //                    else if (item.NotifType == 2)
+        //                    {
+        //                        html.Append("<a class=\"grey-text text-darken-2\" onclick=\"checkisRead('" + item.ID + "','/manager/HistorySendWallet')\">");
+        //                    }
+        //                    else if (item.NotifType == 5)
+        //                    {
+        //                        html.Append("<a class=\"grey-text text-darken-2\" onclick=\"checkisRead('" + item.ID + "','/manager/ComplainList')\">");
+        //                    }
+        //                    else if (item.NotifType == 7)
+        //                    {
+        //                        html.Append("<a class=\"grey-text text-darken-2\" onclick=\"checkisRead('" + item.ID + "','/manager/OrderDetail.aspx?id=" + item.OrderID + "')\">");
+        //                    }
+        //                    else
+        //                    {
+        //                        html.Append("<a class=\"grey-text text-darken-2\" onclick=\"checkisRead('" + item.ID + "','/manager/admin-noti')\">");
+        //                    }
+
+        //                    html.Append("<div class=\"icon-noti\">");
+        //                    html.Append("<span class=\"material-icons icon-bg-circle cyan small\">add_shopping_cart</span>");
+        //                    html.Append("</div>");
+        //                    html.Append("<div class=\"noti-content\">");
+        //                    html.Append("<p class=\"content\">" + item.Message + "</p>");
+        //                    html.Append("<time class=\"media-meta\" datetime=\"2015-06-12T20:50:48+08:00\">" + string.Format("{0:dd/MM/yyyy HH:mm}", item.CreatedDate) + "</time>");
+        //                    html.Append("</div>");
+        //                    html.Append("</a>");
+        //                    html.Append("</li>");
+        //                }
+        //            }
+        //            html.Append("</ul>");
+
+        //            html.Append("<ul id=\"noti-tc\"> ");
+        //            if (tc.Count > 0)
+        //            {
+        //                foreach (var item in tc)
+        //                {
+        //                    html.Append("<li>");
+        //                    html.Append("<a class=\"grey-text text-darken-2\" onclick=\"checkisRead('" + item.ID + "','/manager/HistorySendWallet')\"> ");
+        //                    html.Append("<div class=\"icon-noti\">");
+        //                    html.Append("<span class=\"material-icons icon-bg-circle cyan small\">add_shopping_cart</span>  ");
+        //                    html.Append("</div>");
+        //                    html.Append("<div class=\"noti-content\">");
+        //                    html.Append("<p class=\"content\">" + item.Message + "</p>");
+        //                    html.Append("<time class=\"media-meta\" datetime=\"2015-06-12T20:50:48+08:00\">" + string.Format("{0:dd/MM/yyyy HH:mm}", item.CreatedDate) + "</time>");
+        //                    html.Append("</div>");
+        //                    html.Append("</a>");
+        //                    html.Append("</li>");
+        //                }
+        //            }
+        //            html.Append("</ul>");
+
+        //            html.Append("<ul id=\"noti-order\">");
+        //            if (dh.Count > 0)
+        //            {
+        //                foreach (var item in dh)
+        //                {
+        //                    html.Append("<li>");
+        //                    html.Append("<a class=\"grey-text text-darken-2\" onclick=\"checkisRead('" + item.ID + "','/manager/OrderDetail.aspx?id=" + item.OrderID + "')\">");
+        //                    html.Append("<div class=\"icon-noti\">");
+        //                    html.Append("<span class=\"material-icons icon-bg-circle cyan small\">add_shopping_cart</span> ");
+        //                    html.Append("</div>");
+        //                    html.Append("<div class=\"noti-content\">");
+        //                    html.Append("<p class=\"content\">" + item.Message + "</p>");
+        //                    html.Append("<time class=\"media-meta\" datetime=\"2015-06-12T20:50:48+08:00\">" + string.Format("{0:dd/MM/yyyy HH:mm}", item.CreatedDate) + "</time>");
+        //                    html.Append("</div>");
+        //                    html.Append("</a>");
+        //                    html.Append("</li>");
+        //                }
+        //            }
+        //            html.Append("</ul>");
+
+        //            html.Append("<ul id=\"noti-report\">");
+        //            if (kn.Count > 0)
+        //            {
+        //                foreach (var item in kn)
+        //                {
+        //                    html.Append("<li>");
+        //                    html.Append("<a class=\"grey-text text-darken-2\" onclick=\"checkisRead('" + item.ID + "','/manager/ComplainList')\">");
+        //                    html.Append("<div class=\"icon-noti\">");
+        //                    html.Append("<span class=\"material-icons icon-bg-circle cyan small\">add_shopping_cart</span>   ");
+        //                    html.Append("</div>");
+        //                    html.Append("<div class=\"noti-content\">");
+        //                    html.Append("<p class=\"content\">" + item.Message + "</p>");
+        //                    html.Append("<time class=\"media-meta\" datetime=\"2015-06-12T20:50:48+08:00\">" + string.Format("{0:dd/MM/yyyy HH:mm}", item.CreatedDate) + "</time>");
+        //                    html.Append("</div>");
+        //                    html.Append("</a>");
+        //                    html.Append("</li>");
+        //                }
+        //            }
+        //            html.Append("</ul>");
+
+        //            html.Append("<ul id=\"noti-message\">");
+        //            if (mess.Count > 0)
+        //            {
+        //                foreach (var item in mess)
+        //                {                          
+        //                    html.Append("<li>");
+        //                    html.Append("<a class=\"grey-text text-darken-2\" onclick=\"checkisRead('" + item.ID + "','/manager/OrderDetail.aspx?id=" + item.OrderID + "')\">");
+        //                    html.Append("<div class=\"icon-noti\">");
+        //                    html.Append("<span class=\"material-icons icon-bg-circle cyan small\">add_shopping_cart</span>   ");
+        //                    html.Append("</div>");
+        //                    html.Append("<div class=\"noti-content\">");
+        //                    html.Append("<p class=\"content\">" + item.Message + "</p>");
+        //                    html.Append("<time class=\"media-meta\" datetime=\"2015-06-12T20:50:48+08:00\">" + string.Format("{0:dd/MM/yyyy HH:mm}", item.CreatedDate) + "</time>");
+        //                    html.Append("</div>");
+        //                    html.Append("</a>");
+        //                    html.Append("</li>");
+        //                }
+        //            }
+        //            html.Append("</ul>");
+
+        //            html.Append("</div>");
+        //            html.Append("</li>");
+
+        //            html.Append("<li><a href=\"/manager/admin-noti\" class=\"teal-text text-darken-4 center-align padding-2 viewall\">Xem tất cả</a></li>");
+
+        //            ltrNoti.Text = html.ToString();
+
+        //        }
+        //    }
+        //}
 
     }
 }

@@ -753,6 +753,11 @@
     <Property Name="PercentDeposit" Type="nvarchar(max)" />
     <Property Name="CSID" Type="int" />
     <Property Name="BankPayment" Type="nvarchar(max)" />
+    <Property Name="Username" Type="nvarchar(max)" />
+    <Property Name="UserAddress" Type="nvarchar(max)" />
+    <Property Name="UserPhone" Type="nvarchar(max)" />
+    <Property Name="UserEmail" Type="nvarchar(max)" />
+    <Property Name="UserFullName" Type="nvarchar(max)" />
   </EntityType>
   <EntityType Name="tbl_MainOrderCode">
     <Key>

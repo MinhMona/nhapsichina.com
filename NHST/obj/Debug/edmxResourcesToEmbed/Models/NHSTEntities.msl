@@ -679,6 +679,11 @@
     <EntitySetMapping Name="tbl_MainOder">
       <EntityTypeMapping TypeName="NHSTModel.tbl_MainOder">
         <MappingFragment StoreEntitySet="tbl_MainOder">
+          <ScalarProperty Name="UserFullName" ColumnName="UserFullName" />
+          <ScalarProperty Name="UserEmail" ColumnName="UserEmail" />
+          <ScalarProperty Name="UserPhone" ColumnName="UserPhone" />
+          <ScalarProperty Name="UserAddress" ColumnName="UserAddress" />
+          <ScalarProperty Name="Username" ColumnName="Username" />
           <ScalarProperty Name="BankPayment" ColumnName="BankPayment" />
           <ScalarProperty Name="CSID" ColumnName="CSID" />
           <ScalarProperty Name="PercentDeposit" ColumnName="PercentDeposit" />

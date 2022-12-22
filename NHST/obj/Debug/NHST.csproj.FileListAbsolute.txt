@@ -2732,7 +2732,6 @@ E:\Source_Cty\nhapsichina_com_svn\NHST\obj\Debug\NHST.dll.licenses
 E:\Source_Cty\nhapsichina_com_svn\NHST\obj\Debug\NHST.dll
 E:\Source_Cty\nhapsichina_com_svn\NHST\obj\Debug\NHST.pdb
 E:\Source_Cty\nhapsichina_com_svn\NHST\obj\Debug\NHST.csprojResolveAssemblyReference.cache
-D:\nhapsichina.com.80+\NHST\obj\Debug\NHST.dll.licenses
 D:\nhapsichina.com.80+\NHST\obj\Debug\NHST.csproj.CoreCompileInputs.cache
 D:\nhapsichina.com.80+\NHST\obj\Debug\NHST.dll
 D:\nhapsichina.com.80+\NHST\obj\Debug\NHST.pdb

@@ -880,5 +880,195 @@ namespace NHST.manager
         }
 
         #endregion
+
+        [WebMethod]
+        public static string getcountnoti()
+        {
+            string username = HttpContext.Current.Session["userLoginSystem"].ToString();          
+            var obj_user = AccountController.GetByUsername(username);
+            if (obj_user != null)
+            {
+                int count = NotificationsController.GetCountNotReadByUID_SQL(obj_user.ID);
+                return count.ToString();
+            }
+            else
+                return "";
+        }
+
+        [WebMethod]
+        public static string getallnoti()
+        {
+            string username = HttpContext.Current.Session["userLoginSystem"].ToString();
+            DateTime currentDate = DateTime.Now;
+            var obj_user = AccountController.GetByUsername(username);
+
+            if (obj_user != null)
+            {
+                var all = NotificationsController.GetTop10(obj_user.ID);
+                StringBuilder html = new StringBuilder();
+                if (all.Count > 0)
+                {
+                    foreach (var item in all)
+                    {
+                        html.Append("<li>");
+                        switch (item.NotifType)
+                        {
+                            case 1:
+                                html.Append("<a class=\"grey-text text-darken-2\" onclick=\"checkisRead('" + item.ID + "','/manager/OrderDetail.aspx?id=" + item.OrderID + "')\">");
+                                break;
+                            case 2:
+                                html.Append("<a class=\"grey-text text-darken-2\" onclick=\"checkisRead('" + item.ID + "','/manager/HistorySendWallet')\">");
+                                break;                            
+                            case 5:
+                                html.Append("<a class=\"grey-text text-darken-2\" onclick=\"checkisRead('" + item.ID + "','/manager/ComplainList')\">");
+                                break;
+                            default:
+                                html.Append("<a class=\"grey-text text-darken-2\" onclick=\"checkisRead('" + item.ID + "','/manager/admin-noti')\">");
+                                break;
+                        }
+                        html.Append("<div class=\"icon-noti\">");
+                        html.Append("<span class=\"material-icons icon-bg-circle cyan small\">add_shopping_cart</span>");
+                        html.Append("</div>");
+                        html.Append("<div class=\"noti-content\">");
+                        html.Append("<p class=\"content\">" + item.Message + "</p>");
+                        html.Append("<time class=\"media-meta\" datetime=\"2015-06-12T20:50:48+08:00\">" + string.Format("{0:dd/MM/yyyy HH:mm}", item.CreatedDate) + "</time>");
+                        html.Append("</div>");
+                        html.Append("</a>");
+                        html.Append("</li>");
+                    }
+                }
+                return html.ToString();
+            }
+            else
+                return "";
+        }
+
+        [WebMethod]
+        public static string getnotitc()
+        {
+            string username = HttpContext.Current.Session["userLoginSystem"].ToString();          
+            var obj_user = AccountController.GetByUsername(username);
+            if (obj_user != null)
+            {
+                var nap = NotificationsController.GetAllByNotifType(2, obj_user.ID).Take(10).ToList();
+                StringBuilder html = new StringBuilder();
+                if (nap.Count > 0)
+                {
+                    foreach (var item in nap)
+                    {
+                        html.Append("<li>");
+                        html.Append("<a class=\"grey-text text-darken-2\" onclick=\"checkisRead('" + item.ID + "','/manager/HistorySendWallet')\"> ");
+                        html.Append("<div class=\"icon-noti\">");
+                        html.Append("<span class=\"material-icons icon-bg-circle cyan small\">add_shopping_cart</span>  ");
+                        html.Append("</div>");
+                        html.Append("<div class=\"noti-content\">");
+                        html.Append("<p class=\"content\">" + item.Message + "</p>");
+                        html.Append("<time class=\"media-meta\" datetime=\"2015-06-12T20:50:48+08:00\">" + string.Format("{0:dd/MM/yyyy HH:mm}", item.CreatedDate) + "</time>");
+                        html.Append("</div>");
+                        html.Append("</a>");
+                        html.Append("</li>");
+                    }
+                }
+                return html.ToString();
+            }
+            else
+                return "";
+        }
+
+        [WebMethod]
+        public static string getnotimessage()
+        {
+            string username = HttpContext.Current.Session["userLoginSystem"].ToString();           
+            var obj_user = AccountController.GetByUsername(username);
+            if (obj_user != null)
+            {
+                var rut = NotificationsController.GetAllByNotifType(7, obj_user.ID).Take(10).ToList();
+                StringBuilder html = new StringBuilder();
+                if (rut.Count > 0)
+                {
+                    foreach (var item in rut)
+                    {
+                        html.Append("<li>");
+                        html.Append("<a class=\"grey-text text-darken-2\" onclick=\"checkisRead('" + item.ID + "','/manager/OrderDetail.aspx?id=" + item.OrderID + "')\">");
+                        html.Append("<div class=\"icon-noti\">");
+                        html.Append("<span class=\"material-icons icon-bg-circle cyan small\">add_shopping_cart</span>  ");
+                        html.Append("</div>");
+                        html.Append("<div class=\"noti-content\">");
+                        html.Append("<p class=\"content\">" + item.Message + "</p>");
+                        html.Append("<time class=\"media-meta\" datetime=\"2015-06-12T20:50:48+08:00\">" + string.Format("{0:dd/MM/yyyy HH:mm}", item.CreatedDate) + "</time>");
+                        html.Append("</div>");
+                        html.Append("</a>");
+                        html.Append("</li>");
+                    }
+                }
+                return html.ToString();
+            }
+            else
+                return "";
+        }
+
+        [WebMethod]
+        public static string getnotiorder()
+        {
+            string username = HttpContext.Current.Session["userLoginSystem"].ToString();           
+            var obj_user = AccountController.GetByUsername(username);
+            if (obj_user != null)
+            {
+                var dh = NotificationsController.GetAllByNotifType(1, obj_user.ID).Take(10).ToList();
+                StringBuilder html = new StringBuilder();
+                if (dh.Count > 0)
+                {
+                    foreach (var item in dh)
+                    {
+                        html.Append("<li>");
+                        html.Append("<a class=\"grey-text text-darken-2\" onclick=\"checkisRead('" + item.ID + "','/manager/OrderDetail.aspx?id=" + item.OrderID + "')\">");
+                        html.Append("<div class=\"icon-noti\">");
+                        html.Append("<span class=\"material-icons icon-bg-circle cyan small\">add_shopping_cart</span> ");
+                        html.Append("</div>");
+                        html.Append("<div class=\"noti-content\">");
+                        html.Append("<p class=\"content\">" + item.Message + "</p>");
+                        html.Append("<time class=\"media-meta\" datetime=\"2015-06-12T20:50:48+08:00\">" + string.Format("{0:dd/MM/yyyy HH:mm}", item.CreatedDate) + "</time>");
+                        html.Append("</div>");
+                        html.Append("</a>");
+                        html.Append("</li>");
+                    }
+                }
+                return html.ToString();
+            }
+            else
+                return "";
+        }
+
+        [WebMethod]
+        public static string getnotireport()
+        {
+            string username = HttpContext.Current.Session["userLoginSystem"].ToString();           
+            var obj_user = AccountController.GetByUsername(username);
+            if (obj_user != null)
+            {
+                var kn = NotificationsController.GetAllByNotifType(5, obj_user.ID).Take(10).ToList();
+                StringBuilder html = new StringBuilder();
+                if (kn.Count > 0)
+                {
+                    foreach (var item in kn)
+                    {
+                        html.Append("<li>");
+                        html.Append("<a class=\"grey-text text-darken-2\" onclick=\"checkisRead('" + item.ID + "','/manager/ComplainList')\">");
+                        html.Append("<div class=\"icon-noti\">");
+                        html.Append("<span class=\"material-icons icon-bg-circle cyan small\">add_shopping_cart</span>   ");
+                        html.Append("</div>");
+                        html.Append("<div class=\"noti-content\">");
+                        html.Append("<p class=\"content\">" + item.Message + "</p>");
+                        html.Append("<time class=\"media-meta\" datetime=\"2015-06-12T20:50:48+08:00\">" + string.Format("{0:dd/MM/yyyy HH:mm}", item.CreatedDate) + "</time>");
+                        html.Append("</div>");
+                        html.Append("</a>");
+                        html.Append("</li>");
+                    }
+                }
+                return html.ToString();
+            }
+            else
+                return "";
+        }
     }
 }

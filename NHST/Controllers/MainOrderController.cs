@@ -652,6 +652,27 @@ namespace NHST.Controllers
             }
         }
 
+        public static string UpdateInfor(int ID, string Username, string UserFullName, string UserPhone, string UserEmail, string UserAddress)
+        {
+            using (var dbe = new NHSTEntities())
+            {
+                var or = dbe.tbl_MainOder.Where(o => o.ID == ID).FirstOrDefault();
+                if (or != null)
+                {
+                    or.Username = Username;
+                    or.UserFullName = UserFullName;
+                    or.UserPhone = UserPhone;
+                    or.UserEmail = UserEmail;
+                    or.UserAddress = UserAddress;
+                    dbe.Configuration.ValidateOnSaveEnabled = false;
+                    dbe.SaveChanges();
+                    return "ok";
+                }
+                else
+                    return null;
+            }
+        }
+
         public static string UpdateStatus(int ID, int UID, int Status)
         {
             using (var dbe = new NHSTEntities())
@@ -3398,6 +3419,11 @@ namespace NHST.Controllers
             public int CSID { get; set; }
             public int SalerID { get; set; }
             public int DathangID { get; set; }
+            public string Username { get; set; }
+            public string UserFullName { get; set; }
+            public string UserPhone { get; set; }
+            public string UserAddress { get; set; }
+            public string UserEmail { get; set; }
         }
         #endregion
 
@@ -7532,32 +7558,25 @@ namespace NHST.Controllers
         {
             var list = new List<OrderGetSQL>();
             var sql = @";with ds as ( ";
-            sql += "  select  m.ID, ";
-            sql += "count(m.ID) over() as totalrow ";
-            sql += " from tbl_MainOder m ";
-            sql += ") select ds.ID, ds.totalrow,mo.BankPayment,mo.TotalPriceVND,mo.ShippingType,mo.ShopName,mo.MaDonTruoc,mo.OrderTransactionCode,mo.PriceVND,mo.OrderDone,mo.CurrentCNYVN,mo.DathangID,mo.SalerID,mo.CSID,mo.IsDoneSmallPackage, ";
-            sql += "mo.MainOrderCode,mo.OrderTransactionCode,  mo.Deposit, mo.CreatedDate,ui.Phone, mo.DepostiDate, mo.DateBuy,mo.DateShipper, mo.DateTQ, mo.Site,  ";
-            sql += " mo.DateVN,mo.PayDate,mo.CompleteDate, mo.Status, mo.OrderType, mo.IsCheckNotiPrice, mo.DateBuyOK, mo.DateToVN, mo.DateToCancel, mo.DateToShip,    ";
-            sql += "mo.DathangID,  mo.SalerID, u.Username AS Uname, s.Username AS saler, d.Username AS dathang, cskh.Username AS cskhname, sm.totalSmallPackages,  mo.SalerID,  u.Username AS Uname,  ";
-            sql += " s.Username AS saler, d.Username AS dathang,   ";
-            sql += " CASE WHEN mo.LinkImage IS NULL THEN '' ELSE '<img alt=\"\" src=\"' + mo.LinkImage + '\" width=\"100%\">' END AS anhsanpham,     ";
-            sql += "CASE WHEN mo.IsDoneSmallPackage = 1      ";
-            sql += "THEN N'<span class=\"badge blue darken-2 white-text border-radius-2\">Đã đủ MVĐ</span>'     ";
-            sql += "WHEN a.countrow > 0      ";
-            sql += " THEN N'<span class=\"badge yellow darken-2 white-text border-radius-2\">Đã nhập</span>'  ";
-            sql += "ELSE N'<span class=\"badge red darken-2 white-text border-radius-2\">Chưa nhập MVĐ</span>'   ";
-            sql += "END AS hasSmallpackage   ";
-            sql += "from ds  ";
-            sql += "LEFT JOIN tbl_MainOder mo on mo.ID = ds.ID   ";
-            sql += "LEFT OUTER JOIN dbo.tbl_AccountInfo AS ui ON mo.UID = ui.UID ";
-            sql += "LEFT OUTER JOIN dbo.tbl_Account AS u ON mo.UID = u.ID ";
-            sql += "LEFT OUTER JOIN dbo.tbl_Account AS s ON mo.SalerID = s.ID ";
-            sql += "LEFT OUTER JOIN dbo.tbl_Account AS d ON mo.DathangID = d.ID ";
-            sql += "LEFT OUTER JOIN dbo.tbl_Account AS cskh ON mo.CSID = cskh.ID ";
-            sql += "LEFT OUTER JOIN (SELECT MainOrderID, OrderTransactionCode, ROW_NUMBER() OVER(PARTITION BY MainOrderID ORDER BY(SELECT NULL)) AS totalSmallPackages FROM tbl_smallpackage)  ";
-            sql += "sm ON sm.MainOrderID = mo.ID and totalSmallPackages = 1   ";
-            sql += "LEFT OUTER JOIN(SELECT count(*) AS countRow, MainOrderID  FROM tbl_SmallPackage AS a  GROUP BY a.MainOrderID) AS a ON a.MainOrderID = mo.ID  ";
-            sql += "Where mo.IsHidden = 0 and mo.OrderType = '" + OrderType + "'";
+            sql += " select  m.ID, ";
+            sql += " count(m.ID) over() as totalrow ";
+            sql += " from tbl_MainOder m )";          
+            sql += " select ds.ID, ds.totalrow,mo.TotalPriceVND,mo.ShippingType,mo.ShopName,mo.MaDonTruoc,mo.OrderTransactionCode,mo.PriceVND,mo.OrderDone,mo.CurrentCNYVN,mo.DathangID,mo.SalerID,mo.CSID,mo.IsDoneSmallPackage, ";
+            sql += " mo.MainOrderCode,mo.Deposit,mo.CreatedDate,mo.UserPhone,mo.DepostiDate,mo.DateBuy,mo.DateShipper,mo.DateTQ,mo.Site,mo.Username,mo.UserAddress,mo.UserEmail,mo.UserFullName, ";
+            sql += " mo.DateVN,mo.PayDate,mo.CompleteDate,mo.Status,mo.OrderType,mo.IsCheckNotiPrice,mo.DateBuyOK,mo.DateToVN,mo.DateToCancel,mo.DateToShip,sm.totalSmallPackages, ";
+            sql += " CASE WHEN mo.LinkImage IS NULL THEN '' ELSE '<img alt=\"\" src=\"' + mo.LinkImage + '\" width=\"100%\">' END AS anhsanpham, ";
+            sql += " CASE WHEN mo.IsDoneSmallPackage = 1 ";
+            sql += " THEN N'<span class=\"badge blue darken-2 white-text border-radius-2\">Đã đủ MVĐ</span>' ";
+            sql += " WHEN a.countrow > 0 ";
+            sql += " THEN N'<span class=\"badge yellow darken-2 white-text border-radius-2\">Đã nhập</span>' ";
+            sql += " ELSE N'<span class=\"badge red darken-2 white-text border-radius-2\">Chưa nhập MVĐ</span>' ";
+            sql += " END AS hasSmallpackage   ";
+            sql += " from ds  ";
+            sql += " LEFT JOIN tbl_MainOder mo on mo.ID = ds.ID   ";   
+            sql += " LEFT OUTER JOIN (SELECT MainOrderID, OrderTransactionCode, ROW_NUMBER() OVER(PARTITION BY MainOrderID ORDER BY(SELECT NULL)) AS totalSmallPackages FROM tbl_smallpackage)  ";
+            sql += " sm ON sm.MainOrderID = mo.ID and totalSmallPackages = 1   ";
+            sql += " LEFT OUTER JOIN(SELECT count(*) AS countRow, MainOrderID  FROM tbl_SmallPackage AS a  GROUP BY a.MainOrderID) AS a ON a.MainOrderID = mo.ID  ";
+            sql += " Where mo.IsHidden = 0 and mo.OrderType = '" + OrderType + "'";
             if (RoleID == 3)
             {
                 sql += "    AND mo.DathangID = " + StaffID + "";
@@ -7602,13 +7621,13 @@ namespace NHST.Controllers
                     sql += " AND mo.OrderTransactionCode like N'%" + searchtext + "%'";
 
                 if (Type == 4)
-                    sql += " AND u.Email like N'%" + searchtext + "%'";
+                    sql += " AND mo.UserEmail like N'%" + searchtext + "%'";
 
                 if (Type == 5)
-                    sql += " AND u.Username like N'%" + searchtext + "%'";
+                    sql += " AND mo.Username like N'%" + searchtext + "%'";
 
                 if (Type == 6)
-                    sql += " AND ui.Phone like N'%" + searchtext + "%'";
+                    sql += " AND mo.UserPhone like N'%" + searchtext + "%'";
 
                 if (Type == 7)
                     sql += " AND mo.ShopName like N'%" + searchtext + "%'";
@@ -7988,22 +8007,30 @@ namespace NHST.Controllers
                 int Status = 0;
                 int MainOrderID = reader["ID"].ToString().ToInt(0);
                 var entity = new OrderGetSQL();
+
                 if (reader["ID"] != DBNull.Value)
                     entity.ID = MainOrderID;
+
                 if (reader["TotalPriceVND"] != DBNull.Value)
                     entity.TotalPriceVND = reader["TotalPriceVND"].ToString();
+
                 if (reader["PriceVND"] != DBNull.Value)
                     entity.PriceVND = reader["PriceVND"].ToString();
+
                 if (reader["ShopName"] != DBNull.Value)
                     entity.ShopName = reader["ShopName"].ToString();
+
                 if (reader["Site"] != DBNull.Value)
                     entity.Site = reader["Site"].ToString();
+
                 if (reader["CurrentCNYVN"] != DBNull.Value)
                     entity.Currency = reader["CurrentCNYVN"].ToString();
+
                 if (reader["Deposit"] != DBNull.Value)
                     entity.Deposit = reader["Deposit"].ToString();
-                if (reader["BankPayment"] != DBNull.Value)
-                    entity.StaffNote = reader["BankPayment"].ToString();
+
+                //if (reader["BankPayment"] != DBNull.Value)
+                //    entity.StaffNote = reader["BankPayment"].ToString();
 
                 if (reader["CreatedDate"] != DBNull.Value)
                     entity.CreatedDate = Convert.ToDateTime(reader["CreatedDate"]).ToString("dd/MM/yyyy HH:mm");
@@ -8017,35 +8044,44 @@ namespace NHST.Controllers
                 if (reader["OrderTransactionCode"] != DBNull.Value)
                     entity.OrderTransactionCode = reader["OrderTransactionCode"].ToString();
 
-                if (reader["Uname"] != DBNull.Value)
-                    entity.Uname = reader["Uname"].ToString();
+                if (reader["Username"] != DBNull.Value)
+                    entity.Username = reader["Username"].ToString();
+
+                if (reader["UserFullName"] != DBNull.Value)
+                    entity.UserFullName = reader["UserFullName"].ToString();
+
+                if (reader["UserPhone"] != DBNull.Value)
+                    entity.UserPhone = reader["UserPhone"].ToString();
+
+                if (reader["UserEmail"] != DBNull.Value)
+                    entity.UserEmail = reader["UserEmail"].ToString();
+
+                if (reader["UserAddress"] != DBNull.Value)
+                    entity.UserAddress = reader["UserAddress"].ToString();
+
                 if (reader["MainOrderCode"] != DBNull.Value)
                     entity.MainOrderCode = reader["MainOrderCode"].ToString();
-                if (reader["saler"] != DBNull.Value)
-                    entity.saler = reader["saler"].ToString();
-                if (reader["dathang"] != DBNull.Value)
-                    entity.dathang = reader["dathang"].ToString();
-                if (reader["cskhname"] != DBNull.Value)
-                    entity.CSKHNAME = reader["cskhname"].ToString();
+
+                //if (reader["cskhname"] != DBNull.Value)
+                //    entity.CSKHNAME = reader["cskhname"].ToString();
 
                 if (reader["SalerID"] != DBNull.Value)
                     entity.SalerID = Convert.ToInt32(reader["SalerID"].ToString());
+
                 if (reader["DathangID"] != DBNull.Value)
                     entity.DathangID = Convert.ToInt32(reader["DathangID"].ToString());
+
                 if (reader["CSID"] != DBNull.Value)
                     entity.CSID = Convert.ToInt32(reader["CSID"].ToString());
-                if (reader["anhsanpham"] != DBNull.Value)
-                    entity.anhsanpham = reader["anhsanpham"].ToString();
 
-                //if (reader["MaDonHang"] != DBNull.Value)
-                //    entity.listMainOrderCode = reader["MaDonHang"].ToString().Split(',').ToList();
+                if (reader["anhsanpham"] != DBNull.Value)
+                    entity.anhsanpham = reader["anhsanpham"].ToString();               
 
                 if (reader["IsDoneSmallPackage"] != DBNull.Value)
                     entity.IsDoneSmallPackage = Convert.ToBoolean(reader["IsDoneSmallPackage"].ToString());
 
                 if (reader["OrderType"] != DBNull.Value)
                     entity.OrderType = reader["OrderType"].ToString().ToInt(1);
-
 
                 if (reader["MaDonTruoc"] != DBNull.Value)
                     entity.MaDonTruoc = reader["MaDonTruoc"].ToString().ToInt();
@@ -8066,6 +8102,10 @@ namespace NHST.Controllers
                 if (reader["hasSmallpackage"] != DBNull.Value)
                     entity.hasSmallpackage = reader["hasSmallpackage"].ToString();
 
+                if (Status == 1)
+                {
+                    entity.Cancel = "<span class=\"badge black darken-2 white-text border-radius-2\">Hủy đơn hàng</span>";
+                }
                 if (Status == 0)
                 {
                     if (reader["CreatedDate"] != DBNull.Value)
@@ -8076,14 +8116,6 @@ namespace NHST.Controllers
                     if (reader["CreatedDate"] != DBNull.Value)
                         entity.Created = "<p class=\"s-txt no-wrap\"><span class=\"mg\">Đơn mới:</span><span>" + string.Format("{0:HH:mm}", Convert.ToDateTime(reader["CreatedDate"].ToString())) + " - " + string.Format("{0:dd/MM/yyyy}", Convert.ToDateTime(reader["CreatedDate"].ToString())) + "</span> </p>";
                 }
-
-                if (Status == 1)
-                {
-                    entity.Cancel = "<span class=\"badge black darken-2 white-text border-radius-2\">Hủy đơn hàng</span>";
-                }
-
-
-
                 if (Status == 2)
                 {
                     if (reader["DepostiDate"] != DBNull.Value)
@@ -8094,7 +8126,6 @@ namespace NHST.Controllers
                     if (reader["DepostiDate"] != DBNull.Value)
                         entity.DepostiDate = "<p class=\"s-txt no-wrap \"><span class=\"mg\">Đơn đã cọc:</span><span> " + string.Format("{0:HH:mm}", Convert.ToDateTime(reader["DepostiDate"].ToString())) + " - " + string.Format("{0:dd/MM/yyyy}", Convert.ToDateTime(reader["DepostiDate"].ToString())) + "</span> </p>";
                 }
-
                 if (Status == 3)
                 {
                     if (reader["DateShipper"] != DBNull.Value)
@@ -8105,7 +8136,6 @@ namespace NHST.Controllers
                     if (reader["DateShipper"] != DBNull.Value)
                         entity.DateShipper = "<p class=\"s-txt no-wrap \"><span class=\"mg\">Đơn người bán giao:</span><span> " + string.Format("{0:HH:mm}", Convert.ToDateTime(reader["DateShipper"].ToString())) + " - " + string.Format("{0:dd/MM/yyyy}", Convert.ToDateTime(reader["DateShipper"].ToString())) + "</span> </p>";
                 }
-
                 if (Status == 4)
                 {
                     if (reader["DateBuy"] != DBNull.Value)
@@ -8116,7 +8146,6 @@ namespace NHST.Controllers
                     if (reader["DateBuy"] != DBNull.Value)
                         entity.DateBuy = "<p class=\"s-txt no-wrap\"><span class=\"mg\">Đơn chờ mua hàng:</span><span> " + string.Format("{0:HH:mm}", Convert.ToDateTime(reader["DateBuy"].ToString())) + " - " + string.Format("{0:dd/MM/yyyy}", Convert.ToDateTime(reader["DateBuy"].ToString())) + "</span> </p>";
                 }
-
                 if (Status == 5)
                 {
                     if (reader["DateBuyOK"] != DBNull.Value)
@@ -8127,7 +8156,6 @@ namespace NHST.Controllers
                     if (reader["DateBuyOK"] != DBNull.Value)
                         entity.DateBuyOK = "<p class=\"s-txt no-wrap\"><span class=\"mg\">Đơn đã mua hàng:</span><span> " + string.Format("{0:HH:mm}", Convert.ToDateTime(reader["DateBuyOK"].ToString())) + " - " + string.Format("{0:dd/MM/yyyy}", Convert.ToDateTime(reader["DateBuyOK"].ToString())) + "</span> </p>";
                 }
-
                 if (Status == 6)
                 {
                     if (reader["DateTQ"] != DBNull.Value)
@@ -8138,7 +8166,6 @@ namespace NHST.Controllers
                     if (reader["DateTQ"] != DBNull.Value)
                         entity.DateTQ = "<p class=\"s-txt no-wrap\"><span class=\"mg\">Kho Trung Quốc nhận hàng:</span><span> " + string.Format("{0:HH:mm}", Convert.ToDateTime(reader["DateTQ"].ToString())) + " - " + string.Format("{0:dd/MM/yyyy}", Convert.ToDateTime(reader["DateTQ"].ToString())) + "</span> </p>";
                 }
-
                 if (Status == 7)
                 {
                     if (reader["DateToVN"] != DBNull.Value)
@@ -8160,7 +8187,6 @@ namespace NHST.Controllers
                     if (reader["DateVN"] != DBNull.Value)
                         entity.DateVN = "<p class=\"s-txt no-wrap\"><span class=\"mg\">Trong kho Hà Nội:</span><span> " + string.Format("{0:HH:mm}", Convert.ToDateTime(reader["DateVN"].ToString())) + " - " + string.Format("{0:dd/MM/yyyy}", Convert.ToDateTime(reader["DateVN"].ToString())) + "</span> </p>";
                 }
-
                 if (Status == 9)
                 {
                     if (reader["PayDate"] != DBNull.Value)
@@ -8171,7 +8197,6 @@ namespace NHST.Controllers
                     if (reader["PayDate"] != DBNull.Value)
                         entity.DatePay = "<p class=\"s-txt no-wrap\"><span class=\"mg\">Đã thanh toán:</span><span> " + string.Format("{0:HH:mm}", Convert.ToDateTime(reader["PayDate"].ToString())) + " - " + string.Format("{0:dd/MM/yyyy}", Convert.ToDateTime(reader["PayDate"].ToString())) + "</span> </p>";
                 }
-
                 if (Status == 10)
                 {
                     if (reader["CompleteDate"] != DBNull.Value)
@@ -8182,7 +8207,6 @@ namespace NHST.Controllers
                     if (reader["CompleteDate"] != DBNull.Value)
                         entity.CompleteDate = "<p class=\"s-txt no-wrap\"><span class=\"mg\">Đã hoàn thành:</span><span> " + string.Format("{0:HH:mm}", Convert.ToDateTime(reader["CompleteDate"].ToString())) + " - " + string.Format("{0:dd/MM/yyyy}", Convert.ToDateTime(reader["CompleteDate"].ToString())) + "</span> </p>";
                 }
-
                 if (Status == 11)
                 {
                     if (reader["DateToShip"] != DBNull.Value)
@@ -8193,7 +8217,6 @@ namespace NHST.Controllers
                     if (reader["DateToShip"] != DBNull.Value)
                         entity.DateToShip = "<p class=\"s-txt no-wrap\"><span class=\"mg\">Đang giao hàng:</span><span> " + string.Format("{0:HH:mm}", Convert.ToDateTime(reader["DateToShip"].ToString())) + " - " + string.Format("{0:dd/MM/yyyy}", Convert.ToDateTime(reader["DateToShip"].ToString())) + "</span> </p>";
                 }
-
                 if (Status == 12)
                 {
                     if (reader["DateToCancel"] != DBNull.Value)
@@ -8204,7 +8227,6 @@ namespace NHST.Controllers
                     if (reader["DateToCancel"] != DBNull.Value)
                         entity.DateToCancel = "<p class=\"s-txt no-wrap\"><span class=\"mg\">Đơn khiếu nại:</span><span> " + string.Format("{0:HH:mm}", Convert.ToDateTime(reader["DateToCancel"].ToString())) + " - " + string.Format("{0:dd/MM/yyyy}", Convert.ToDateTime(reader["DateToCancel"].ToString())) + "</span> </p>";
                 }
-
                 list.Add(entity);
             }
             reader.Close();

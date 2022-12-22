@@ -865,6 +865,11 @@
     <Property Name="PercentDeposit" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
     <Property Name="CSID" Type="Int32" />
     <Property Name="BankPayment" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Username" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="UserAddress" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="UserPhone" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="UserEmail" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="UserFullName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
   </EntityType>
   <EntityType Name="tbl_MainOrderCode">
     <Key>

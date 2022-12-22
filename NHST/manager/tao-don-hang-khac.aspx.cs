@@ -194,38 +194,26 @@ namespace NHST.manager
                     userbuypro = Convert.ToDouble(obj_user.FeeBuyPro);
                 }
 
-                int Percent = ddlPercent.SelectedValue.ToString().ToInt();
+                //int Percent = ddlPercent.SelectedValue.ToString().ToInt();
                 if (userdeposit > 0)
                 {
                     if (userbuypro > 0)
                     {
                         phantramdichvu = userbuypro;
                     }
-                    else if (priceVND < 6000000)
+                    else if (priceVND >= 0 && priceVND <= 3000000)
                     {
-                        phantramdichvu = 3;
+                        phantramdichvu = 2.5;
                     }
-                    else
+                    else if (priceVND > 3000000 && priceVND <= 6000000)
                     {
-                        phantramdichvu = 1.8;
-                    }
-                    phantramcoc = userdeposit;
-                }
-                else if (Percent == 1)
-                {
-                    if (userbuypro > 0)
-                    {
-                        phantramdichvu = userbuypro;
-                    }
-                    else if (priceVND < 6000000)
-                    {
-                        phantramdichvu = 2;
+                        phantramdichvu = 1.5;
                     }
                     else
                     {
                         phantramdichvu = 0.9;
                     }
-                    phantramcoc = 100;
+                    phantramcoc = userdeposit;
                 }
                 else
                 {
@@ -233,23 +221,25 @@ namespace NHST.manager
                     {
                         phantramdichvu = userbuypro;
                     }
-                    else if (priceVND < 6000000)
+                    else if (priceVND >= 0 && priceVND <= 3000000)
                     {
-                        phantramdichvu = 3;
+                        phantramdichvu = 2.5;
+                    }
+                    else if (priceVND > 3000000 && priceVND <= 6000000)
+                    {
+                        phantramdichvu = 1.5;
                     }
                     else
                     {
-                        phantramdichvu = 1.8;
+                        phantramdichvu = 0.9;
                     }
-                    phantramcoc = 80;
+                    phantramcoc = 90;
                 }
-
                 double feebp = priceVND * phantramdichvu / 100;
+
                 if (feebp < 20000)
-                {
                     feebp = 20000;
-                }
-                
+
                 double TotalPriceVND = (priceCYN * currency) + 0;
                 string AmountDeposit = (TotalPriceVND * phantramcoc / 100).ToString();
                 string Deposit = "0";
@@ -371,7 +361,22 @@ namespace NHST.manager
                     MainOrderController.UpdateIsCheckNotiPrice(idkq, UID, true);
                     MainOrderController.UpdateLinkImage(idkq, linkimage);
                     MainOrderController.UpdateCSKHID(idkq, cskhID);
+                    MainOrderController.UpdatePercentDeposit(idkq, phantramcoc.ToString());
 
+                    string UserFullName = "";
+                    string UserPhone = "";
+                    string UserAdress = "";
+                    string UserEmail = "";
+
+                    var accinfor = AccountInfoController.GetByUserID(UID);
+                    if (accinfor != null)
+                    {
+                        UserFullName = accinfor.FirstName + " " + accinfor.LastName;
+                        UserPhone = accinfor.Phone;
+                        UserAdress = accinfor.Address;
+                        UserEmail = accinfor.Email;
+                    }
+                    MainOrderController.UpdateInfor(idkq, obj_user.Username, UserFullName, UserPhone, UserEmail, UserAdress);
                     var admins = AccountController.GetAllByRoleID(0);
                     if (admins.Count > 0)
                     {

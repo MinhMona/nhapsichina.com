@@ -1311,36 +1311,36 @@ namespace NHST
                                         }
                                     }
 
-                                    if (setNoti.IsSentEmailAdmin == true)
-                                    {
-                                        var admins = AccountController.GetAllByRoleID(0);
-                                        if (admins.Count > 0)
-                                        {
-                                            foreach (var admin in admins)
-                                            {
-                                                try
-                                                {
-                                                    PJUtils.SendMailGmail("cskh.thuonghai@gmail.com.vn.net", "jrbhnznozmlrmwvy", admin.Email,
-                                                        "Thông báo tại NHAPSICHINA.COM.", "Đơn hàng " + o.ID + " đã được thanh toán.", "");
-                                                }
-                                                catch { }
-                                            }
-                                        }
+                                    //if (setNoti.IsSentEmailAdmin == true)
+                                    //{
+                                    //    var admins = AccountController.GetAllByRoleID(0);
+                                    //    if (admins.Count > 0)
+                                    //    {
+                                    //        foreach (var admin in admins)
+                                    //        {
+                                    //            try
+                                    //            {
+                                    //                PJUtils.SendMailGmail("cskh.thuonghai@gmail.com.vn.net", "jrbhnznozmlrmwvy", admin.Email,
+                                    //                    "Thông báo tại NHAPSICHINA.COM.", "Đơn hàng " + o.ID + " đã được thanh toán.", "");
+                                    //            }
+                                    //            catch { }
+                                    //        }
+                                    //    }
 
-                                        var managers = AccountController.GetAllByRoleID(2);
-                                        if (managers.Count > 0)
-                                        {
-                                            foreach (var manager in managers)
-                                            {
-                                                try
-                                                {
-                                                    PJUtils.SendMailGmail("cskh.thuonghai@gmail.com.vn.net", "jrbhnznozmlrmwvy", manager.Email,
-                                                        "Thông báo tại NHAPSICHINA.COM.", "Đơn hàng " + o.ID + " đã được thanh toán.", "");
-                                                }
-                                                catch { }
-                                            }
-                                        }
-                                    }
+                                    //    var managers = AccountController.GetAllByRoleID(2);
+                                    //    if (managers.Count > 0)
+                                    //    {
+                                    //        foreach (var manager in managers)
+                                    //        {
+                                    //            try
+                                    //            {
+                                    //                PJUtils.SendMailGmail("cskh.thuonghai@gmail.com.vn.net", "jrbhnznozmlrmwvy", manager.Email,
+                                    //                    "Thông báo tại NHAPSICHINA.COM.", "Đơn hàng " + o.ID + " đã được thanh toán.", "");
+                                    //            }
+                                    //            catch { }
+                                    //        }
+                                    //    }
+                                    //}
                                 }
 
                                 PJUtils.ShowMessageBoxSwAlert("Thanh toán thành công.", "s", true, Page);
@@ -2157,37 +2157,37 @@ namespace NHST
                                         }
                                     }
 
-                                    if (setNoti.IsSentEmailAdmin == true)
-                                    {
-                                        var admins = AccountController.GetAllByRoleID(0);
-                                        if (admins.Count > 0)
-                                        {
-                                            foreach (var admin in admins)
-                                            {
-                                                try
-                                                {
-                                                    PJUtils.SendMailGmail("cskh.thuonghai@gmail.com.vn.net", "jrbhnznozmlrmwvy", admin.Email,
-                                                        "Thông báo tại NHAPSICHINA.COM.", "Đơn hàng " + o.ID + " đã yêu cầu giao hàng.", "");
-                                                }
-                                                catch { }
-                                            }
-                                        }
+                                    //if (setNoti.IsSentEmailAdmin == true)
+                                    //{
+                                    //    var admins = AccountController.GetAllByRoleID(0);
+                                    //    if (admins.Count > 0)
+                                    //    {
+                                    //        foreach (var admin in admins)
+                                    //        {
+                                    //            try
+                                    //            {
+                                    //                PJUtils.SendMailGmail("cskh.thuonghai@gmail.com.vn.net", "jrbhnznozmlrmwvy", admin.Email,
+                                    //                    "Thông báo tại NHAPSICHINA.COM.", "Đơn hàng " + o.ID + " đã yêu cầu giao hàng.", "");
+                                    //            }
+                                    //            catch { }
+                                    //        }
+                                    //    }
 
-                                        var managers = AccountController.GetAllByRoleID(2);
-                                        if (managers.Count > 0)
-                                        {
-                                            foreach (var manager in managers)
-                                            {
-                                                try
-                                                {
-                                                    PJUtils.SendMailGmail("cskh.thuonghai@gmail.com.vn.net", "jrbhnznozmlrmwvy", manager.Email,
-                                                        "Thông báo tại NHAPSICHINA.COM.", "Đơn hàng " + o.ID + " đã yêu cầu giao hàng.", "");
-                                                }
-                                                catch { }
-                                            }
-                                        }
+                                    //    var managers = AccountController.GetAllByRoleID(2);
+                                    //    if (managers.Count > 0)
+                                    //    {
+                                    //        foreach (var manager in managers)
+                                    //        {
+                                    //            try
+                                    //            {
+                                    //                PJUtils.SendMailGmail("cskh.thuonghai@gmail.com.vn.net", "jrbhnznozmlrmwvy", manager.Email,
+                                    //                    "Thông báo tại NHAPSICHINA.COM.", "Đơn hàng " + o.ID + " đã yêu cầu giao hàng.", "");
+                                    //            }
+                                    //            catch { }
+                                    //        }
+                                    //    }
 
-                                    }
+                                    //}
                                 }
 
                                 PJUtils.ShowMessageBoxSwAlert("Tạo yêu cầu giao hàng thành công.", "s", true, Page);
@@ -2626,6 +2626,20 @@ namespace NHST
                     MainOrderController.UpdateFromPlace(idkq, UID, warehouseFromID, w_shippingType);
                     MainOrderController.UpdateIsInsurrance(idkq, Convert.ToBoolean(o.IsInsurrance));
                     MainOrderController.UpdateInsurranceMoney(idkq, InsuranceMoney.ToString(), InsurancePercent.ToString());
+                    string UserFullName = "";
+                    string UserPhone = "";
+                    string UserAdress = "";
+                    string UserEmail = "";
+
+                    var accinfor = AccountInfoController.GetByUserID(UID);
+                    if (accinfor != null)
+                    {
+                        UserFullName = accinfor.FirstName + " " + accinfor.LastName;
+                        UserPhone = accinfor.Phone;
+                        UserAdress = accinfor.Address;
+                        UserEmail = accinfor.Email;
+                    }
+                    MainOrderController.UpdateInfor(idkq, obj_user.Username, UserFullName, UserPhone, UserEmail, UserAdress);
 
                     if (setNoti != null)
                     {

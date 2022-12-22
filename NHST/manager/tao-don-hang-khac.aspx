@@ -41,7 +41,7 @@
                                         <label for="search_name"><span>Phương thức VC</span></label>
                                     </div>
                                 </div>
-                                <div class="float-left mt-1">
+                           <%--     <div class="float-left mt-1">
                                     <div class="search-name input-field col s12 l12">
                                         <asp:DropDownList ID="ddlPercent" runat="server" CssClass="form-control select2">
                                             <asp:ListItem Value="1">100 %</asp:ListItem>
@@ -49,7 +49,7 @@
                                         </asp:DropDownList>
                                         <label for="search_name"><span>Phần trăm đặt cọc</span></label>
                                     </div>
-                                </div>
+                                </div>--%>
                                 <div class="float-right mt-2">
                                     <a href="javascript:;" class="btn add-product valign-wrapper" style="display: flex"><i class="material-icons">add</i><span>Sản phẩm</span></a>
                                 </div>
