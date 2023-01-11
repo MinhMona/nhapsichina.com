@@ -748,6 +748,7 @@ namespace NHST.manager
                     hcm.Append("<p class=\"s-txt no-wrap\"><span class=\"total\">Tổng tiền:</span><span>" + string.Format("{0:N0}", Convert.ToDouble(item.TotalPriceVND)) + " Đ</span></p>");
                     hcm.Append("<p class=\"s-txt blue-text no-wrap\"><span class=\"total\">Đã trả:</span><span>" + string.Format("{0:N0}", Convert.ToDouble(item.Deposit)) + " Đ</span></p>");
                     hcm.Append("<p class=\"s-txt red-text no-wrap\"><span class=\"total\">Còn lại:</span><span>" + string.Format("{0:N0}", Math.Round(Convert.ToDouble(item.TotalPriceVND) - Convert.ToDouble(item.Deposit))) + " Đ</span></p>");
+                    
                     hcm.Append("<p class=\"s-txt  no-wrap\"><span class=\"total\">Shop TQ:</span><span>" + item.ShopName + "</span></p>");
                     hcm.Append("<p class=\"s-txt  no-wrap\"><span class=\"total\">Website:</span><span>" + item.Site + "</span></p>");
                     //hcm.Append("<p class=\"s-txt  no-wrap\"><span class=\"total\">TK thanh toán:</span><span> " + item.StaffNote + "</span></p>");

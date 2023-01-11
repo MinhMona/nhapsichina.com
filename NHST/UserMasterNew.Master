@@ -97,17 +97,17 @@
                 </div>
                 <!-- BEGIN: Horizontal nav start-->
                 <nav class="white hide-on-med-and-down" id="horizontal-nav">
-                    <div class="nav-wrapper">
+                    <div class="nav-wrapper" style="display:flex;justify-content:center">
                         <ul class="left hide-on-med-and-down" id="ul-horizontal-nav" data-menu="menu-navigation">
                             <li>
-                                <a href="/gio-hang"><i class="material-icons">shopping_cart</i><span>Giỏ hàng
+                                <a href="/gio-hang"><i class="material-icons">shopping_cart</i><span><strong>GIỎ HÀNG</strong>
                                     <asp:Literal runat="server" ID="ltrCountCart"></asp:Literal></span></a>
                             </li>
                             <li>
-                                <a href="/danh-sach-don-hang"><i class="material-icons">dashboard</i><span>Đơn hàng</span></a>
+                                <a href="/danh-sach-don-hang"><i class="material-icons">dashboard</i><span><strong>ĐƠN HÀNG</strong></span></a>
                             </li>
                              <li>
-                                <a href="/user-outstock-payment"><i class="material-icons">nature_people</i><span>In phiếu</span></a>
+                                <a href="/user-outstock-payment"><i class="material-icons">nature_people</i><span><strong>IN PHIẾU</strong></span></a>
                             </li>
                             <%--<li><a class="dropdown-menu" href="#" data-target="BuyHelper"><i class="material-icons">nature_people</i><span>Mua hàng hộ<i class="material-icons right">keyboard_arrow_down</i></span></a>
                                 <ul class="dropdown-content dropdown-horizontal-list" id="BuyHelper">
@@ -121,53 +121,53 @@
                                     </li>
                                 </ul>
                             </li>--%>
-                            <li><a class="dropdown-menu" href="#" data-target="ShippingAsign"><i class="material-icons">next_week</i><span>Vận chuyển ký gửi<i class="material-icons right">keyboard_arrow_down</i></span></a>
+                            <li><a class="dropdown-menu" href="#" data-target="ShippingAsign"><i class="material-icons">next_week</i><span><strong>VẬN CHUYỂN KÝ GỬI</strong><i class="material-icons right">keyboard_arrow_down</i></span></a>
                                 <ul class="dropdown-content dropdown-horizontal-list" id="ShippingAsign">
 
-                                    <li data-menu=""><a href="/tao-ma-van-don-ky-gui">Tạo đơn hàng ký gửi</a>
+                                    <li data-menu=""><a href="/tao-ma-van-don-ky-gui"><strong>TẠO ĐƠN HÀNG KÝ GỬI</strong></a>
                                     </li>
-                                    <li data-menu=""><a href="/danh-sach-kien-yeu-cau-ky-gui">Danh sách đơn ký gửi</a>
+                                    <li data-menu=""><a href="/danh-sach-kien-yeu-cau-ky-gui"><strong>DANH SÁCH ĐƠN KÝ GỬI</strong></a>
                                     </li>
-                                    <li data-menu=""><a href="/thong-ke-cuoc-ky-gui">Thống kê cước ký gửi</a>
+                                    <li data-menu=""><a href="/thong-ke-cuoc-ky-gui"><strong>THỐNG KÊ CƯỚC KÝ GỬI</strong></a>
                                     </li>
                                 </ul>
                             </li>
 
-                            <li style="display: none"><a class="dropdown-menu" href="#" data-target="CheckoutHelp"><i class="material-icons">payment</i><span>Thanh toán hộ<i class="material-icons right">keyboard_arrow_down</i></span></a>
+                            <li style="display: none"><a class="dropdown-menu" href="#" data-target="CheckoutHelp"><i class="material-icons">payment</i><span><strong>THANH TOÁN HỘ</strong><i class="material-icons right">keyboard_arrow_down</i></span></a>
                                 <ul class="dropdown-content dropdown-horizontal-list" id="CheckoutHelp">
-                                    <li data-menu=""><a href="/danh-sach-thanh-toan-ho">Danh sách yêu cầu</a>
+                                    <li data-menu=""><a href="/danh-sach-thanh-toan-ho"><strong>DANH SÁCH YÊU CẦU</strong></a>
                                     </li>
-                                    <li data-menu=""><a href="/tao-don-thanh-toan-ho">Tạo yêu cầu thanh toán hộ</a>
+                                    <li data-menu=""><a href="/tao-don-thanh-toan-ho"><strong>TẠO YÊU CẦU THANH TOÁN HỘ</strong></a>
                                     </li>
                                 </ul>
                             </li>
 							
 							<li>
-                                <a href="/nap-tien"><i class="material-icons">monetization_on</i><span>Nạp tiền</span></a>
+                                <a href="/nap-tien"><i class="material-icons">monetization_on</i><span><strong>NẠP TIỀN</strong></span></a>
                             </li>
 							
 							<li>
-                                <a href="/lich-su-giao-dich"><i class="material-icons">monetization_on</i><span>Lịch sử giao dịch</span></a>
+                                <a href="/lich-su-giao-dich"><i class="material-icons">monetization_on</i><span><strong>LỊCH SỬ GIAO DỊCH</strong></span></a>
                             </li>		
 							
                             <li>
-                                <a href="/khieu-nai"><i class="material-icons">report</i><span>Khiếu nại</span></a>
+                                <a href="/khieu-nai"><i class="material-icons">report</i><span><strong>KHIẾU NẠI</strong></span></a>
                             </li>
                             <li>
-                                <a href="/danh-sach-yeu-cau-giao"><i class="material-icons">library_books</i><span>Yêu cầu giao</span></a>
+                                <a href="/danh-sach-yeu-cau-giao"><i class="material-icons">library_books</i><span><strong>YÊU CẦU GIAO</strong></span></a>
                             </li>
                             <li>
-                                <a href="/tracking-mvd"><i class="material-icons">local_shipping</i><span>Tracking</span></a>
+                                <a href="/tracking-mvd"><i class="material-icons">local_shipping</i><span><strong>TRACKING</strong></span></a>
 
                             </li>
                             <li>
                                 <a href="https://chrome.google.com/webstore/detail/c%C3%B4ng-c%E1%BB%A5-%C4%91%E1%BA%B7t-h%C3%A0ng-c%E1%BB%A7a-nh%E1%BA%ADp/elfmiplccfnohmbbpdehiflablbfeijh"><i>
-                                    <img src="/App_Themes/nhapsichina/images/chrome.png" alt=""></i><span>Công cụ Chrome</span></a>
+                                    <img src="/App_Themes/nhapsichina/images/chrome.png" alt=""></i><span><strong>CÔNG CỤ ĐẶT HÀNG</strong></span></a>
 
                             </li>
-                            <li>
+                            <li style="display:none">
                                 <a href="https://chrome.google.com/webstore/detail/c%C3%B4ng-c%E1%BB%A5-%C4%91%E1%BA%B7t-h%C3%A0ng-c%E1%BB%A7a-nh%E1%BA%ADp/elfmiplccfnohmbbpdehiflablbfeijh"><i>
-                                    <img src="/App_Themes/nhapsichina/images/coccoc.png" alt=""></i> <span>Công cụ Cốc cốc</span></a>
+                                    <img src="/App_Themes/nhapsichina/images/coccoc.png" alt=""></i> <span><strong>CÔNG CỤ CỐC CỐC</strong></span></a>
 
                             </li>
 							<div class="zalo-follow-only-button" data-oaid="680183717032251660"></div>

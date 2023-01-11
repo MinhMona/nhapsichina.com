@@ -52,7 +52,7 @@ namespace NHST.manager
                     }
                 }
                 //UpdatePrice();
-                checkOrderStaff();
+                //checkOrderStaff();
                 LoadDDL();
                 loaddata();
             }
@@ -196,7 +196,7 @@ namespace NHST.manager
                                                 }
                                                 phantramcoc = 90;
                                             }
-                                        }                                        
+                                        }
 
                                         double feebp = Math.Round(pricevnd * phantramdichvu / 100, 0);
                                         if (feebp < 20000)
@@ -1692,16 +1692,16 @@ namespace NHST.manager
 
                             //if (o.Status > 2)
                             //{
-                                if (obj_user.ID == 1 || obj_user.ID == 22)
-                                {
-                                    pDeposit.Enabled = true;
-                                    pAmountDeposit.Enabled = true;
-                                }
-                                else
-                                {
-                                    pDeposit.Enabled = false;
-                                    pAmountDeposit.Enabled = false;
-                                }
+                            if (obj_user.ID == 1 || obj_user.ID == 22)
+                            {
+                                pDeposit.Enabled = true;
+                                pAmountDeposit.Enabled = true;
+                            }
+                            else
+                            {
+                                pDeposit.Enabled = false;
+                                pAmountDeposit.Enabled = false;
+                            }
                             //}
 
                             ltrBtnUpdate.Text = "<a href=\"javascript:;\" class=\"btn mt-2\" onclick=\"UpdateOrder()\">CẬP NHẬT</a>";
@@ -3023,12 +3023,8 @@ namespace NHST.manager
                         hisChange.Append("</tr>");
                     }
                     //lrtHistoryChange.Text = hisChange.ToString();
-
                 }
-
             }
-
-
         }
 
         #region Button
@@ -3150,96 +3146,154 @@ namespace NHST.manager
             DateTime currentDate = DateTime.Now;
             if (obj_user != null)
             {
-                int uid = obj_user.ID;
-                int RoleID = obj_user.RoleID.ToString().ToInt();
-                var id = Convert.ToInt32(ViewState["ID"]);
-                if (id > 0)
+                double priceOrderInWebCYN = Convert.ToDouble(lblTotalMoneyCNY1.Text);
+                double priceOrderRealCYN = Math.Round(Convert.ToDouble(rTotalPriceRealCYN.Text), 2);
+                double feeShipTQCYN = Math.Round(Convert.ToDouble(pCNShipFeeNDT.Text), 2);
+                double hoaHong = priceOrderInWebCYN - priceOrderRealCYN + feeShipTQCYN;
+                hoaHong = Math.Round(hoaHong, 1);
+                if (hoaHong < 0)
+                    PJUtils.ShowMessageBoxSwAlert("Tiền hoa hồng bé hơn 0", "e", true, Page);
+                else
                 {
-                    var o = MainOrderController.GetAllByID(id);
-                    if (o != null)
+                    int uid = obj_user.ID;
+                    int RoleID = obj_user.RoleID.ToString().ToInt();
+                    var id = Convert.ToInt32(ViewState["ID"]);
+                    if (id > 0)
                     {
-                        int uidmuahang = Convert.ToInt32(o.UID);
-                        string usermuahang = "";
-
-                        var accmuahan = AccountController.GetByID(uidmuahang);
-                        usermuahang = accmuahan.Username;
-
-                        string CurrentOrderWeight = o.OrderWeight;
-                        bool ischeckmvd = true;
-                        string listmvd_ne = "";
-
-                        #region cập nhật và tạo mới smallpackage
-                        string tcl = hdfCodeTransactionList.Value;
-                        string listmvd = hdfCodeTransactionListMVD.Value;
-                        if (!string.IsNullOrEmpty(tcl))
+                        var o = MainOrderController.GetAllByID(id);
+                        if (o != null)
                         {
-                            checkMVD = true;
-                            string[] list = tcl.Split('|');
-                            for (int i = 0; i < list.Length - 1; i++)
+                            int uidmuahang = Convert.ToInt32(o.UID);
+                            string usermuahang = "";
+
+                            var accmuahan = AccountController.GetByID(uidmuahang);
+                            usermuahang = accmuahan.Username;
+
+                            string CurrentOrderWeight = o.OrderWeight;
+                            bool ischeckmvd = true;
+                            string listmvd_ne = "";
+
+                            #region cập nhật và tạo mới smallpackage
+                            string tcl = hdfCodeTransactionList.Value;
+                            string listmvd = hdfCodeTransactionListMVD.Value;
+                            if (!string.IsNullOrEmpty(tcl))
                             {
-                                string[] item = list[i].Split(',');
-                                int ID = item[0].ToInt(0);
-                                string code = item[1].Trim();
-                                string weight = item[2];
-                                double weightin = 0;
-                                if (!string.IsNullOrEmpty(weight))
-                                    weightin = Math.Round(Convert.ToDouble(weight), 1);
-                                int smallpackage_status = item[3].ToInt(1);
-                                string description = item[4];
-                                string mainOrderCodeID = item[5];
-                                var MainOrderCode = MainOrderCodeController.GetByID(mainOrderCodeID.ToInt(0));
-                                if (MainOrderCode == null)
-                                    PJUtils.ShowMessageBoxSwAlert("Lỗi, không có mã đơn hàng", "e", false, Page);
-                                if (ID > 0)
+                                checkMVD = true;
+                                string[] list = tcl.Split('|');
+                                for (int i = 0; i < list.Length - 1; i++)
                                 {
-                                    var smp = SmallPackageController.GetByID(ID);
-                                    if (smp != null)
+                                    string[] item = list[i].Split(',');
+                                    int ID = item[0].ToInt(0);
+                                    string code = item[1].Trim();
+                                    string weight = item[2];
+                                    double weightin = 0;
+                                    if (!string.IsNullOrEmpty(weight))
+                                        weightin = Math.Round(Convert.ToDouble(weight), 1);
+                                    int smallpackage_status = item[3].ToInt(1);
+                                    string description = item[4];
+                                    string mainOrderCodeID = item[5];
+                                    var MainOrderCode = MainOrderCodeController.GetByID(mainOrderCodeID.ToInt(0));
+                                    if (MainOrderCode == null)
+                                        PJUtils.ShowMessageBoxSwAlert("Lỗi, không có mã đơn hàng", "e", false, Page);
+                                    if (ID > 0)
                                     {
-                                        int bigpackageID = Convert.ToInt32(smp.BigPackageID);
-                                        bool check = false;
-                                        var getsmallcheck = SmallPackageController.GetByOrderCode(code);
-                                        if (getsmallcheck.Count > 0)
+                                        var smp = SmallPackageController.GetByID(ID);
+                                        if (smp != null)
                                         {
-                                            foreach (var sp in getsmallcheck)
+                                            int bigpackageID = Convert.ToInt32(smp.BigPackageID);
+                                            bool check = false;
+                                            var getsmallcheck = SmallPackageController.GetByOrderCode(code);
+                                            if (getsmallcheck.Count > 0)
                                             {
-                                                if (sp.ID == ID)
+                                                foreach (var sp in getsmallcheck)
                                                 {
-                                                    check = true;
+                                                    if (sp.ID == ID)
+                                                    {
+                                                        check = true;
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                check = true;
+                                            }
+                                            if (check)
+                                            {
+                                                SmallPackageController.UpdateNew(ID, accmuahan.ID, usermuahang, bigpackageID, code,
+                                                    smp.ProductType, Math.Round(Convert.ToDouble(smp.FeeShip), 0),
+                                                weightin, Math.Round(Convert.ToDouble(smp.Volume), 1), smallpackage_status,
+                                                description, currentDate, username, mainOrderCodeID.ToInt(0));
+
+                                                if (smallpackage_status == 2)
+                                                {
+                                                    SmallPackageController.UpdateDateInTQWareHouse(ID, username, currentDate);
+                                                }
+                                                else if (smallpackage_status == 3)
+                                                {
+                                                    SmallPackageController.UpdateDateInVNWareHouse(ID, username, currentDate);
+                                                }
+                                                var bigpack = BigPackageController.GetByID(bigpackageID);
+                                                if (bigpack != null)
+                                                {
+                                                    int TotalPackageWaiting = SmallPackageController.GetCountByBigPackageIDStatus(bigpackageID, 1, 2);
+                                                    if (TotalPackageWaiting == 0)
+                                                    {
+                                                        BigPackageController.UpdateStatus(bigpackageID, 2, currentDate, username);
+                                                    }
                                                 }
                                             }
                                         }
                                         else
                                         {
-                                            check = true;
-                                        }
-                                        if (check)
-                                        {
-                                            SmallPackageController.UpdateNew(ID, accmuahan.ID, usermuahang, bigpackageID, code,
-                                                smp.ProductType, Math.Round(Convert.ToDouble(smp.FeeShip), 0),
-                                            weightin, Math.Round(Convert.ToDouble(smp.Volume), 1), smallpackage_status,
-                                            description, currentDate, username, mainOrderCodeID.ToInt(0));
+                                            //var getsmallcheck = SmallPackageController.GetByOrderCode(code);
+                                            //if (getsmallcheck.Count > 0)
+                                            //{
+                                            //    PJUtils.ShowMessageBoxSwAlert("Mã kiện đã tồn tại, vui lòng tạo mã khác", "e", true, Page);
+                                            //}
+                                            //else
+                                            //{
+                                            var checkbarcode = SmallPackageController.GetByOrderTransactionCode(code);
+                                            if (checkbarcode == null)
+                                            {
+                                                SmallPackageController.InsertWithMainOrderIDUIDUsernameNew(id, accmuahan.ID, usermuahang,
+                                                0, code, "", 0, weightin, 0,
+                                            smallpackage_status, description, currentDate, username, mainOrderCodeID.ToInt(0), 0);
 
-                                            if (smallpackage_status == 2)
-                                            {
-                                                SmallPackageController.UpdateDateInTQWareHouse(ID, username, currentDate);
-                                            }
-                                            else if (smallpackage_status == 3)
-                                            {
-                                                SmallPackageController.UpdateDateInVNWareHouse(ID, username, currentDate);
-                                            }
-                                            var bigpack = BigPackageController.GetByID(bigpackageID);
-                                            if (bigpack != null)
-                                            {
-                                                int TotalPackageWaiting = SmallPackageController.GetCountByBigPackageIDStatus(bigpackageID, 1, 2);
-                                                if (TotalPackageWaiting == 0)
+
+                                                var quantitymvd1 = SmallPackageController.GetByMainOrderID(id);
+                                                if (quantitymvd1.Count > 0)
                                                 {
-                                                    BigPackageController.UpdateStatus(bigpackageID, 2, currentDate, username);
+                                                    if (quantitymvd1 != null)
+                                                    {
+                                                        MainOrderController.UpdateListMVD(id, listmvd, quantitymvd1.Count);
+                                                    }
                                                 }
+
+                                                HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
+                                         " đã thêm mã vận đơn của đơn hàng ID là: " + o.ID + ", Mã vận đơn: " + code + ", cân nặng: " + weightin + "", 8, currentDate);
+
+                                                if (smallpackage_status == 2)
+                                                {
+                                                    SmallPackageController.UpdateDateInTQWareHouse(ID, username, currentDate);
+                                                }
+                                                else if (smallpackage_status == 3)
+                                                {
+                                                    SmallPackageController.UpdateDateInVNWareHouse(ID, username, currentDate);
+                                                }
+                                                //}
                                             }
+                                            else
+                                            {
+                                                ischeckmvd = false;
+                                                listmvd_ne += code + " - ";
+                                            }
+
+
                                         }
                                     }
                                     else
                                     {
+                                        //bool check = false;
                                         //var getsmallcheck = SmallPackageController.GetByOrderCode(code);
                                         //if (getsmallcheck.Count > 0)
                                         //{
@@ -3250,22 +3304,20 @@ namespace NHST.manager
                                         var checkbarcode = SmallPackageController.GetByOrderTransactionCode(code);
                                         if (checkbarcode == null)
                                         {
-                                            SmallPackageController.InsertWithMainOrderIDUIDUsernameNew(id, accmuahan.ID, usermuahang,
-                                            0, code, "", 0, weightin, 0,
+                                            SmallPackageController.InsertWithMainOrderIDUIDUsernameNew(id, accmuahan.ID, usermuahang, 0,
+                                            code, "", 0, weightin, 0,
                                         smallpackage_status, description, currentDate, username, mainOrderCodeID.ToInt(0), 0);
 
-
-                                            var quantitymvd1 = SmallPackageController.GetByMainOrderID(id);
-                                            if (quantitymvd1.Count > 0)
+                                            var quantitymvd2 = SmallPackageController.GetByMainOrderID(id);
+                                            if (quantitymvd2.Count > 0)
                                             {
-                                                if (quantitymvd1 != null)
+                                                if (quantitymvd2 != null)
                                                 {
-                                                    MainOrderController.UpdateListMVD(id, listmvd, quantitymvd1.Count);
+                                                    MainOrderController.UpdateListMVD(id, listmvd, quantitymvd2.Count);
                                                 }
                                             }
 
-                                            HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
-                                     " đã thêm mã vận đơn của đơn hàng ID là: " + o.ID + ", Mã vận đơn: " + code + ", cân nặng: " + weightin + "", 8, currentDate);
+
 
                                             if (smallpackage_status == 2)
                                             {
@@ -3283,1174 +3335,1159 @@ namespace NHST.manager
                                             listmvd_ne += code + " - ";
                                         }
 
-
-                                    }
-                                }
-                                else
-                                {
-                                    //bool check = false;
-                                    //var getsmallcheck = SmallPackageController.GetByOrderCode(code);
-                                    //if (getsmallcheck.Count > 0)
-                                    //{
-                                    //    PJUtils.ShowMessageBoxSwAlert("Mã kiện đã tồn tại, vui lòng tạo mã khác", "e", true, Page);
-                                    //}
-                                    //else
-                                    //{
-                                    var checkbarcode = SmallPackageController.GetByOrderTransactionCode(code);
-                                    if (checkbarcode == null)
-                                    {
-                                        SmallPackageController.InsertWithMainOrderIDUIDUsernameNew(id, accmuahan.ID, usermuahang, 0,
-                                        code, "", 0, weightin, 0,
-                                    smallpackage_status, description, currentDate, username, mainOrderCodeID.ToInt(0), 0);
-
-                                        var quantitymvd2 = SmallPackageController.GetByMainOrderID(id);
-                                        if (quantitymvd2.Count > 0)
-                                        {
-                                            if (quantitymvd2 != null)
-                                            {
-                                                MainOrderController.UpdateListMVD(id, listmvd, quantitymvd2.Count);
-                                            }
-                                        }
-
-
-
-                                        if (smallpackage_status == 2)
-                                        {
-                                            SmallPackageController.UpdateDateInTQWareHouse(ID, username, currentDate);
-                                        }
-                                        else if (smallpackage_status == 3)
-                                        {
-                                            SmallPackageController.UpdateDateInVNWareHouse(ID, username, currentDate);
-                                        }
-                                        //}
-                                    }
-                                    else
-                                    {
-                                        ischeckmvd = false;
-                                        listmvd_ne += code + " - ";
-                                    }
-
-                                }
-                            }
-                        }
-                        #endregion
-                        if (ischeckmvd)
-                        {
-                            #region Cập nhật và tạo mới phụ phí
-                            double TotalFeeSupport = 0;
-                            string lsp = hdfListFeeSupport.Value;
-                            if (!string.IsNullOrEmpty(lsp))
-                            {
-                                string[] list = lsp.Split('|');
-                                for (int i = 0; i < list.Length - 1; i++)
-                                {
-                                    string[] item = list[i].Split(',');
-                                    int ID = item[0].ToInt(0);
-                                    string fname = item[1];
-                                    double FeeSupport = Convert.ToDouble(item[2]);
-                                    TotalFeeSupport += FeeSupport;
-                                    if (ID > 0)
-                                    {
-                                        var check = FeeSupportController.GetByID(ID);
-                                        if (check != null)
-                                        {
-                                            FeeSupportController.Update(check.ID, fname, FeeSupport.ToString(), obj_user.Username, currentDate);
-                                            if (check.SupportName != fname)
-                                            {
-                                                HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
-                                          " đã thay đổi tên phụ phí của đơn hàng ID là: " + o.ID + ", Từ: " + check.SupportName + ", Sang: "
-                                          + fname + "", 10, currentDate);
-                                            }
-
-                                            if (check.SupportInfoVND != FeeSupport.ToString())
-                                            {
-                                                HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
-                                          " đã thay đổi tiền phụ phí của đơn hàng ID là: " + o.ID + ", Tên phụ phí: " + fname + ", Số tiền từ: "
-                                          + string.Format("{0:N0}", Convert.ToDouble(check.SupportInfoVND)) + ", Sang: "
-                                          + string.Format("{0:N0}", Convert.ToDouble(FeeSupport)) + "", 10, currentDate);
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        FeeSupportController.Insert(o.ID, fname, FeeSupport.ToString(), obj_user.Username, currentDate);
-                                        HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
-                                           " đã thêm phụ phí của đơn hàng ID là: " + o.ID + ", Tên phụ phí: " + fname + ", Số tiền: "
-                                           + string.Format("{0:N0}", Convert.ToDouble(FeeSupport)) + "", 10, currentDate);
-
                                     }
                                 }
                             }
                             #endregion
-                            #region Lấy ra text của trạng thái đơn hàng
-                            string orderstatus = "";
-                            int currentOrderStatus = Convert.ToInt32(o.Status);
-                            switch (currentOrderStatus)
+                            if (ischeckmvd)
                             {
-                                case 0:
-                                    orderstatus = "Đơn mới";
-                                    break;
-                                case 1:
-                                    orderstatus = "Đơn hàng hủy";
-                                    break;
-                                case 2:
-                                    orderstatus = "Đơn đã cọc";
-                                    break;
-                                case 3:
-                                    orderstatus = "Đơn người bán giao";
-                                    break;
-                                case 4:
-                                    orderstatus = "Đơn chờ mua hàng";
-                                    break;
-                                case 5:
-                                    orderstatus = "Đơn đã mua hàng";
-                                    break;
-                                case 6:
-                                    orderstatus = "Kho Trung Quốc nhận hàng";
-                                    break;
-                                case 7:
-                                    orderstatus = "Trên đường về Việt Nam";
-                                    break;
-                                case 8:
-                                    orderstatus = "Trong kho Hà Nội";
-                                    break;
-                                case 9:
-                                    orderstatus = "Đã thanh toán";
-                                    break;
-                                case 10:
-                                    orderstatus = "Đã hoàn thành";
-                                    break;
-                                case 11:
-                                    orderstatus = "Đang giao hàng";
-                                    break;
-                                case 12:
-                                    orderstatus = "Đơn khiếu nại";
-                                    break;
-                                default:
-                                    break;
-                            }
-                            #endregion
-                            #region Cập nhật nhân viên KhoTQ và nhân viên KhoVN
-                            if (RoleID == 4)
-                            {
-                                if (o.KhoTQID == uid || o.KhoTQID == 0)
+                                #region Cập nhật và tạo mới phụ phí
+                                double TotalFeeSupport = 0;
+                                string lsp = hdfListFeeSupport.Value;
+                                if (!string.IsNullOrEmpty(lsp))
                                 {
-                                    MainOrderController.UpdateStaff(o.ID, o.SalerID.ToString().ToInt(0), o.DathangID.ToString().ToInt(0), uid, o.KhoVNID.ToString().ToInt(0));
-                                }
-                                else
-                                {
-                                    PJUtils.ShowMessageBoxSwAlert("Có lỗi trong quá trình xử lý", "e", true, Page);
-                                }
-                            }
-                            else if (RoleID == 5)
-                            {
-                                if (o.KhoVNID == uid || o.KhoTQID == 0)
-                                {
-                                    MainOrderController.UpdateStaff(o.ID, o.SalerID.ToString().ToInt(0), o.DathangID.ToString().ToInt(0), o.KhoTQID.ToString().ToInt(0), uid);
-                                }
-                                else
-                                {
-                                    PJUtils.ShowMessageBoxSwAlert("Có lỗi trong quá trình xử lý", "e", true, Page);
-                                }
-                            }
-                            #endregion
-                            #region cập nhật thông tin của đơn hàng
-                            double feeeinwarehouse = 0;
-                            int status = ddlStatus.SelectedValue.ToString().ToInt(0);
-                            if (status == 1)
-                            {
-                                if (RoleID == 0 || RoleID == 2 || RoleID == 9)
-                                {
-
-                                    MainOrderController.UpdateStatusByID(o.ID, 1);
-                                    double Deposit = 0;
-                                    if (o.Deposit.ToFloat(0) > 0)
-                                        Deposit = Math.Round(Convert.ToDouble(o.Deposit), 0);
-                                    if (Deposit > 0)
+                                    string[] list = lsp.Split('|');
+                                    for (int i = 0; i < list.Length - 1; i++)
                                     {
-                                        var user_order = AccountController.GetByID(o.UID.ToString().ToInt());
-                                        if (user_order != null)
+                                        string[] item = list[i].Split(',');
+                                        int ID = item[0].ToInt(0);
+                                        string fname = item[1];
+                                        double FeeSupport = Convert.ToDouble(item[2]);
+                                        TotalFeeSupport += FeeSupport;
+                                        if (ID > 0)
                                         {
-                                            double wallet = 0;
-                                            if (user_order.Wallet.ToString().ToFloat(0) > 0)
-                                                wallet = Math.Round(Convert.ToDouble(user_order.Wallet), 0);
-                                            wallet = wallet + Deposit;
-                                            HistoryPayWalletController.Insert(user_order.ID, user_order.Username, o.ID, Deposit,
-                                            "Đơn hàng: " + o.ID + " bị hủy và hoàn tiền cọc cho khách.", wallet, 2, 2, currentDate, obj_user.Username);
-                                            AccountController.updateWallet(user_order.ID, wallet, currentDate, obj_user.Username);
-                                            MainOrderController.UpdateDeposit(o.ID, "0");
-                                            PayOrderHistoryController.Insert(o.ID, user_order.ID, 4, Deposit, 2, currentDate, obj_user.Username);
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                double OCurrent_deposit = 0;
-                                if (o.Deposit.ToFloat(0) > 0)
-                                    OCurrent_deposit = Math.Round(Convert.ToDouble(o.Deposit), 0);
+                                            var check = FeeSupportController.GetByID(ID);
+                                            if (check != null)
+                                            {
+                                                FeeSupportController.Update(check.ID, fname, FeeSupport.ToString(), obj_user.Username, currentDate);
+                                                if (check.SupportName != fname)
+                                                {
+                                                    HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
+                                              " đã thay đổi tên phụ phí của đơn hàng ID là: " + o.ID + ", Từ: " + check.SupportName + ", Sang: "
+                                              + fname + "", 10, currentDate);
+                                                }
 
-                                double OCurrent_FeeShipCN = 0;
-                                if (o.FeeShipCN.ToFloat(0) > 0)
-                                    OCurrent_FeeShipCN = Math.Round(Convert.ToDouble(o.FeeShipCN), 2);
-
-                                double OCurrent_FeeBuyPro = 0;
-                                if (o.FeeBuyPro.ToFloat(0) > 0)
-                                    OCurrent_FeeBuyPro = Math.Round(Convert.ToDouble(o.FeeBuyPro), 0);
-
-                                double OCurrent_FeeWeight = 0;
-                                if (o.FeeWeight.ToFloat(0) > 0)
-                                    OCurrent_FeeWeight = Math.Round(Convert.ToDouble(o.FeeWeight), 0);
-
-                                double OCurrent_IsCheckProductPrice = 0;
-                                if (o.IsCheckProductPrice.ToFloat(0) > 0)
-                                    OCurrent_IsCheckProductPrice = Math.Round(Convert.ToDouble(o.IsCheckProductPrice), 0);
-
-                                double OCurrent_IsPackedPrice = 0;
-                                if (o.IsPackedPrice.ToFloat(0) > 0)
-                                    OCurrent_IsPackedPrice = Math.Round(Convert.ToDouble(o.IsPackedPrice), 0);
-
-                                double OCurrent_IsSpecial = 0;
-                                if (o.IsCheckPriceSpecial.ToFloat(0) > 0)
-                                    OCurrent_IsSpecial = Math.Round(Convert.ToDouble(o.IsCheckPriceSpecial), 0);
-
-                                double OCurrent_IsFastDeliveryPrice = 0;
-                                if (o.IsFastDeliveryPrice.ToFloat(0) > 0)
-                                    OCurrent_IsFastDeliveryPrice = Math.Round(Convert.ToDouble(o.IsFastDeliveryPrice), 0);
-
-                                double OCurrent_TotalPriceReal = 0;
-                                if (o.TotalPriceReal.ToFloat(0) > 0)
-                                    OCurrent_TotalPriceReal = Math.Round(Convert.ToDouble(o.TotalPriceReal), 0);
-
-                                double OCurrent_TotalPriceRealCYN = 0;
-                                if (o.TotalPriceRealCYN.ToFloat(0) > 0)
-                                    OCurrent_TotalPriceRealCYN = Math.Round(Convert.ToDouble(o.TotalPriceRealCYN), 2);
-
-                                double Deposit = Math.Round(Convert.ToDouble(pDeposit.Value), 0);
-                                double FeeShipCN = Math.Round(Convert.ToDouble(pCNShipFee.Text), 0);
-                                double FeeShipCNCYN = Math.Round(Convert.ToDouble(pCNShipFeeNDT.Text), 2);
-                                double FeeShipCNReal = Math.Round(Convert.ToDouble(pCNShipFeeReal.Text), 0);
-                                double FeeShipCNRealCYN = Math.Round(Convert.ToDouble(pCNShipFeeNDTReal.Text), 2);
-                                double FeeBuyPro = Math.Round(Convert.ToDouble(pBuy.Text), 0);
-                                double FeeWeight = Math.Round(Convert.ToDouble(pWeight.Text), 0);
-                                double TotalPriceReal = Math.Round(Convert.ToDouble(rTotalPriceReal.Text), 0);
-                                double TotalPriceRealCYN = Math.Round(Convert.ToDouble(rTotalPriceRealCYN.Text), 2);
-
-                                if (o.FeeInWareHouse != null)
-                                    feeeinwarehouse = Math.Round(Convert.ToDouble(o.FeeInWareHouse), 0);
-
-                                double IsCheckProductPrice = 0;
-                                if (pCheck.Text.ToString().ToFloat(0) > 0)
-                                    IsCheckProductPrice = Math.Round(Convert.ToDouble(pCheck.Text), 0);
-
-                                double IsCheckProductPriceCYN = 0;
-                                if (pCheckNDT.Text.ToString().ToFloat(0) > 0)
-                                    IsCheckProductPriceCYN = Math.Round(Convert.ToDouble(pCheckNDT.Text), 0);
-
-
-                                double IsPackedPrice = 0;
-                                if (pPacked.Text.ToString().ToFloat(0) > 0)
-                                    IsPackedPrice = Math.Round(Convert.ToDouble(pPacked.Text), 0);
-
-                                double IsPriceSepcial = 0;
-                                if (txtFeeSpecial.Text.ToString().ToFloat(0) > 0)
-                                    IsPriceSepcial = Math.Round(Convert.ToDouble(txtFeeSpecial.Text), 0);
-
-                                double IsPackedPriceCYN = 0;
-                                if (pPackedNDT.Text.ToString().ToFloat(0) > 0)
-                                    IsPackedPriceCYN = Math.Round(Convert.ToDouble(pPackedNDT.Text), 0);
-
-                                double IsFastDeliveryPrice = 0;
-                                if (pShipHome.Text.ToString().ToFloat(0) > 0)
-                                    IsFastDeliveryPrice = Math.Round(Convert.ToDouble(pShipHome.Text), 0);
-
-
-                                #region Ghi lịch sử chỉnh sửa các loại giá
-                                if (obj_user.ID == 1 || obj_user.ID == 22 || obj_user.ID == 941)
-                                {
-                                    if (OCurrent_deposit != Deposit)
-                                    {
-                                        HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
-                                        " đã đổi tiền đặt cọc từ: " + string.Format("{0:N0}", OCurrent_deposit) + ", sang: "
-                                         + string.Format("{0:N0}", Deposit) + "", 1, currentDate);
-
-                                        MainOrderController.UpdateDeposit(o.ID, Deposit.ToString());
-                                    }
-                                }
-                                if (OCurrent_FeeShipCN != FeeShipCN)
-                                {
-                                    HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
-                                            " đã đổi tiền phí ship Trung Quốc từ " + string.Format("{0:N0}", OCurrent_FeeShipCN) + " sang "
-                                            + string.Format("{0:N0}", FeeShipCN) + "", 2, currentDate);
-                                }
-                                if (OCurrent_FeeBuyPro < FeeBuyPro || OCurrent_FeeBuyPro > FeeBuyPro)
-                                {
-                                    HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
-                                    " đã đổi tiền phí mua hàng từ: " + string.Format("{0:N0}", OCurrent_FeeBuyPro) + " sang: "
-                                    + string.Format("{0:N0}", FeeBuyPro) + "", 3, currentDate);
-                                }
-                                if (OCurrent_TotalPriceReal < TotalPriceReal || OCurrent_TotalPriceReal > TotalPriceReal)
-                                {
-                                    HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
-                                            " đã đổi tiền phí mua thật từ: " + string.Format("{0:N0}", OCurrent_TotalPriceReal) + " sang: "
-                                            + string.Format("{0:N0}", TotalPriceReal) + "", 3, currentDate);
-                                }
-                                if (OCurrent_FeeWeight != FeeWeight)
-                                {
-                                    HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
-                                            " đã đổi tiền phí TQ-VN từ: " + string.Format("{0:N0}", OCurrent_FeeWeight) + " sang: "
-                                            + string.Format("{0:N0}", FeeWeight) + "", 4, currentDate);
-                                }
-                                if (OCurrent_IsCheckProductPrice != IsCheckProductPrice)
-                                {
-
-                                    HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
-                                            " đã đổi tiền phí kiểm tra sản phẩm từ: " + string.Format("{0:N0}", OCurrent_IsCheckProductPrice) + " sang: "
-                                            + string.Format("{0:N0}", IsCheckProductPrice) + "", 5, currentDate);
-                                }
-                                if (OCurrent_IsPackedPrice != IsPackedPrice)
-                                {
-
-                                    HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
-                                            " đã đổi tiền phí đóng gỗ của đơn hàng ID là: " + o.ID + ", từ: " + string.Format("{0:N0}", OCurrent_IsPackedPrice) + " sang: "
-                                            + string.Format("{0:N0}", IsPackedPrice) + "", 6, currentDate);
-                                }
-
-                                if (OCurrent_IsSpecial != IsPriceSepcial)
-                                {
-                                    HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
-                                           " đã đổi tiền phí đặc biệt từ: " + string.Format("{0:N0}", OCurrent_IsSpecial) + " sang: "
-                                           + string.Format("{0:N0}", IsPriceSepcial) + "", 6, currentDate);
-                                }
-
-                                if (OCurrent_IsFastDeliveryPrice != IsFastDeliveryPrice)
-                                {
-
-                                    HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
-                                            " đã đổi tiền phí ship giao hàng tận nhà từ: " + string.Format("{0:N0}", OCurrent_IsFastDeliveryPrice) + " sang: "
-                                            + string.Format("{0:N0}", IsFastDeliveryPrice) + "", 7, currentDate);
-                                }
-                                #endregion
-
-                                double pricenvd = 0;
-                                if (o.PriceVND.ToFloat(0) > 0)
-                                    pricenvd = Math.Round(Convert.ToDouble(o.PriceVND), 0);
-
-                                var conf = ConfigurationController.GetByTop1();
-                                double cannangdonggo = 0;
-                                double cannangdacbiet = 0;
-                                if (!string.IsNullOrEmpty(o.TongCanNang))
-                                {
-                                    cannangdonggo = Convert.ToDouble(o.TongCanNang);
-                                    cannangdacbiet = Convert.ToDouble(o.TongCanNang);
-                                }
-                                if (o.IsPacked == true)
-                                {
-                                    if (cannangdonggo > 0)
-                                    {
-                                        if (cannangdonggo <= 1)
-                                        {
-                                            IsPackedPrice = Convert.ToDouble(conf.FeeDongGoKgDau);
+                                                if (check.SupportInfoVND != FeeSupport.ToString())
+                                                {
+                                                    HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
+                                              " đã thay đổi tiền phụ phí của đơn hàng ID là: " + o.ID + ", Tên phụ phí: " + fname + ", Số tiền từ: "
+                                              + string.Format("{0:N0}", Convert.ToDouble(check.SupportInfoVND)) + ", Sang: "
+                                              + string.Format("{0:N0}", Convert.ToDouble(FeeSupport)) + "", 10, currentDate);
+                                                }
+                                            }
                                         }
                                         else
                                         {
-                                            cannangdonggo = cannangdonggo - 1;
-                                            IsPackedPrice = Convert.ToDouble(conf.FeeDongGoKgDau) + (cannangdonggo * Convert.ToDouble(conf.FeeDongGoKgSau));
+                                            FeeSupportController.Insert(o.ID, fname, FeeSupport.ToString(), obj_user.Username, currentDate);
+                                            HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
+                                               " đã thêm phụ phí của đơn hàng ID là: " + o.ID + ", Tên phụ phí: " + fname + ", Số tiền: "
+                                               + string.Format("{0:N0}", Convert.ToDouble(FeeSupport)) + "", 10, currentDate);
+
                                         }
                                     }
                                 }
-
-                                if (o.IsCheckSpecial1 == true)
-                                {
-                                    if (cannangdacbiet > 0)
-                                    {
-                                        IsPriceSepcial = (cannangdacbiet * Convert.ToDouble(conf.FeeDacBiet1));
-                                    }
-                                }
-                                if (o.IsCheckSpecial2 == true)
-                                {
-                                    if (cannangdacbiet > 0)
-                                    {
-                                        IsPriceSepcial = (cannangdacbiet * Convert.ToDouble(conf.FeeDacBiet2));
-                                    }
-                                }
-                                if (o.IsCheckSpecial1 == true && o.IsCheckSpecial2 == true)
-                                {
-                                    if (cannangdacbiet > 0)
-                                    {
-                                        IsPriceSepcial = (cannangdacbiet * (Convert.ToDouble(conf.FeeDacBiet1) + Convert.ToDouble(conf.FeeDacBiet2)));
-                                    }
-                                }
-
-                                IsPriceSepcial = Math.Round(IsPriceSepcial, 0);
-                                IsPackedPrice = Math.Round(IsPackedPrice, 0);
-                                double TotalPriceVND = FeeShipCN + FeeBuyPro + FeeWeight + IsCheckProductPrice + IsPackedPrice
-                                                           + IsFastDeliveryPrice + pricenvd + TotalFeeSupport + IsPriceSepcial;
-                                TotalPriceVND = Math.Round(TotalPriceVND, 0);
-
-                                MainOrderController.UpdateFee_OrderDetail(o.ID, Deposit.ToString(), FeeShipCN.ToString(), FeeBuyPro.ToString(), FeeWeight.ToString(), IsCheckProductPrice.ToString(),
-                                IsPackedPrice.ToString(), IsFastDeliveryPrice.ToString(), TotalPriceVND.ToString(), FeeShipCNReal.ToString(), IsPriceSepcial.ToString());
-                                MainOrderController.UpdateCYN(o.ID, FeeShipCNRealCYN.ToString(), FeeShipCNCYN.ToString(), IsCheckProductPriceCYN.ToString(), IsPackedPriceCYN.ToString());
-
-                            }
-                            string OrderWeight = txtOrderWeight.Text.ToString();
-                            OrderWeight = Math.Round(Convert.ToDouble(OrderWeight), 1).ToString();
-                            if (string.IsNullOrEmpty(CurrentOrderWeight))
-                            {
-                                if (CurrentOrderWeight != OrderWeight)
-                                {
-                                    HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
-                                    " đã đổi cân nặng là: " + OrderWeight + "", 8, currentDate);
-                                }
-                            }
-                            else
-                            {
-                                if (CurrentOrderWeight != OrderWeight)
-                                {
-                                    HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
-                                    " đã đổi cân nặng từ: " + CurrentOrderWeight + ", sang: " + OrderWeight + "", 9, currentDate);
-                                }
-                            }
-
-                            string CurrentReceivePlace = o.ReceivePlace;
-                            string ReceivePlace = ddlReceivePlace.SelectedValue;
-
-                            if (CurrentReceivePlace != ReceivePlace)
-                            {
-                                HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
-                                " đã thay đổi kho nhận hàng từ: " + CurrentReceivePlace + ", sang: " + ReceivePlace + "", 8, currentDate);
-                            }
-
-                            string CurrentShippingType = o.ShippingType.ToString();
-                            string ShippingType = ddlShippingType.SelectedValue;
-                            string CurrentLine = "";
-                            string NewLine = "";
-                            int newline = Convert.ToInt32(ddlShippingType.SelectedValue);
-                            int line = Convert.ToInt32(o.ShippingType);
-                            if (line > 0)
-                            {
-                                var shipping = ShippingTypeToWareHouseController.GetByID(line);
-                                if (shipping != null)
-                                {
-                                    CurrentLine = shipping.ShippingTypeName;
-                                }
-                            }
-                            if (newline > 0)
-                            {
-                                var shipping = ShippingTypeToWareHouseController.GetByID(newline);
-                                if (shipping != null)
-                                {
-                                    NewLine = shipping.ShippingTypeName;
-                                }
-                            }
-
-                            if (CurrentShippingType != ShippingType)
-                            {
-                                HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username + " đã thay đổi Line từ: " + CurrentLine + " sang: " + NewLine + "", 8, currentDate);
-                            }
-
-                            string CurrentAmountDeposit = o.AmountDeposit.Trim();
-                            CurrentAmountDeposit = Math.Round(Convert.ToDouble(CurrentAmountDeposit), 0).ToString();
-                            string AmountDeposit = pAmountDeposit.Value.ToString().Trim();
-                            AmountDeposit = Math.Round(Convert.ToDouble(AmountDeposit), 0).ToString();
-
-                            if (obj_user.ID == 1 || obj_user.ID == 22 || obj_user.ID == 941)
-                            {
-                                if (CurrentAmountDeposit != AmountDeposit)
-                                {
-                                    HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
-                                    " đã đổi số tiền phải cọc từ: " + CurrentAmountDeposit + ", sang: " + AmountDeposit + "", 8, currentDate);
-
-                                    MainOrderController.UpdateAmountDeposit(o.ID, AmountDeposit);
-                                }
-                            }
-
-
-                            bool Currentcheckpro = new bool();
-                            bool checkpro = new bool();
-                            bool Package = new bool();
-                            bool MoveIsFastDelivery = new bool();
-                            bool baogia = new bool();
-                            bool smallPackage = new bool();
-                            bool ycg = new bool();
-                            bool baohiem = new bool();
-                            bool orderdone = new bool();
-                            bool orderPrice = new bool();
-                            bool special1 = new bool();
-                            bool special2 = new bool();
-
-                            var listCheck = hdfListCheckBox.Value.Split('|').ToList();
-                            foreach (var item in listCheck)
-                            {
-                                if (!string.IsNullOrEmpty(item))
-                                {
-                                    var ck = item.Split(',').ToList();
-
-                                    if (ck != null)
-                                    {
-                                        if (ck[0] == "1")
-                                        {
-                                            smallPackage = Convert.ToBoolean(ck[1].ToInt(0));
-                                        }
-                                        if (ck[0] == "2")
-                                        {
-                                            baogia = Convert.ToBoolean(ck[1].ToInt(0));
-                                        }
-                                        if (ck[0] == "3")
-                                        {
-                                            checkpro = Convert.ToBoolean(ck[1].ToInt(0));
-                                        }
-                                        if (ck[0] == "4")
-                                        {
-                                            Package = Convert.ToBoolean(ck[1].ToInt(0));
-                                        }
-                                        if (ck[0] == "5")
-                                        {
-                                            MoveIsFastDelivery = Convert.ToBoolean(ck[1].ToInt(0));
-                                        }
-                                        if (ck[0] == "6")
-                                        {
-                                            ycg = Convert.ToBoolean(ck[1].ToInt(0));
-                                        }
-                                        if (ck[0] == "7")
-                                        {
-                                            baohiem = Convert.ToBoolean(ck[1].ToInt(0));
-                                        }
-                                        if (ck[0] == "8")
-                                        {
-                                            orderdone = Convert.ToBoolean(ck[1].ToInt(0));
-                                        }
-                                        if (ck[0] == "9")
-                                        {
-                                            orderPrice = Convert.ToBoolean(ck[1].ToInt(0));
-                                        }
-                                        if (ck[0] == "10")
-                                        {
-                                            special1 = Convert.ToBoolean(ck[1].ToInt(0));
-                                        }
-                                        if (ck[0] == "11")
-                                        {
-                                            special2 = Convert.ToBoolean(ck[1].ToInt(0));
-                                        }
-                                    }
-                                }
-                            }
-
-                            if (Currentcheckpro != checkpro)
-                            {
-                                HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
-                                           " đã đổi dịch vụ kiểm tra đơn hàng từ: " + ConvertBoolHistory(Currentcheckpro, "kiểm tra đơn hàng") + " sang: " + ConvertBoolHistory(checkpro, "kiểm tra đơn hàng") + "",
-                                           8, currentDate);
-                            }
-                            bool CurrentPackage = o.IsPacked.ToString().ToBool();
-
-                            if (CurrentPackage != Package)
-                            {
-                                HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
-                                           " đã đổi dịch vụ đóng gỗ từ: " + ConvertBoolHistory(CurrentPackage, "đóng gỗ") + " sang: " + ConvertBoolHistory(Package, "đóng gỗ") + "",
-                                           8, currentDate);
-                            }
-                            bool CurrentSpecial1 = o.IsCheckSpecial1.ToString().ToBool();
-                            if (CurrentSpecial1 != special1)
-                            {
-                                HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
-                                           " đã đổi phí đặc biệt 1 từ: " + ConvertBoolHistory(CurrentSpecial1, "đặc biệt 1") + " sang: " + ConvertBoolHistory(special1, "đặc biệt 1") + "",
-                                           8, currentDate);
-                            }
-
-                            bool CurrentSpecial2 = o.IsCheckSpecial2.ToString().ToBool();
-                            if (CurrentSpecial2 != special2)
-                            {
-                                HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
-                                           " đã đổi phí đặc biệt 2 từ: " + ConvertBoolHistory(CurrentSpecial2, "đặc biệt 2") + " sang: " + ConvertBoolHistory(special2, "đặc biệt 2") + "",
-                                           8, currentDate);
-                            }
-
-                            bool CurrentIsFastDelivery = o.IsFastDelivery.ToString().ToBool();
-                            string TotalPriceReal1 = rTotalPriceReal.Text.ToString();
-                            TotalPriceReal1 = Math.Round(Convert.ToDouble(TotalPriceReal1), 0).ToString();
-                            string TotalPriceRealCYN1 = rTotalPriceRealCYN.Text.ToString();
-                            TotalPriceRealCYN1 = Math.Round(Convert.ToDouble(TotalPriceRealCYN1), 2).ToString();
-                            if (CurrentIsFastDelivery != MoveIsFastDelivery)
-                            {
-                                HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
-                                " đã đổi dịch vụ giao hàng tận nhà từ: " + ConvertBoolHistory(CurrentIsFastDelivery, "giao hàng tận nhà") + " sang: " + ConvertBoolHistory(MoveIsFastDelivery, "giao hàng tận nhà") + "",
-                                           8, currentDate);
-                            }
-                            MainOrderController.UpdateTotalFeeSupport(o.ID, TotalFeeSupport.ToString());
-                            MainOrderController.UpdateOrderWeight(o.ID, OrderWeight);
-                            MainOrderController.UpdateCheckPro(o.ID, checkpro);
-                            MainOrderController.UpdateBaogia(o.ID, baogia);
-                            MainOrderController.UpdateIsGiaohang(o.ID, ycg);
-                            MainOrderController.UpdateOrderDone(o.ID, orderdone);
-                            MainOrderController.UpdateOrderPrice(o.ID, orderPrice);
-                            MainOrderController.UpdateIsPacked(o.ID, Package);
-                            MainOrderController.UpdateIsSpecial(o.ID, special1, special2);
-                            MainOrderController.UpdateIsFastDelivery(o.ID, MoveIsFastDelivery);
-                            MainOrderController.UpdateFeeWarehouse(o.ID, feeeinwarehouse);
-                            double FeeweightPriceDiscount = 0;
-                            if (!string.IsNullOrEmpty(hdfFeeweightPriceDiscount.Value))
-                            {
-                                FeeweightPriceDiscount = Math.Round(Convert.ToDouble(hdfFeeweightPriceDiscount.Value));
-                            }
-                            MainOrderController.UpdateFeeWeightDC(o.ID, FeeweightPriceDiscount.ToString());
-                            MainOrderController.UpdateOrderWeightCK(o.ID, FeeweightPriceDiscount.ToString());
-                            MainOrderController.UpdateTQVNWeight(o.ID, o.UID.ToString().ToInt(), Math.Round(Convert.ToDouble(pWeightNDT.Text.ToString()), 2).ToString());
-                            MainOrderController.UpdateTotalPriceReal(o.ID, TotalPriceReal1.ToString(), TotalPriceRealCYN1.ToString());
-                            MainOrderController.UpdateFTS(o.ID, o.UID.ToString().ToInt(), ddlWarehouseFrom.SelectedValue.ToInt(), ddlReceivePlace.SelectedValue, ddlShippingType.SelectedValue.ToInt());
-                            MainOrderController.UpdateDoneSmallPackage(o.ID, smallPackage);
-                            MainOrderController.UpdateIsInsurrance(o.ID, baohiem);
-                            if (baohiem == false)
-                            {
-                                MainOrderController.UpdateInsurranceMoney(o.ID, "0", o.InsurancePercent);
-                            }
-                            else
-                            {
-                                double InsurranceMoney = Convert.ToDouble(o.PriceVND) * (Convert.ToDouble(o.InsurancePercent) / 100);
-                                MainOrderController.UpdateInsurranceMoney(o.ID, InsurranceMoney.ToString(), o.InsurancePercent);
-                            }
-                            #region update status
-                            if (status != 1)
-                            {
-                                if (RoleID == 0)
-                                {
-                                    if ((status == 4 && orderdone && ddlDatHang.SelectedValue.ToInt(0) > 0) || (orderdone && ddlDatHang.SelectedValue.ToInt(0) > 0))
-                                    {
-                                        if (o.DateBuy == null)
-                                        {
-                                            MainOrderController.UpdateDateBuy(o.ID, currentDate);
-                                        }
-                                        MainOrderController.UpdateStatusByID(o.ID, 4);
-                                    }
-                                    if ((status == 5 && orderPrice && !string.IsNullOrEmpty(rTotalPriceReal.Text)) || (orderPrice && !string.IsNullOrEmpty(rTotalPriceReal.Text)))
-                                    {
-                                        if (o.DateBuyOK == null)
-                                        {
-                                            MainOrderController.UpdateDateBuyOK(o.ID, currentDate);
-                                        }
-                                        MainOrderController.UpdateStatusByID(o.ID, 5);
-                                    }
-                                    if ((status == 3 && checkMVD) || (checkMVD))
-                                    {
-                                        if (o.DateShipper == null)
-                                        {
-                                            MainOrderController.UpdateDateShipper(o.ID, currentDate);
-                                        }
-                                        MainOrderController.UpdateStatusByID(o.ID, 3);
-                                    }
-                                    if (status == 6)
-                                    {
-                                        if (o.DateTQ == null)
-                                        {
-                                            MainOrderController.UpdateDateTQ(o.ID, currentDate);
-                                        }
-                                        MainOrderController.UpdateStatusByID(o.ID, 6);
-                                    }
-                                    if (status == 7)
-                                    {
-                                        if (o.DateToVN == null)
-                                        {
-                                            MainOrderController.UpdateDateToVN(o.ID, currentDate);
-                                        }
-                                        MainOrderController.UpdateStatusByID(o.ID, 7);
-                                    }
-                                    if (status == 8)
-                                    {
-                                        if (o.DateVN == null)
-                                        {
-                                            MainOrderController.UpdateDateVN(o.ID, currentDate);
-                                        }
-                                        MainOrderController.UpdateStatusByID(o.ID, 8);
-                                    }
-                                    if (status == 9)
-                                    {
-                                        if (o.PayDate == null)
-                                        {
-                                            MainOrderController.UpdatePayDate(o.ID, currentDate);
-                                        }
-                                        MainOrderController.UpdateStatusByID(o.ID, 9);
-                                    }
-                                    if (status == 10)
-                                    {
-                                        if (o.CompleteDate == null)
-                                        {
-                                            MainOrderController.UpdateCompleteDate(o.ID, currentDate);
-                                        }
-                                        MainOrderController.UpdateStatusByID(o.ID, 10);
-                                    }
-                                    if (status == 11)
-                                    {
-                                        if (o.DateToShip == null)
-                                        {
-                                            MainOrderController.UpdateDateToShip(o.ID, currentDate);
-                                        }
-                                        MainOrderController.UpdateStatusByID(o.ID, 11);
-                                    }
-                                    if (status == 12)
-                                    {
-                                        if (o.DateToCancel == null)
-                                        {
-                                            MainOrderController.UpdateDateToCancel(o.ID, currentDate);
-                                        }
-                                        MainOrderController.UpdateStatusByID(o.ID, 12);
-                                    }
-                                    //if (status == 2)
-                                    //{
-                                    //    if (o.DepostiDate == null)
-                                    //    {
-                                    //        MainOrderController.UpdateDepositDate(o.ID, currentDate);
-                                    //    }
-                                    //    MainOrderController.UpdateStatusByID(o.ID, 2);
-                                    //}
-                                }
-                                else if (RoleID == 2)
-                                {
-                                    if ((status == 4 && orderdone && ddlDatHang.SelectedValue.ToInt(0) > 0) || (orderdone && ddlDatHang.SelectedValue.ToInt(0) > 0))
-                                    {
-                                        if (o.DateBuy == null)
-                                        {
-                                            MainOrderController.UpdateDateBuy(o.ID, currentDate);
-                                        }
-                                        MainOrderController.UpdateStatusByID(o.ID, 4);
-                                    }
-                                    if ((status == 5 && orderPrice && !string.IsNullOrEmpty(rTotalPriceReal.Text)) || (orderPrice && !string.IsNullOrEmpty(rTotalPriceReal.Text)))
-                                    {
-                                        if (o.DateBuyOK == null)
-                                        {
-                                            MainOrderController.UpdateDateBuyOK(o.ID, currentDate);
-                                        }
-                                        MainOrderController.UpdateStatusByID(o.ID, 5);
-                                    }
-                                    if ((status == 3 && checkMVD) || (checkMVD))
-                                    {
-                                        if (o.DateShipper == null)
-                                        {
-                                            MainOrderController.UpdateDateShipper(o.ID, currentDate);
-                                        }
-                                        MainOrderController.UpdateStatusByID(o.ID, 3);
-                                    }
-                                    if (status == 6)
-                                    {
-                                        if (o.DateTQ == null)
-                                        {
-                                            MainOrderController.UpdateDateTQ(o.ID, currentDate);
-                                        }
-                                        MainOrderController.UpdateStatusByID(o.ID, 6);
-                                    }
-                                    if (status == 7)
-                                    {
-                                        if (o.DateToVN == null)
-                                        {
-                                            MainOrderController.UpdateDateToVN(o.ID, currentDate);
-                                        }
-                                        MainOrderController.UpdateStatusByID(o.ID, 7);
-                                    }
-                                    if (status == 8)
-                                    {
-                                        if (o.DateVN == null)
-                                        {
-                                            MainOrderController.UpdateDateVN(o.ID, currentDate);
-                                        }
-                                        MainOrderController.UpdateStatusByID(o.ID, 8);
-                                    }
-                                    if (status == 9)
-                                    {
-                                        if (o.PayDate == null)
-                                        {
-                                            MainOrderController.UpdatePayDate(o.ID, currentDate);
-                                        }
-                                        MainOrderController.UpdateStatusByID(o.ID, 9);
-                                    }
-                                    if (status == 10)
-                                    {
-                                        if (o.CompleteDate == null)
-                                        {
-                                            MainOrderController.UpdateCompleteDate(o.ID, currentDate);
-                                        }
-                                        MainOrderController.UpdateStatusByID(o.ID, 10);
-                                    }
-                                    if (status == 11)
-                                    {
-                                        if (o.DateToShip == null)
-                                        {
-                                            MainOrderController.UpdateDateToShip(o.ID, currentDate);
-                                        }
-                                        MainOrderController.UpdateStatusByID(o.ID, 11);
-                                    }
-                                    if (status == 12)
-                                    {
-                                        if (o.DateToCancel == null)
-                                        {
-                                            MainOrderController.UpdateDateToCancel(o.ID, currentDate);
-                                        }
-                                        MainOrderController.UpdateStatusByID(o.ID, 12);
-                                    }
-                                }
-                                else if (RoleID == 3)
-                                {
-                                    if ((status == 4 && orderdone && ddlDatHang.SelectedValue.ToInt(0) > 0) || (orderdone && ddlDatHang.SelectedValue.ToInt(0) > 0))
-                                    {
-                                        if (o.DateBuy == null)
-                                        {
-                                            MainOrderController.UpdateDateBuy(o.ID, currentDate);
-                                            MainOrderController.UpdateStatusByID(o.ID, 4);
-                                        }
-                                    }
-                                    if ((status == 3 && checkMVD) || (checkMVD))
-                                    {
-                                        if (o.DateShipper == null)
-                                        {
-                                            MainOrderController.UpdateDateShipper(o.ID, currentDate);
-                                            MainOrderController.UpdateStatusByID(o.ID, 3);
-                                        }
-                                    }
-                                }
-                                else if (RoleID == 9)
-                                {
-                                    if ((status == 3 && checkMVD) || (checkMVD))
-                                    {
-                                        if (o.DateShipper == null)
-                                        {
-                                            MainOrderController.UpdateDateShipper(o.ID, currentDate);
-                                            MainOrderController.UpdateStatusByID(o.ID, 3);
-                                        }
-                                    }
-                                }
-                                else if (RoleID == 4)
-                                {
-                                    if (status == 6)
-                                    {
-                                        if (o.DateTQ == null)
-                                        {
-                                            MainOrderController.UpdateDateTQ(o.ID, currentDate);
-                                            MainOrderController.UpdateStatusByID(o.ID, 6);
-                                        }
-                                    }
-                                    if (status == 7)
-                                    {
-                                        if (o.DateToVN == null)
-                                        {
-                                            MainOrderController.UpdateDateToVN(o.ID, currentDate);
-                                            MainOrderController.UpdateStatusByID(o.ID, 7);
-                                        }
-                                    }
-                                }
-                                else if (RoleID == 5)
-                                {
-                                    if (status == 8)
-                                    {
-                                        if (o.DateVN == null)
-                                        {
-                                            MainOrderController.UpdateDateVN(o.ID, currentDate);
-                                            MainOrderController.UpdateStatusByID(o.ID, 8);
-                                        }
-                                    }
-                                    if (status == 9)
-                                    {
-                                        if (o.PayDate == null)
-                                        {
-                                            MainOrderController.UpdatePayDate(o.ID, currentDate);
-                                            MainOrderController.UpdateStatusByID(o.ID, 9);
-                                        }
-                                    }
-                                    if (status == 11)
-                                    {
-                                        if (o.DateToShip == null)
-                                        {
-                                            MainOrderController.UpdateDateToShip(o.ID, currentDate);
-                                            MainOrderController.UpdateStatusByID(o.ID, 11);
-                                        }
-                                    }
-                                }
-                                else if (RoleID == 7)
-                                {
-                                    if ((status == 4 && orderdone && ddlDatHang.SelectedValue.ToInt(0) > 0) || (orderdone && ddlDatHang.SelectedValue.ToInt(0) > 0))
-                                    {
-                                        if (o.DateBuy == null)
-                                        {
-                                            MainOrderController.UpdateDateBuy(o.ID, currentDate);
-                                            MainOrderController.UpdateStatusByID(o.ID, 4);
-                                        }
-                                    }
-                                    if ((status == 5 && orderPrice && !string.IsNullOrEmpty(rTotalPriceReal.Text)) || (orderPrice && !string.IsNullOrEmpty(rTotalPriceReal.Text)))
-                                    {
-                                        if (o.DateBuyOK == null)
-                                        {
-                                            MainOrderController.UpdateDateBuyOK(o.ID, currentDate);
-                                            MainOrderController.UpdateStatusByID(o.ID, 5);
-                                        }
-                                    }
-                                }
-                            }
-                            #endregion
-                            #region update liên quan đến status
-                            int currentstt = Convert.ToInt32(o.Status);
-                            var imo = MainOrderController.GetByID(o.ID);
-                            if (currentstt < 3 || currentstt > 7)
-                            {
-                                if (imo.Status != currentstt)
-                                {
-                                    OrderCommentController.Insert(id, "Đã có cập nhật mới cho đơn hàng #" + id + " của bạn.", true, 1, DateTime.Now, uid);
-                                }
-                            }
-                            else if (currentstt > 2 && currentstt < 8)
-                            {
-                                if (imo.Status < 3 || imo.Status > 7)
-                                {
-                                    OrderCommentController.Insert(id, "Đã có cập nhật mới cho đơn hàng #" + id + " của bạn.", true, 1, DateTime.Now, uid);
-
-                                    try
-                                    {
-                                        //PJUtils.SendMailGmail("cskh@1688pgs.vn", "1688pegasus", AccountInfoController.GetByUserID(Convert.ToInt32(o.UID)).Email, 
-                                        //    "Thông báo tại 1688PGS.", 
-                                        //    "Đã có cập nhật trạng thái cho đơn hàng #" + id + " của bạn. CLick vào để xem", "");
-                                        PJUtils.SendMailGmail("cskh.thuonghai@gmail.com.vn.net", "jrbhnznozmlrmwvy",
-                                            AccountInfoController.GetByUserID(Convert.ToInt32(o.UID)).Email,
-                                                    "Thông báo tại NHAPSICHINA.COM",
-                                                    "Đã có cập nhật trạng thái cho đơn hàng #" + id
-                                                    + " của bạn. CLick vào để xem", "");
-                                    }
-                                    catch { }
-                                }
-                            }
-                            #region Ghi lịch sử update status của đơn hàng
-                            if (imo.Status != currentstt)
-                            {
-                                string ustatus = "";
-                                switch (imo.Status.Value)
+                                #endregion
+                                #region Lấy ra text của trạng thái đơn hàng
+                                string orderstatus = "";
+                                int currentOrderStatus = Convert.ToInt32(o.Status);
+                                switch (currentOrderStatus)
                                 {
                                     case 0:
-                                        ustatus = "Đơn mới";
+                                        orderstatus = "Đơn mới";
                                         break;
                                     case 1:
-                                        ustatus = "Đơn hàng hủy";
+                                        orderstatus = "Đơn hàng hủy";
                                         break;
                                     case 2:
-                                        ustatus = "Đơn đã cọc";
+                                        orderstatus = "Đơn đã cọc";
                                         break;
                                     case 3:
-                                        ustatus = "Đơn người bán giao";
+                                        orderstatus = "Đơn người bán giao";
                                         break;
                                     case 4:
-                                        ustatus = "Đơn chờ mua hàng";
+                                        orderstatus = "Đơn chờ mua hàng";
                                         break;
                                     case 5:
-                                        ustatus = "Đơn đã mua hàng";
+                                        orderstatus = "Đơn đã mua hàng";
                                         break;
                                     case 6:
-                                        ustatus = "Kho Trung Quốc nhận hàng";
+                                        orderstatus = "Kho Trung Quốc nhận hàng";
                                         break;
                                     case 7:
-                                        ustatus = "Trên đường về Việt Nam";
+                                        orderstatus = "Trên đường về Việt Nam";
                                         break;
                                     case 8:
-                                        ustatus = "Trong kho Hà Nội";
+                                        orderstatus = "Trong kho Hà Nội";
                                         break;
                                     case 9:
-                                        ustatus = "Đã thanh toán";
+                                        orderstatus = "Đã thanh toán";
                                         break;
                                     case 10:
-                                        ustatus = "Đã hoàn thành";
+                                        orderstatus = "Đã hoàn thành";
                                         break;
                                     case 11:
-                                        ustatus = "Đang giao hàng";
+                                        orderstatus = "Đang giao hàng";
                                         break;
                                     case 12:
-                                        ustatus = "Đơn khiếu nại";
+                                        orderstatus = "Đơn khiếu nại";
                                         break;
                                     default:
                                         break;
                                 }
-                                HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
-                                           " đã đổi trạng thái của đơn hàng ID là: " + o.ID + ", từ: " + orderstatus + ", sang: " + ustatus + "", 0, currentDate);
-                            }
-                            #endregion
-                            if (imo.Status == 5 && imo.Status != currentstt)
-                            {
-                                var setNoti = SendNotiEmailController.GetByID(7);
-                                if (setNoti != null)
+                                #endregion
+                                #region Cập nhật nhân viên KhoTQ và nhân viên KhoVN
+                                if (RoleID == 4)
                                 {
-                                    if (setNoti.IsSentNotiUser == true)
+                                    if (o.KhoTQID == uid || o.KhoTQID == 0)
                                     {
-                                        if (o.OrderType == 1)
-                                        {
-                                            NotificationsController.Inser(accmuahan.ID,
-                                              accmuahan.Username, o.ID,
-                                              "Đơn hàng " + o.ID + " đã được mua hàng.", 1,
-                                              currentDate, obj_user.Username, true);
-                                            string strPathAndQuery = Request.Url.PathAndQuery;
-                                            string strUrl = Request.Url.AbsoluteUri.Replace(strPathAndQuery, "/");
-                                            string datalink = "" + strUrl + "chi-tiet-don-hang/" + o.ID;
-                                            PJUtils.PushNotiDesktop(accmuahan.ID, "Đơn hàng " + o.ID + " đã được mua hàng.", datalink);
-                                        }
-                                        else
-                                        {
-                                            NotificationsController.Inser(accmuahan.ID,
-                                              accmuahan.Username, o.ID,
-                                              "Đơn hàng " + o.ID + " đã được mua hàng.", 11,
-                                              currentDate, obj_user.Username, true);
-                                            string strPathAndQuery = Request.Url.PathAndQuery;
-                                            string strUrl = Request.Url.AbsoluteUri.Replace(strPathAndQuery, "/");
-                                            string datalink = "" + strUrl + "chi-tiet-don-hang/" + o.ID;
-                                            PJUtils.PushNotiDesktop(accmuahan.ID, "Đơn hàng " + o.ID + " đã được mua hàng.", datalink);
-                                        }
-
+                                        MainOrderController.UpdateStaff(o.ID, o.SalerID.ToString().ToInt(0), o.DathangID.ToString().ToInt(0), uid, o.KhoVNID.ToString().ToInt(0));
                                     }
-
-                                    //if (setNoti.IsSendEmailUser == true)
-                                    //{
-                                    //    try
-                                    //    {
-                                    //        PJUtils.SendMailGmail("cskh.thuonghai@gmail.com.vn.net", "jrbhnznozmlrmwvy",
-                                    //            accmuahan.Email,
-                                    //            "Thông báo tại NHAPSICHINA.COM.", "Đơn hàng " + o.ID
-                                    //            + " đã được mua hàng.", "");
-                                    //    }
-                                    //    catch { }
-                                    //}
+                                    else
+                                    {
+                                        PJUtils.ShowMessageBoxSwAlert("Có lỗi trong quá trình xử lý", "e", true, Page);
+                                    }
                                 }
-                            }
-                            #endregion   
-                            #endregion                           
-                            if (RoleID == 0 || RoleID == 2)
-                            {
-                                #region Cập nhật thông tin nhân viên sale và đặt hàng
-                                int SalerID = ddlSaler.SelectedValue.ToString().ToInt(0);
-                                int DathangID = ddlDatHang.SelectedValue.ToString().ToInt(0);
-                                int CSKHID = ddlCSKH.SelectedValue.ToString().ToInt(0);
-                                int KhoTQID = ddlKhoTQ.SelectedValue.ToString().ToInt(0);
-                                int khoVNID = ddlKhoVN.SelectedValue.ToString().ToInt(0);
-                                var mo = MainOrderController.GetAllByID(id);
-                                if (mo != null)
+                                else if (RoleID == 5)
                                 {
-                                    double feebp = Math.Round(Convert.ToDouble(mo.FeeBuyPro), 0);
-                                    DateTime CreatedDate = Convert.ToDateTime(mo.CreatedDate);
-                                    double salepercent = 0;
-                                    double salepercentaf3m = 0;
-                                    double dathangpercent = 0;
-                                    var config = ConfigurationController.GetByTop1();
-                                    if (config != null)
+                                    if (o.KhoVNID == uid || o.KhoTQID == 0)
                                     {
-                                        salepercent = Convert.ToDouble(config.SalePercent);
-                                        salepercentaf3m = Convert.ToDouble(config.SalePercentAfter3Month);
-                                        dathangpercent = Convert.ToDouble(config.DathangPercent);
+                                        MainOrderController.UpdateStaff(o.ID, o.SalerID.ToString().ToInt(0), o.DathangID.ToString().ToInt(0), o.KhoTQID.ToString().ToInt(0), uid);
                                     }
-
-                                    string salerName = "";
-                                    string dathangName = "";
-                                    int salerID_old = Convert.ToInt32(mo.SalerID);
-                                    int dathangID_old = Convert.ToInt32(mo.DathangID);
-                                    int cskh_old = Convert.ToInt32(mo.CSID);
-
-                                    int UID = 0;
-                                    UID = mo.UID.Value;
-
-                                    if (CSKHID != cskh_old)
+                                    else
                                     {
-                                        MainOrderController.UpdateCSKHID(mo.ID, CSKHID);
+                                        PJUtils.ShowMessageBoxSwAlert("Có lỗi trong quá trình xử lý", "e", true, Page);
                                     }
-
-                                    #region Saler
-                                    if (SalerID > 0)
+                                }
+                                #endregion
+                                #region cập nhật thông tin của đơn hàng
+                                double feeeinwarehouse = 0;
+                                int status = ddlStatus.SelectedValue.ToString().ToInt(0);
+                                if (status == 1)
+                                {
+                                    if (RoleID == 0 || RoleID == 2 || RoleID == 9)
                                     {
-                                        if (SalerID == salerID_old)
+
+                                        MainOrderController.UpdateStatusByID(o.ID, 1);
+                                        double Deposit = 0;
+                                        if (o.Deposit.ToFloat(0) > 0)
+                                            Deposit = Math.Round(Convert.ToDouble(o.Deposit), 0);
+                                        if (Deposit > 0)
                                         {
-                                            var staff = StaffIncomeController.GetByMainOrderIDUID(id, salerID_old);
-                                            if (staff != null)
+                                            var user_order = AccountController.GetByID(o.UID.ToString().ToInt());
+                                            if (user_order != null)
                                             {
-                                                int rStaffID = staff.ID;
-                                                int staffstatus = Convert.ToInt32(staff.Status);
-                                                if (staffstatus == 1)
-                                                {
-                                                    var sale = AccountController.GetByID(salerID_old);
-                                                    if (sale != null)
-                                                    {
-                                                        salerName = sale.Username;
-                                                        var createdDate = DateTime.Now;
-                                                        var top1 = MainOrderController.GetTop1ByUID(UID);
-                                                        if (top1.Count > 0)
-                                                        {
-                                                            foreach (var item in top1)
-                                                            {
-                                                                createdDate = Convert.ToDateTime(item.CreatedDate);
-                                                            }
+                                                double wallet = 0;
+                                                if (user_order.Wallet.ToString().ToFloat(0) > 0)
+                                                    wallet = Math.Round(Convert.ToDouble(user_order.Wallet), 0);
+                                                wallet = wallet + Deposit;
+                                                HistoryPayWalletController.Insert(user_order.ID, user_order.Username, o.ID, Deposit,
+                                                "Đơn hàng: " + o.ID + " bị hủy và hoàn tiền cọc cho khách.", wallet, 2, 2, currentDate, obj_user.Username);
+                                                AccountController.updateWallet(user_order.ID, wallet, currentDate, obj_user.Username);
+                                                MainOrderController.UpdateDeposit(o.ID, "0");
+                                                PayOrderHistoryController.Insert(o.ID, user_order.ID, 4, Deposit, 2, currentDate, obj_user.Username);
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    double OCurrent_deposit = 0;
+                                    if (o.Deposit.ToFloat(0) > 0)
+                                        OCurrent_deposit = Math.Round(Convert.ToDouble(o.Deposit), 0);
 
-                                                            int d = CreatedDate.Subtract(createdDate).Days;
-                                                            if (d > 90)
+                                    double OCurrent_FeeShipCN = 0;
+                                    if (o.FeeShipCN.ToFloat(0) > 0)
+                                        OCurrent_FeeShipCN = Math.Round(Convert.ToDouble(o.FeeShipCN), 2);
+
+                                    double OCurrent_FeeBuyPro = 0;
+                                    if (o.FeeBuyPro.ToFloat(0) > 0)
+                                        OCurrent_FeeBuyPro = Math.Round(Convert.ToDouble(o.FeeBuyPro), 0);
+
+                                    double OCurrent_FeeWeight = 0;
+                                    if (o.FeeWeight.ToFloat(0) > 0)
+                                        OCurrent_FeeWeight = Math.Round(Convert.ToDouble(o.FeeWeight), 0);
+
+                                    double OCurrent_IsCheckProductPrice = 0;
+                                    if (o.IsCheckProductPrice.ToFloat(0) > 0)
+                                        OCurrent_IsCheckProductPrice = Math.Round(Convert.ToDouble(o.IsCheckProductPrice), 0);
+
+                                    double OCurrent_IsPackedPrice = 0;
+                                    if (o.IsPackedPrice.ToFloat(0) > 0)
+                                        OCurrent_IsPackedPrice = Math.Round(Convert.ToDouble(o.IsPackedPrice), 0);
+
+                                    double OCurrent_IsSpecial = 0;
+                                    if (o.IsCheckPriceSpecial.ToFloat(0) > 0)
+                                        OCurrent_IsSpecial = Math.Round(Convert.ToDouble(o.IsCheckPriceSpecial), 0);
+
+                                    double OCurrent_IsFastDeliveryPrice = 0;
+                                    if (o.IsFastDeliveryPrice.ToFloat(0) > 0)
+                                        OCurrent_IsFastDeliveryPrice = Math.Round(Convert.ToDouble(o.IsFastDeliveryPrice), 0);
+
+                                    double OCurrent_TotalPriceReal = 0;
+                                    if (o.TotalPriceReal.ToFloat(0) > 0)
+                                        OCurrent_TotalPriceReal = Math.Round(Convert.ToDouble(o.TotalPriceReal), 0);
+
+                                    double OCurrent_TotalPriceRealCYN = 0;
+                                    if (o.TotalPriceRealCYN.ToFloat(0) > 0)
+                                        OCurrent_TotalPriceRealCYN = Math.Round(Convert.ToDouble(o.TotalPriceRealCYN), 2);
+
+                                    double Deposit = Math.Round(Convert.ToDouble(pDeposit.Value), 0);
+                                    double FeeShipCN = Math.Round(Convert.ToDouble(pCNShipFee.Text), 0);
+                                    double FeeShipCNCYN = Math.Round(Convert.ToDouble(pCNShipFeeNDT.Text), 2);
+                                    double FeeShipCNReal = Math.Round(Convert.ToDouble(pCNShipFeeReal.Text), 0);
+                                    double FeeShipCNRealCYN = Math.Round(Convert.ToDouble(pCNShipFeeNDTReal.Text), 2);
+                                    double FeeBuyPro = Math.Round(Convert.ToDouble(pBuy.Text), 0);
+                                    double FeeWeight = Math.Round(Convert.ToDouble(pWeight.Text), 0);
+                                    double TotalPriceReal = Math.Round(Convert.ToDouble(rTotalPriceReal.Text), 0);
+                                    double TotalPriceRealCYN = Math.Round(Convert.ToDouble(rTotalPriceRealCYN.Text), 2);
+
+                                    if (o.FeeInWareHouse != null)
+                                        feeeinwarehouse = Math.Round(Convert.ToDouble(o.FeeInWareHouse), 0);
+
+                                    double IsCheckProductPrice = 0;
+                                    if (pCheck.Text.ToString().ToFloat(0) > 0)
+                                        IsCheckProductPrice = Math.Round(Convert.ToDouble(pCheck.Text), 0);
+
+                                    double IsCheckProductPriceCYN = 0;
+                                    if (pCheckNDT.Text.ToString().ToFloat(0) > 0)
+                                        IsCheckProductPriceCYN = Math.Round(Convert.ToDouble(pCheckNDT.Text), 0);
+
+
+                                    double IsPackedPrice = 0;
+                                    if (pPacked.Text.ToString().ToFloat(0) > 0)
+                                        IsPackedPrice = Math.Round(Convert.ToDouble(pPacked.Text), 0);
+
+                                    double IsPriceSepcial = 0;
+                                    if (txtFeeSpecial.Text.ToString().ToFloat(0) > 0)
+                                        IsPriceSepcial = Math.Round(Convert.ToDouble(txtFeeSpecial.Text), 0);
+
+                                    double IsPackedPriceCYN = 0;
+                                    if (pPackedNDT.Text.ToString().ToFloat(0) > 0)
+                                        IsPackedPriceCYN = Math.Round(Convert.ToDouble(pPackedNDT.Text), 0);
+
+                                    double IsFastDeliveryPrice = 0;
+                                    if (pShipHome.Text.ToString().ToFloat(0) > 0)
+                                        IsFastDeliveryPrice = Math.Round(Convert.ToDouble(pShipHome.Text), 0);
+
+
+                                    #region Ghi lịch sử chỉnh sửa các loại giá
+                                    if (obj_user.ID == 1 || obj_user.ID == 22 || obj_user.ID == 941)
+                                    {
+                                        if (OCurrent_deposit != Deposit)
+                                        {
+                                            HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
+                                            " đã đổi tiền đặt cọc từ: " + string.Format("{0:N0}", OCurrent_deposit) + ", sang: "
+                                             + string.Format("{0:N0}", Deposit) + "", 1, currentDate);
+
+                                            MainOrderController.UpdateDeposit(o.ID, Deposit.ToString());
+                                        }
+                                    }
+                                    if (OCurrent_FeeShipCN != FeeShipCN)
+                                    {
+                                        HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
+                                                " đã đổi tiền phí ship Trung Quốc từ " + string.Format("{0:N0}", OCurrent_FeeShipCN) + " sang "
+                                                + string.Format("{0:N0}", FeeShipCN) + "", 2, currentDate);
+                                    }
+                                    if (OCurrent_FeeBuyPro < FeeBuyPro || OCurrent_FeeBuyPro > FeeBuyPro)
+                                    {
+                                        HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
+                                        " đã đổi tiền phí mua hàng từ: " + string.Format("{0:N0}", OCurrent_FeeBuyPro) + " sang: "
+                                        + string.Format("{0:N0}", FeeBuyPro) + "", 3, currentDate);
+                                    }
+                                    if (OCurrent_TotalPriceReal < TotalPriceReal || OCurrent_TotalPriceReal > TotalPriceReal)
+                                    {
+                                        HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
+                                                " đã đổi tiền phí mua thật từ: " + string.Format("{0:N0}", OCurrent_TotalPriceReal) + " sang: "
+                                                + string.Format("{0:N0}", TotalPriceReal) + "", 3, currentDate);
+                                    }
+                                    if (OCurrent_FeeWeight != FeeWeight)
+                                    {
+                                        HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
+                                                " đã đổi tiền phí TQ-VN từ: " + string.Format("{0:N0}", OCurrent_FeeWeight) + " sang: "
+                                                + string.Format("{0:N0}", FeeWeight) + "", 4, currentDate);
+                                    }
+                                    if (OCurrent_IsCheckProductPrice != IsCheckProductPrice)
+                                    {
+
+                                        HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
+                                                " đã đổi tiền phí kiểm tra sản phẩm từ: " + string.Format("{0:N0}", OCurrent_IsCheckProductPrice) + " sang: "
+                                                + string.Format("{0:N0}", IsCheckProductPrice) + "", 5, currentDate);
+                                    }
+                                    if (OCurrent_IsPackedPrice != IsPackedPrice)
+                                    {
+
+                                        HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
+                                                " đã đổi tiền phí đóng gỗ của đơn hàng ID là: " + o.ID + ", từ: " + string.Format("{0:N0}", OCurrent_IsPackedPrice) + " sang: "
+                                                + string.Format("{0:N0}", IsPackedPrice) + "", 6, currentDate);
+                                    }
+
+                                    if (OCurrent_IsSpecial != IsPriceSepcial)
+                                    {
+                                        HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
+                                               " đã đổi tiền phí đặc biệt từ: " + string.Format("{0:N0}", OCurrent_IsSpecial) + " sang: "
+                                               + string.Format("{0:N0}", IsPriceSepcial) + "", 6, currentDate);
+                                    }
+
+                                    if (OCurrent_IsFastDeliveryPrice != IsFastDeliveryPrice)
+                                    {
+
+                                        HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
+                                                " đã đổi tiền phí ship giao hàng tận nhà từ: " + string.Format("{0:N0}", OCurrent_IsFastDeliveryPrice) + " sang: "
+                                                + string.Format("{0:N0}", IsFastDeliveryPrice) + "", 7, currentDate);
+                                    }
+                                    #endregion
+
+                                    double pricenvd = 0;
+                                    if (o.PriceVND.ToFloat(0) > 0)
+                                        pricenvd = Math.Round(Convert.ToDouble(o.PriceVND), 0);
+
+                                    var conf = ConfigurationController.GetByTop1();
+                                    double cannangdonggo = 0;
+                                    double cannangdacbiet = 0;
+                                    if (!string.IsNullOrEmpty(o.TongCanNang))
+                                    {
+                                        cannangdonggo = Convert.ToDouble(o.TongCanNang);
+                                        cannangdacbiet = Convert.ToDouble(o.TongCanNang);
+                                    }
+                                    if (o.IsPacked == true)
+                                    {
+                                        if (cannangdonggo > 0)
+                                        {
+                                            if (cannangdonggo <= 1)
+                                            {
+                                                IsPackedPrice = Convert.ToDouble(conf.FeeDongGoKgDau);
+                                            }
+                                            else
+                                            {
+                                                cannangdonggo = cannangdonggo - 1;
+                                                IsPackedPrice = Convert.ToDouble(conf.FeeDongGoKgDau) + (cannangdonggo * Convert.ToDouble(conf.FeeDongGoKgSau));
+                                            }
+                                        }
+                                    }
+
+                                    if (o.IsCheckSpecial1 == true)
+                                    {
+                                        if (cannangdacbiet > 0)
+                                        {
+                                            IsPriceSepcial = (cannangdacbiet * Convert.ToDouble(conf.FeeDacBiet1));
+                                        }
+                                    }
+                                    if (o.IsCheckSpecial2 == true)
+                                    {
+                                        if (cannangdacbiet > 0)
+                                        {
+                                            IsPriceSepcial = (cannangdacbiet * Convert.ToDouble(conf.FeeDacBiet2));
+                                        }
+                                    }
+                                    if (o.IsCheckSpecial1 == true && o.IsCheckSpecial2 == true)
+                                    {
+                                        if (cannangdacbiet > 0)
+                                        {
+                                            IsPriceSepcial = (cannangdacbiet * (Convert.ToDouble(conf.FeeDacBiet1) + Convert.ToDouble(conf.FeeDacBiet2)));
+                                        }
+                                    }
+
+                                    IsPriceSepcial = Math.Round(IsPriceSepcial, 0);
+                                    IsPackedPrice = Math.Round(IsPackedPrice, 0);
+                                    double TotalPriceVND = FeeShipCN + FeeBuyPro + FeeWeight + IsCheckProductPrice + IsPackedPrice
+                                                               + IsFastDeliveryPrice + pricenvd + TotalFeeSupport + IsPriceSepcial;
+                                    TotalPriceVND = Math.Round(TotalPriceVND, 0);
+
+                                    MainOrderController.UpdateFee_OrderDetail(o.ID, Deposit.ToString(), FeeShipCN.ToString(), FeeBuyPro.ToString(), FeeWeight.ToString(), IsCheckProductPrice.ToString(),
+                                    IsPackedPrice.ToString(), IsFastDeliveryPrice.ToString(), TotalPriceVND.ToString(), FeeShipCNReal.ToString(), IsPriceSepcial.ToString());
+                                    MainOrderController.UpdateCYN(o.ID, FeeShipCNRealCYN.ToString(), FeeShipCNCYN.ToString(), IsCheckProductPriceCYN.ToString(), IsPackedPriceCYN.ToString());
+
+                                }
+                                string OrderWeight = txtOrderWeight.Text.ToString();
+                                OrderWeight = Math.Round(Convert.ToDouble(OrderWeight), 1).ToString();
+                                if (string.IsNullOrEmpty(CurrentOrderWeight))
+                                {
+                                    if (CurrentOrderWeight != OrderWeight)
+                                    {
+                                        HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
+                                        " đã đổi cân nặng là: " + OrderWeight + "", 8, currentDate);
+                                    }
+                                }
+                                else
+                                {
+                                    if (CurrentOrderWeight != OrderWeight)
+                                    {
+                                        HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
+                                        " đã đổi cân nặng từ: " + CurrentOrderWeight + ", sang: " + OrderWeight + "", 9, currentDate);
+                                    }
+                                }
+
+                                string CurrentReceivePlace = o.ReceivePlace;
+                                string ReceivePlace = ddlReceivePlace.SelectedValue;
+
+                                if (CurrentReceivePlace != ReceivePlace)
+                                {
+                                    HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
+                                    " đã thay đổi kho nhận hàng từ: " + CurrentReceivePlace + ", sang: " + ReceivePlace + "", 8, currentDate);
+                                }
+
+                                string CurrentShippingType = o.ShippingType.ToString();
+                                string ShippingType = ddlShippingType.SelectedValue;
+                                string CurrentLine = "";
+                                string NewLine = "";
+                                int newline = Convert.ToInt32(ddlShippingType.SelectedValue);
+                                int line = Convert.ToInt32(o.ShippingType);
+                                if (line > 0)
+                                {
+                                    var shipping = ShippingTypeToWareHouseController.GetByID(line);
+                                    if (shipping != null)
+                                    {
+                                        CurrentLine = shipping.ShippingTypeName;
+                                    }
+                                }
+                                if (newline > 0)
+                                {
+                                    var shipping = ShippingTypeToWareHouseController.GetByID(newline);
+                                    if (shipping != null)
+                                    {
+                                        NewLine = shipping.ShippingTypeName;
+                                    }
+                                }
+
+                                if (CurrentShippingType != ShippingType)
+                                {
+                                    HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username + " đã thay đổi Line từ: " + CurrentLine + " sang: " + NewLine + "", 8, currentDate);
+                                }
+
+                                string CurrentAmountDeposit = o.AmountDeposit.Trim();
+                                CurrentAmountDeposit = Math.Round(Convert.ToDouble(CurrentAmountDeposit), 0).ToString();
+                                string AmountDeposit = pAmountDeposit.Value.ToString().Trim();
+                                AmountDeposit = Math.Round(Convert.ToDouble(AmountDeposit), 0).ToString();
+
+                                if (obj_user.ID == 1 || obj_user.ID == 22 || obj_user.ID == 941)
+                                {
+                                    if (CurrentAmountDeposit != AmountDeposit)
+                                    {
+                                        HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
+                                        " đã đổi số tiền phải cọc từ: " + CurrentAmountDeposit + ", sang: " + AmountDeposit + "", 8, currentDate);
+
+                                        MainOrderController.UpdateAmountDeposit(o.ID, AmountDeposit);
+                                    }
+                                }
+
+
+                                bool Currentcheckpro = new bool();
+                                bool checkpro = new bool();
+                                bool Package = new bool();
+                                bool MoveIsFastDelivery = new bool();
+                                bool baogia = new bool();
+                                bool smallPackage = new bool();
+                                bool ycg = new bool();
+                                bool baohiem = new bool();
+                                bool orderdone = new bool();
+                                bool orderPrice = new bool();
+                                bool special1 = new bool();
+                                bool special2 = new bool();
+
+                                var listCheck = hdfListCheckBox.Value.Split('|').ToList();
+                                foreach (var item in listCheck)
+                                {
+                                    if (!string.IsNullOrEmpty(item))
+                                    {
+                                        var ck = item.Split(',').ToList();
+
+                                        if (ck != null)
+                                        {
+                                            if (ck[0] == "1")
+                                            {
+                                                smallPackage = Convert.ToBoolean(ck[1].ToInt(0));
+                                            }
+                                            if (ck[0] == "2")
+                                            {
+                                                baogia = Convert.ToBoolean(ck[1].ToInt(0));
+                                            }
+                                            if (ck[0] == "3")
+                                            {
+                                                checkpro = Convert.ToBoolean(ck[1].ToInt(0));
+                                            }
+                                            if (ck[0] == "4")
+                                            {
+                                                Package = Convert.ToBoolean(ck[1].ToInt(0));
+                                            }
+                                            if (ck[0] == "5")
+                                            {
+                                                MoveIsFastDelivery = Convert.ToBoolean(ck[1].ToInt(0));
+                                            }
+                                            if (ck[0] == "6")
+                                            {
+                                                ycg = Convert.ToBoolean(ck[1].ToInt(0));
+                                            }
+                                            if (ck[0] == "7")
+                                            {
+                                                baohiem = Convert.ToBoolean(ck[1].ToInt(0));
+                                            }
+                                            if (ck[0] == "8")
+                                            {
+                                                orderdone = Convert.ToBoolean(ck[1].ToInt(0));
+                                            }
+                                            if (ck[0] == "9")
+                                            {
+                                                orderPrice = Convert.ToBoolean(ck[1].ToInt(0));
+                                            }
+                                            if (ck[0] == "10")
+                                            {
+                                                special1 = Convert.ToBoolean(ck[1].ToInt(0));
+                                            }
+                                            if (ck[0] == "11")
+                                            {
+                                                special2 = Convert.ToBoolean(ck[1].ToInt(0));
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (Currentcheckpro != checkpro)
+                                {
+                                    HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
+                                               " đã đổi dịch vụ kiểm tra đơn hàng từ: " + ConvertBoolHistory(Currentcheckpro, "kiểm tra đơn hàng") + " sang: " + ConvertBoolHistory(checkpro, "kiểm tra đơn hàng") + "",
+                                               8, currentDate);
+                                }
+                                bool CurrentPackage = o.IsPacked.ToString().ToBool();
+
+                                if (CurrentPackage != Package)
+                                {
+                                    HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
+                                               " đã đổi dịch vụ đóng gỗ từ: " + ConvertBoolHistory(CurrentPackage, "đóng gỗ") + " sang: " + ConvertBoolHistory(Package, "đóng gỗ") + "",
+                                               8, currentDate);
+                                }
+                                bool CurrentSpecial1 = o.IsCheckSpecial1.ToString().ToBool();
+                                if (CurrentSpecial1 != special1)
+                                {
+                                    HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
+                                               " đã đổi phí đặc biệt 1 từ: " + ConvertBoolHistory(CurrentSpecial1, "đặc biệt 1") + " sang: " + ConvertBoolHistory(special1, "đặc biệt 1") + "",
+                                               8, currentDate);
+                                }
+
+                                bool CurrentSpecial2 = o.IsCheckSpecial2.ToString().ToBool();
+                                if (CurrentSpecial2 != special2)
+                                {
+                                    HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
+                                               " đã đổi phí đặc biệt 2 từ: " + ConvertBoolHistory(CurrentSpecial2, "đặc biệt 2") + " sang: " + ConvertBoolHistory(special2, "đặc biệt 2") + "",
+                                               8, currentDate);
+                                }
+
+                                bool CurrentIsFastDelivery = o.IsFastDelivery.ToString().ToBool();
+                                string TotalPriceReal1 = rTotalPriceReal.Text.ToString();
+                                TotalPriceReal1 = Math.Round(Convert.ToDouble(TotalPriceReal1), 0).ToString();
+                                string TotalPriceRealCYN1 = rTotalPriceRealCYN.Text.ToString();
+                                TotalPriceRealCYN1 = Math.Round(Convert.ToDouble(TotalPriceRealCYN1), 2).ToString();
+                                if (CurrentIsFastDelivery != MoveIsFastDelivery)
+                                {
+                                    HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
+                                    " đã đổi dịch vụ giao hàng tận nhà từ: " + ConvertBoolHistory(CurrentIsFastDelivery, "giao hàng tận nhà") + " sang: " + ConvertBoolHistory(MoveIsFastDelivery, "giao hàng tận nhà") + "",
+                                               8, currentDate);
+                                }
+                                MainOrderController.UpdateTotalFeeSupport(o.ID, TotalFeeSupport.ToString());
+                                MainOrderController.UpdateOrderWeight(o.ID, OrderWeight);
+                                MainOrderController.UpdateCheckPro(o.ID, checkpro);
+                                MainOrderController.UpdateBaogia(o.ID, baogia);
+                                MainOrderController.UpdateIsGiaohang(o.ID, ycg);
+                                MainOrderController.UpdateOrderDone(o.ID, orderdone);
+                                MainOrderController.UpdateOrderPrice(o.ID, orderPrice);
+                                MainOrderController.UpdateIsPacked(o.ID, Package);
+                                MainOrderController.UpdateIsSpecial(o.ID, special1, special2);
+                                MainOrderController.UpdateIsFastDelivery(o.ID, MoveIsFastDelivery);
+                                MainOrderController.UpdateFeeWarehouse(o.ID, feeeinwarehouse);
+                                double FeeweightPriceDiscount = 0;
+                                if (!string.IsNullOrEmpty(hdfFeeweightPriceDiscount.Value))
+                                {
+                                    FeeweightPriceDiscount = Math.Round(Convert.ToDouble(hdfFeeweightPriceDiscount.Value));
+                                }
+                                MainOrderController.UpdateFeeWeightDC(o.ID, FeeweightPriceDiscount.ToString());
+                                MainOrderController.UpdateOrderWeightCK(o.ID, FeeweightPriceDiscount.ToString());
+                                MainOrderController.UpdateTQVNWeight(o.ID, o.UID.ToString().ToInt(), Math.Round(Convert.ToDouble(pWeightNDT.Text.ToString()), 2).ToString());
+                                MainOrderController.UpdateTotalPriceReal(o.ID, TotalPriceReal1.ToString(), TotalPriceRealCYN1.ToString());
+                                MainOrderController.UpdateFTS(o.ID, o.UID.ToString().ToInt(), ddlWarehouseFrom.SelectedValue.ToInt(), ddlReceivePlace.SelectedValue, ddlShippingType.SelectedValue.ToInt());
+                                MainOrderController.UpdateDoneSmallPackage(o.ID, smallPackage);
+                                MainOrderController.UpdateIsInsurrance(o.ID, baohiem);
+                                if (baohiem == false)
+                                {
+                                    MainOrderController.UpdateInsurranceMoney(o.ID, "0", o.InsurancePercent);
+                                }
+                                else
+                                {
+                                    double InsurranceMoney = Convert.ToDouble(o.PriceVND) * (Convert.ToDouble(o.InsurancePercent) / 100);
+                                    MainOrderController.UpdateInsurranceMoney(o.ID, InsurranceMoney.ToString(), o.InsurancePercent);
+                                }
+                                #region update status
+                                if (status != 1)
+                                {
+                                    if (RoleID == 0)
+                                    {
+                                        if ((status == 4 && orderdone && ddlDatHang.SelectedValue.ToInt(0) > 0) || (orderdone && ddlDatHang.SelectedValue.ToInt(0) > 0))
+                                        {
+                                            if (o.DateBuy == null)
+                                            {
+                                                MainOrderController.UpdateDateBuy(o.ID, currentDate);
+                                            }
+                                            MainOrderController.UpdateStatusByID(o.ID, 4);
+                                        }
+                                        if ((status == 5 && orderPrice && !string.IsNullOrEmpty(rTotalPriceReal.Text)) || (orderPrice && !string.IsNullOrEmpty(rTotalPriceReal.Text)))
+                                        {
+                                            if (o.DateBuyOK == null)
+                                            {
+                                                MainOrderController.UpdateDateBuyOK(o.ID, currentDate);
+                                            }
+                                            MainOrderController.UpdateStatusByID(o.ID, 5);
+                                        }
+                                        if ((status == 3 && checkMVD) || (checkMVD))
+                                        {
+                                            if (o.DateShipper == null)
+                                            {
+                                                MainOrderController.UpdateDateShipper(o.ID, currentDate);
+                                            }
+                                            MainOrderController.UpdateStatusByID(o.ID, 3);
+                                        }
+                                        if (status == 6)
+                                        {
+                                            if (o.DateTQ == null)
+                                            {
+                                                MainOrderController.UpdateDateTQ(o.ID, currentDate);
+                                            }
+                                            MainOrderController.UpdateStatusByID(o.ID, 6);
+                                        }
+                                        if (status == 7)
+                                        {
+                                            if (o.DateToVN == null)
+                                            {
+                                                MainOrderController.UpdateDateToVN(o.ID, currentDate);
+                                            }
+                                            MainOrderController.UpdateStatusByID(o.ID, 7);
+                                        }
+                                        if (status == 8)
+                                        {
+                                            if (o.DateVN == null)
+                                            {
+                                                MainOrderController.UpdateDateVN(o.ID, currentDate);
+                                            }
+                                            MainOrderController.UpdateStatusByID(o.ID, 8);
+                                        }
+                                        if (status == 9)
+                                        {
+                                            if (o.PayDate == null)
+                                            {
+                                                MainOrderController.UpdatePayDate(o.ID, currentDate);
+                                            }
+                                            MainOrderController.UpdateStatusByID(o.ID, 9);
+                                        }
+                                        if (status == 10)
+                                        {
+                                            if (o.CompleteDate == null)
+                                            {
+                                                MainOrderController.UpdateCompleteDate(o.ID, currentDate);
+                                            }
+                                            MainOrderController.UpdateStatusByID(o.ID, 10);
+                                        }
+                                        if (status == 11)
+                                        {
+                                            if (o.DateToShip == null)
+                                            {
+                                                MainOrderController.UpdateDateToShip(o.ID, currentDate);
+                                            }
+                                            MainOrderController.UpdateStatusByID(o.ID, 11);
+                                        }
+                                        if (status == 12)
+                                        {
+                                            if (o.DateToCancel == null)
+                                            {
+                                                MainOrderController.UpdateDateToCancel(o.ID, currentDate);
+                                            }
+                                            MainOrderController.UpdateStatusByID(o.ID, 12);
+                                        }
+                                        //if (status == 2)
+                                        //{
+                                        //    if (o.DepostiDate == null)
+                                        //    {
+                                        //        MainOrderController.UpdateDepositDate(o.ID, currentDate);
+                                        //    }
+                                        //    MainOrderController.UpdateStatusByID(o.ID, 2);
+                                        //}
+                                    }
+                                    else if (RoleID == 2)
+                                    {
+                                        if ((status == 4 && orderdone && ddlDatHang.SelectedValue.ToInt(0) > 0) || (orderdone && ddlDatHang.SelectedValue.ToInt(0) > 0))
+                                        {
+                                            if (o.DateBuy == null)
+                                            {
+                                                MainOrderController.UpdateDateBuy(o.ID, currentDate);
+                                            }
+                                            MainOrderController.UpdateStatusByID(o.ID, 4);
+                                        }
+                                        if ((status == 5 && orderPrice && !string.IsNullOrEmpty(rTotalPriceReal.Text)) || (orderPrice && !string.IsNullOrEmpty(rTotalPriceReal.Text)))
+                                        {
+                                            if (o.DateBuyOK == null)
+                                            {
+                                                MainOrderController.UpdateDateBuyOK(o.ID, currentDate);
+                                            }
+                                            MainOrderController.UpdateStatusByID(o.ID, 5);
+                                        }
+                                        if ((status == 3 && checkMVD) || (checkMVD))
+                                        {
+                                            if (o.DateShipper == null)
+                                            {
+                                                MainOrderController.UpdateDateShipper(o.ID, currentDate);
+                                            }
+                                            MainOrderController.UpdateStatusByID(o.ID, 3);
+                                        }
+                                        if (status == 6)
+                                        {
+                                            if (o.DateTQ == null)
+                                            {
+                                                MainOrderController.UpdateDateTQ(o.ID, currentDate);
+                                            }
+                                            MainOrderController.UpdateStatusByID(o.ID, 6);
+                                        }
+                                        if (status == 7)
+                                        {
+                                            if (o.DateToVN == null)
+                                            {
+                                                MainOrderController.UpdateDateToVN(o.ID, currentDate);
+                                            }
+                                            MainOrderController.UpdateStatusByID(o.ID, 7);
+                                        }
+                                        if (status == 8)
+                                        {
+                                            if (o.DateVN == null)
+                                            {
+                                                MainOrderController.UpdateDateVN(o.ID, currentDate);
+                                            }
+                                            MainOrderController.UpdateStatusByID(o.ID, 8);
+                                        }
+                                        if (status == 9)
+                                        {
+                                            if (o.PayDate == null)
+                                            {
+                                                MainOrderController.UpdatePayDate(o.ID, currentDate);
+                                            }
+                                            MainOrderController.UpdateStatusByID(o.ID, 9);
+                                        }
+                                        if (status == 10)
+                                        {
+                                            if (o.CompleteDate == null)
+                                            {
+                                                MainOrderController.UpdateCompleteDate(o.ID, currentDate);
+                                            }
+                                            MainOrderController.UpdateStatusByID(o.ID, 10);
+                                        }
+                                        if (status == 11)
+                                        {
+                                            if (o.DateToShip == null)
+                                            {
+                                                MainOrderController.UpdateDateToShip(o.ID, currentDate);
+                                            }
+                                            MainOrderController.UpdateStatusByID(o.ID, 11);
+                                        }
+                                        if (status == 12)
+                                        {
+                                            if (o.DateToCancel == null)
+                                            {
+                                                MainOrderController.UpdateDateToCancel(o.ID, currentDate);
+                                            }
+                                            MainOrderController.UpdateStatusByID(o.ID, 12);
+                                        }
+                                    }
+                                    else if (RoleID == 3)
+                                    {
+                                        if ((status == 4 && orderdone && ddlDatHang.SelectedValue.ToInt(0) > 0) || (orderdone && ddlDatHang.SelectedValue.ToInt(0) > 0))
+                                        {
+                                            if (o.DateBuy == null)
+                                            {
+                                                MainOrderController.UpdateDateBuy(o.ID, currentDate);
+                                                MainOrderController.UpdateStatusByID(o.ID, 4);
+                                            }
+                                        }
+                                        if ((status == 3 && checkMVD) || (checkMVD))
+                                        {
+                                            if (o.DateShipper == null)
+                                            {
+                                                MainOrderController.UpdateDateShipper(o.ID, currentDate);
+                                                MainOrderController.UpdateStatusByID(o.ID, 3);
+                                            }
+                                        }
+                                    }
+                                    else if (RoleID == 9)
+                                    {
+                                        if ((status == 3 && checkMVD) || (checkMVD))
+                                        {
+                                            if (o.DateShipper == null)
+                                            {
+                                                MainOrderController.UpdateDateShipper(o.ID, currentDate);
+                                                MainOrderController.UpdateStatusByID(o.ID, 3);
+                                            }
+                                        }
+                                    }
+                                    else if (RoleID == 4)
+                                    {
+                                        if (status == 6)
+                                        {
+                                            if (o.DateTQ == null)
+                                            {
+                                                MainOrderController.UpdateDateTQ(o.ID, currentDate);
+                                                MainOrderController.UpdateStatusByID(o.ID, 6);
+                                            }
+                                        }
+                                        if (status == 7)
+                                        {
+                                            if (o.DateToVN == null)
+                                            {
+                                                MainOrderController.UpdateDateToVN(o.ID, currentDate);
+                                                MainOrderController.UpdateStatusByID(o.ID, 7);
+                                            }
+                                        }
+                                    }
+                                    else if (RoleID == 5)
+                                    {
+                                        if (status == 8)
+                                        {
+                                            if (o.DateVN == null)
+                                            {
+                                                MainOrderController.UpdateDateVN(o.ID, currentDate);
+                                                MainOrderController.UpdateStatusByID(o.ID, 8);
+                                            }
+                                        }
+                                        if (status == 9)
+                                        {
+                                            if (o.PayDate == null)
+                                            {
+                                                MainOrderController.UpdatePayDate(o.ID, currentDate);
+                                                MainOrderController.UpdateStatusByID(o.ID, 9);
+                                            }
+                                        }
+                                        if (status == 11)
+                                        {
+                                            if (o.DateToShip == null)
+                                            {
+                                                MainOrderController.UpdateDateToShip(o.ID, currentDate);
+                                                MainOrderController.UpdateStatusByID(o.ID, 11);
+                                            }
+                                        }
+                                    }
+                                    else if (RoleID == 7)
+                                    {
+                                        if ((status == 4 && orderdone && ddlDatHang.SelectedValue.ToInt(0) > 0) || (orderdone && ddlDatHang.SelectedValue.ToInt(0) > 0))
+                                        {
+                                            if (o.DateBuy == null)
+                                            {
+                                                MainOrderController.UpdateDateBuy(o.ID, currentDate);
+                                                MainOrderController.UpdateStatusByID(o.ID, 4);
+                                            }
+                                        }
+                                        if ((status == 5 && orderPrice && !string.IsNullOrEmpty(rTotalPriceReal.Text)) || (orderPrice && !string.IsNullOrEmpty(rTotalPriceReal.Text)))
+                                        {
+                                            if (o.DateBuyOK == null)
+                                            {
+                                                MainOrderController.UpdateDateBuyOK(o.ID, currentDate);
+                                                MainOrderController.UpdateStatusByID(o.ID, 5);
+                                            }
+                                        }
+                                    }
+                                }
+                                #endregion
+                                #region update liên quan đến status
+                                int currentstt = Convert.ToInt32(o.Status);
+                                var imo = MainOrderController.GetByID(o.ID);
+                                if (currentstt < 3 || currentstt > 7)
+                                {
+                                    if (imo.Status != currentstt)
+                                    {
+                                        OrderCommentController.Insert(id, "Đã có cập nhật mới cho đơn hàng #" + id + " của bạn.", true, 1, DateTime.Now, uid);
+                                    }
+                                }
+                                else if (currentstt > 2 && currentstt < 8)
+                                {
+                                    if (imo.Status < 3 || imo.Status > 7)
+                                    {
+                                        OrderCommentController.Insert(id, "Đã có cập nhật mới cho đơn hàng #" + id + " của bạn.", true, 1, DateTime.Now, uid);
+
+                                        try
+                                        {
+                                            //PJUtils.SendMailGmail("cskh@1688pgs.vn", "1688pegasus", AccountInfoController.GetByUserID(Convert.ToInt32(o.UID)).Email, 
+                                            //    "Thông báo tại 1688PGS.", 
+                                            //    "Đã có cập nhật trạng thái cho đơn hàng #" + id + " của bạn. CLick vào để xem", "");
+                                            PJUtils.SendMailGmail("cskh.thuonghai@gmail.com.vn.net", "jrbhnznozmlrmwvy",
+                                                AccountInfoController.GetByUserID(Convert.ToInt32(o.UID)).Email,
+                                                        "Thông báo tại NHAPSICHINA.COM",
+                                                        "Đã có cập nhật trạng thái cho đơn hàng #" + id
+                                                        + " của bạn. CLick vào để xem", "");
+                                        }
+                                        catch { }
+                                    }
+                                }
+                                #region Ghi lịch sử update status của đơn hàng
+                                if (imo.Status != currentstt)
+                                {
+                                    string ustatus = "";
+                                    switch (imo.Status.Value)
+                                    {
+                                        case 0:
+                                            ustatus = "Đơn mới";
+                                            break;
+                                        case 1:
+                                            ustatus = "Đơn hàng hủy";
+                                            break;
+                                        case 2:
+                                            ustatus = "Đơn đã cọc";
+                                            break;
+                                        case 3:
+                                            ustatus = "Đơn người bán giao";
+                                            break;
+                                        case 4:
+                                            ustatus = "Đơn chờ mua hàng";
+                                            break;
+                                        case 5:
+                                            ustatus = "Đơn đã mua hàng";
+                                            break;
+                                        case 6:
+                                            ustatus = "Kho Trung Quốc nhận hàng";
+                                            break;
+                                        case 7:
+                                            ustatus = "Trên đường về Việt Nam";
+                                            break;
+                                        case 8:
+                                            ustatus = "Trong kho Hà Nội";
+                                            break;
+                                        case 9:
+                                            ustatus = "Đã thanh toán";
+                                            break;
+                                        case 10:
+                                            ustatus = "Đã hoàn thành";
+                                            break;
+                                        case 11:
+                                            ustatus = "Đang giao hàng";
+                                            break;
+                                        case 12:
+                                            ustatus = "Đơn khiếu nại";
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    HistoryOrderChangeController.Insert(o.ID, obj_user.ID, obj_user.Username, obj_user.Username +
+                                               " đã đổi trạng thái của đơn hàng ID là: " + o.ID + ", từ: " + orderstatus + ", sang: " + ustatus + "", 0, currentDate);
+                                }
+                                #endregion
+                                if (imo.Status == 5 && imo.Status != currentstt)
+                                {
+                                    var setNoti = SendNotiEmailController.GetByID(7);
+                                    if (setNoti != null)
+                                    {
+                                        if (setNoti.IsSentNotiUser == true)
+                                        {
+                                            if (o.OrderType == 1)
+                                            {
+                                                NotificationsController.Inser(accmuahan.ID,
+                                                  accmuahan.Username, o.ID,
+                                                  "Đơn hàng " + o.ID + " đã được mua hàng.", 1,
+                                                  currentDate, obj_user.Username, true);
+                                                string strPathAndQuery = Request.Url.PathAndQuery;
+                                                string strUrl = Request.Url.AbsoluteUri.Replace(strPathAndQuery, "/");
+                                                string datalink = "" + strUrl + "chi-tiet-don-hang/" + o.ID;
+                                                PJUtils.PushNotiDesktop(accmuahan.ID, "Đơn hàng " + o.ID + " đã được mua hàng.", datalink);
+                                            }
+                                            else
+                                            {
+                                                NotificationsController.Inser(accmuahan.ID,
+                                                  accmuahan.Username, o.ID,
+                                                  "Đơn hàng " + o.ID + " đã được mua hàng.", 11,
+                                                  currentDate, obj_user.Username, true);
+                                                string strPathAndQuery = Request.Url.PathAndQuery;
+                                                string strUrl = Request.Url.AbsoluteUri.Replace(strPathAndQuery, "/");
+                                                string datalink = "" + strUrl + "chi-tiet-don-hang/" + o.ID;
+                                                PJUtils.PushNotiDesktop(accmuahan.ID, "Đơn hàng " + o.ID + " đã được mua hàng.", datalink);
+                                            }
+
+                                        }
+
+                                        //if (setNoti.IsSendEmailUser == true)
+                                        //{
+                                        //    try
+                                        //    {
+                                        //        PJUtils.SendMailGmail("cskh.thuonghai@gmail.com.vn.net", "jrbhnznozmlrmwvy",
+                                        //            accmuahan.Email,
+                                        //            "Thông báo tại NHAPSICHINA.COM.", "Đơn hàng " + o.ID
+                                        //            + " đã được mua hàng.", "");
+                                        //    }
+                                        //    catch { }
+                                        //}
+                                    }
+                                }
+                                #endregion
+                                #endregion
+                                if (RoleID == 0 || RoleID == 2)
+                                {
+                                    #region Cập nhật thông tin nhân viên sale và đặt hàng
+                                    int SalerID = ddlSaler.SelectedValue.ToString().ToInt(0);
+                                    int DathangID = ddlDatHang.SelectedValue.ToString().ToInt(0);
+                                    int CSKHID = ddlCSKH.SelectedValue.ToString().ToInt(0);
+                                    int KhoTQID = ddlKhoTQ.SelectedValue.ToString().ToInt(0);
+                                    int khoVNID = ddlKhoVN.SelectedValue.ToString().ToInt(0);
+                                    var mo = MainOrderController.GetAllByID(id);
+                                    if (mo != null)
+                                    {
+                                        double feebp = Math.Round(Convert.ToDouble(mo.FeeBuyPro), 0);
+                                        DateTime CreatedDate = Convert.ToDateTime(mo.CreatedDate);
+                                        double salepercent = 0;
+                                        double salepercentaf3m = 0;
+                                        double dathangpercent = 0;
+                                        var config = ConfigurationController.GetByTop1();
+                                        if (config != null)
+                                        {
+                                            salepercent = Convert.ToDouble(config.SalePercent);
+                                            salepercentaf3m = Convert.ToDouble(config.SalePercentAfter3Month);
+                                            dathangpercent = Convert.ToDouble(config.DathangPercent);
+                                        }
+
+                                        string salerName = "";
+                                        string dathangName = "";
+                                        int salerID_old = Convert.ToInt32(mo.SalerID);
+                                        int dathangID_old = Convert.ToInt32(mo.DathangID);
+                                        int cskh_old = Convert.ToInt32(mo.CSID);
+
+                                        int UID = 0;
+                                        UID = mo.UID.Value;
+
+                                        if (CSKHID != cskh_old)
+                                        {
+                                            MainOrderController.UpdateCSKHID(mo.ID, CSKHID);
+                                        }
+
+                                        #region Saler
+                                        if (SalerID > 0)
+                                        {
+                                            if (SalerID == salerID_old)
+                                            {
+                                                var staff = StaffIncomeController.GetByMainOrderIDUID(id, salerID_old);
+                                                if (staff != null)
+                                                {
+                                                    int rStaffID = staff.ID;
+                                                    int staffstatus = Convert.ToInt32(staff.Status);
+                                                    if (staffstatus == 1)
+                                                    {
+                                                        var sale = AccountController.GetByID(salerID_old);
+                                                        if (sale != null)
+                                                        {
+                                                            salerName = sale.Username;
+                                                            var createdDate = DateTime.Now;
+                                                            var top1 = MainOrderController.GetTop1ByUID(UID);
+                                                            if (top1.Count > 0)
                                                             {
-                                                                salepercentaf3m = Convert.ToDouble(staff.PercentReceive);
-                                                                double per = Math.Round(feebp * salepercentaf3m / 100, 0);
-                                                                StaffIncomeController.Update(rStaffID, mo.TotalPriceVND, salepercentaf3m.ToString(), 1,
-                                                                    per.ToString(), false, currentDate, username);
-                                                            }
-                                                            else
-                                                            {
-                                                                salepercent = Convert.ToDouble(staff.PercentReceive);
-                                                                double per = Math.Round(feebp * salepercent / 100, 0);
-                                                                StaffIncomeController.Update(rStaffID, mo.TotalPriceVND, salepercent.ToString(), 1,
-                                                                    per.ToString(), false, currentDate, username);
+                                                                foreach (var item in top1)
+                                                                {
+                                                                    createdDate = Convert.ToDateTime(item.CreatedDate);
+                                                                }
+
+                                                                int d = CreatedDate.Subtract(createdDate).Days;
+                                                                if (d > 90)
+                                                                {
+                                                                    salepercentaf3m = Convert.ToDouble(staff.PercentReceive);
+                                                                    double per = Math.Round(feebp * salepercentaf3m / 100, 0);
+                                                                    StaffIncomeController.Update(rStaffID, mo.TotalPriceVND, salepercentaf3m.ToString(), 1,
+                                                                        per.ToString(), false, currentDate, username);
+                                                                }
+                                                                else
+                                                                {
+                                                                    salepercent = Convert.ToDouble(staff.PercentReceive);
+                                                                    double per = Math.Round(feebp * salepercent / 100, 0);
+                                                                    StaffIncomeController.Update(rStaffID, mo.TotalPriceVND, salepercent.ToString(), 1,
+                                                                        per.ToString(), false, currentDate, username);
+                                                                }
                                                             }
                                                         }
                                                     }
                                                 }
                                             }
-                                        }
-                                        else
-                                        {
-                                            var createdDate = DateTime.Now;
-                                            var staff = StaffIncomeController.GetByMainOrderIDUID(id, salerID_old);
-                                            if (staff != null)
+                                            else
                                             {
-                                                createdDate = staff.CreatedDate.Value;
-                                                StaffIncomeController.Delete(staff.ID);
-                                            }
-                                            var sale = AccountController.GetByID(SalerID);
-                                            if (sale != null)
-                                            {
-                                                salerName = sale.Username;
-
-                                                var top1 = MainOrderController.GetTop1ByUID(UID);
-                                                if (top1.Count > 0)
+                                                var createdDate = DateTime.Now;
+                                                var staff = StaffIncomeController.GetByMainOrderIDUID(id, salerID_old);
+                                                if (staff != null)
                                                 {
-                                                    foreach (var item in top1)
+                                                    createdDate = staff.CreatedDate.Value;
+                                                    StaffIncomeController.Delete(staff.ID);
+                                                }
+                                                var sale = AccountController.GetByID(SalerID);
+                                                if (sale != null)
+                                                {
+                                                    salerName = sale.Username;
+
+                                                    var top1 = MainOrderController.GetTop1ByUID(UID);
+                                                    if (top1.Count > 0)
                                                     {
-                                                        createdDate = Convert.ToDateTime(item.CreatedDate);
+                                                        foreach (var item in top1)
+                                                        {
+                                                            createdDate = Convert.ToDateTime(item.CreatedDate);
+                                                        }
+
+
+                                                        int d = CreatedDate.Subtract(createdDate).Days;
+                                                        if (d > 90)
+                                                        {
+                                                            double per = Math.Round(feebp * salepercentaf3m / 100, 0);
+                                                            StaffIncomeController.Insert(id, per.ToString(), salepercent.ToString(), SalerID, salerName, 6, 1, per.ToString(), false,
+                                                            CreatedDate, currentDate, username);
+                                                        }
+                                                        else
+                                                        {
+                                                            double per = Math.Round(feebp * salepercent / 100, 0);
+                                                            StaffIncomeController.Insert(id, per.ToString(), salepercent.ToString(), SalerID, salerName, 6, 1, per.ToString(), false,
+                                                            CreatedDate, currentDate, username);
+                                                        }
+
                                                     }
 
 
-                                                    int d = CreatedDate.Subtract(createdDate).Days;
-                                                    if (d > 90)
-                                                    {
-                                                        double per = Math.Round(feebp * salepercentaf3m / 100, 0);
-                                                        StaffIncomeController.Insert(id, per.ToString(), salepercent.ToString(), SalerID, salerName, 6, 1, per.ToString(), false,
-                                                        CreatedDate, currentDate, username);
-                                                    }
-                                                    else
-                                                    {
-                                                        double per = Math.Round(feebp * salepercent / 100, 0);
-                                                        StaffIncomeController.Insert(id, per.ToString(), salepercent.ToString(), SalerID, salerName, 6, 1, per.ToString(), false,
-                                                        CreatedDate, currentDate, username);
-                                                    }
+
 
                                                 }
-
-
-
-
                                             }
                                         }
-                                    }
-                                    #endregion
-                                    #region Đặt hàng
-                                    if (DathangID > 0)
-                                    {
-                                        if (DathangID == dathangID_old)
+                                        #endregion
+                                        #region Đặt hàng
+                                        if (DathangID > 0)
                                         {
-                                            var staff = StaffIncomeController.GetByMainOrderIDUID(id, dathangID_old);
-                                            if (staff != null)
+                                            if (DathangID == dathangID_old)
                                             {
-                                                if (staff.Status == 1)
+                                                var staff = StaffIncomeController.GetByMainOrderIDUID(id, dathangID_old);
+                                                if (staff != null)
                                                 {
+                                                    if (staff.Status == 1)
+                                                    {
+                                                        //double totalPrice = Convert.ToDouble(mo.TotalPriceVND);
+                                                        double totalPrice = Convert.ToDouble(mo.PriceVND) + Convert.ToDouble(mo.FeeShipCN);
+                                                        totalPrice = Math.Round(totalPrice, 0);
+                                                        double totalRealPrice = 0;
+                                                        if (mo.TotalPriceReal.ToFloat(0) > 0)
+                                                            totalRealPrice = Math.Round(Convert.ToDouble(mo.TotalPriceReal), 0);
+                                                        if (totalRealPrice > 0)
+                                                        {
+                                                            double totalpriceloi = totalPrice - totalRealPrice;
+                                                            dathangpercent = Convert.ToDouble(staff.PercentReceive);
+                                                            double income = Math.Round(totalpriceloi * dathangpercent / 100, 0);
+                                                            //double income = totalpriceloi;
+                                                            StaffIncomeController.Update(staff.ID, totalRealPrice.ToString(), dathangpercent.ToString(), 1,
+                                                                        income.ToString(), false, currentDate, username);
+                                                        }
+
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                var createdDate = DateTime.Now;
+                                                var staff = StaffIncomeController.GetByMainOrderIDUID(id, dathangID_old);
+                                                if (staff != null)
+                                                {
+                                                    createdDate = staff.CreatedDate.Value;
+                                                    StaffIncomeController.Delete(staff.ID);
+                                                }
+                                                var dathang = AccountController.GetByID(DathangID);
+                                                if (dathang != null)
+                                                {
+                                                    dathangName = dathang.Username;
                                                     //double totalPrice = Convert.ToDouble(mo.TotalPriceVND);
                                                     double totalPrice = Convert.ToDouble(mo.PriceVND) + Convert.ToDouble(mo.FeeShipCN);
                                                     totalPrice = Math.Round(totalPrice, 0);
@@ -4460,71 +4497,40 @@ namespace NHST.manager
                                                     if (totalRealPrice > 0)
                                                     {
                                                         double totalpriceloi = totalPrice - totalRealPrice;
-                                                        dathangpercent = Convert.ToDouble(staff.PercentReceive);
                                                         double income = Math.Round(totalpriceloi * dathangpercent / 100, 0);
                                                         //double income = totalpriceloi;
-                                                        StaffIncomeController.Update(staff.ID, totalRealPrice.ToString(), dathangpercent.ToString(), 1,
-                                                                    income.ToString(), false, currentDate, username);
+
+                                                        StaffIncomeController.Insert(id, totalpriceloi.ToString(), dathangpercent.ToString(), DathangID, dathangName, 3, 1,
+                                                            income.ToString(), false, CreatedDate, createdDate, username);
                                                     }
-
+                                                    else
+                                                    {
+                                                        StaffIncomeController.Insert(id, "0", dathangpercent.ToString(), DathangID, dathangName, 3, 1, "0", false,
+                                                        CreatedDate, createdDate, username);
+                                                    }
                                                 }
                                             }
                                         }
-                                        else
-                                        {
-                                            var createdDate = DateTime.Now;
-                                            var staff = StaffIncomeController.GetByMainOrderIDUID(id, dathangID_old);
-                                            if (staff != null)
-                                            {
-                                                createdDate = staff.CreatedDate.Value;
-                                                StaffIncomeController.Delete(staff.ID);
-                                            }
-                                            var dathang = AccountController.GetByID(DathangID);
-                                            if (dathang != null)
-                                            {
-                                                dathangName = dathang.Username;
-                                                //double totalPrice = Convert.ToDouble(mo.TotalPriceVND);
-                                                double totalPrice = Convert.ToDouble(mo.PriceVND) + Convert.ToDouble(mo.FeeShipCN);
-                                                totalPrice = Math.Round(totalPrice, 0);
-                                                double totalRealPrice = 0;
-                                                if (mo.TotalPriceReal.ToFloat(0) > 0)
-                                                    totalRealPrice = Math.Round(Convert.ToDouble(mo.TotalPriceReal), 0);
-                                                if (totalRealPrice > 0)
-                                                {
-                                                    double totalpriceloi = totalPrice - totalRealPrice;
-                                                    double income = Math.Round(totalpriceloi * dathangpercent / 100, 0);
-                                                    //double income = totalpriceloi;
-
-                                                    StaffIncomeController.Insert(id, totalpriceloi.ToString(), dathangpercent.ToString(), DathangID, dathangName, 3, 1,
-                                                        income.ToString(), false, CreatedDate, createdDate, username);
-                                                }
-                                                else
-                                                {
-                                                    StaffIncomeController.Insert(id, "0", dathangpercent.ToString(), DathangID, dathangName, 3, 1, "0", false,
-                                                    CreatedDate, createdDate, username);
-                                                }
-                                            }
-                                        }
+                                        #endregion
                                     }
+
+                                    MainOrderController.UpdateStaff(id, SalerID, DathangID, KhoTQID, khoVNID);
                                     #endregion
                                 }
-
-                                MainOrderController.UpdateStaff(id, SalerID, DathangID, KhoTQID, khoVNID);
-                                #endregion
-                            }
-                            var quantitymvd = SmallPackageController.GetByMainOrderID(id);
-                            if (quantitymvd.Count > 0)
-                            {
-                                if (quantitymvd != null)
+                                var quantitymvd = SmallPackageController.GetByMainOrderID(id);
+                                if (quantitymvd.Count > 0)
                                 {
-                                    MainOrderController.UpdateListMVD(id, listmvd, quantitymvd.Count);
+                                    if (quantitymvd != null)
+                                    {
+                                        MainOrderController.UpdateListMVD(id, listmvd, quantitymvd.Count);
+                                    }
                                 }
+                                Response.Redirect("/manager/OrderDetail.aspx?id=" + id + "");
                             }
-                            Response.Redirect("/manager/OrderDetail.aspx?id=" + id + "");
-                        }
-                        else
-                        {
-                            PJUtils.ShowMessageBoxSwAlert("Mã vận đơn " + listmvd_ne + " đã tồn tại.", "e", false, Page);
+                            else
+                            {
+                                PJUtils.ShowMessageBoxSwAlert("Mã vận đơn " + listmvd_ne + " đã tồn tại.", "e", false, Page);
+                            }
                         }
                     }
                 }

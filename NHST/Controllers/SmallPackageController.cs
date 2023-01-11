@@ -172,7 +172,7 @@ namespace NHST.Controllers
                 a.MainOrderID = 0;
                 a.TransportationOrderID = 0;
                 a.BigPackageID = 0;
-                a.Status = 5;        
+                a.Status = 5;
                 a.CreatedBy = ModifiedBy;
                 a.CreatedDate = ModifiedDate;
                 a.ModifiedBy = ModifiedBy;
@@ -199,7 +199,7 @@ namespace NHST.Controllers
                 a.StaffTQWarehouse = StaffTQWarehouse;
                 a.DateInTQWarehouse = DateInTQWarehouse;
                 a.CreatedDate = CreatedDate;
-                a.CreatedBy = CreatedBy;                
+                a.CreatedBy = CreatedBy;
                 dbe.tbl_SmallPackage.Add(a);
                 dbe.Configuration.ValidateOnSaveEnabled = false;
                 int kq = dbe.SaveChanges();
@@ -1043,6 +1043,16 @@ namespace NHST.Controllers
                 return ps;
             }
         }
+
+        public static List<tbl_SmallPackage> GetAllBuyBigPackageID(int BigPackageID)
+        {
+            using (var dbe = new NHSTEntities())
+            {
+                List<tbl_SmallPackage> ps = new List<tbl_SmallPackage>();
+                ps = dbe.tbl_SmallPackage.Where(p => p.BigPackageID == BigPackageID).OrderByDescending(p => p.ID).ToList();
+                return ps;
+            }
+        }
         public static List<tbl_SmallPackage> GetByTransportationOrderID(int TransportationOrderID)
         {
             using (var dbe = new NHSTEntities())
@@ -1241,7 +1251,7 @@ namespace NHST.Controllers
             sql += "Case Status when 0 then N'<span class=\"white-text badge red darken-2\">Đã hủy</span>' ";
             sql += "when 1 then N'<span class=\"white-text badge yellow darken-2\">Mới đặt - chưa về kho TQ</span>' ";
             sql += "when 2 then N'<span class=\"white-text badge orange darken-2\">Đã về kho TQ</span>' ";
-            sql += "when 3 then N'<span class=\"white-text badge green darken-2\">Đã về kho VN</span>' ";           
+            sql += "when 3 then N'<span class=\"white-text badge green darken-2\">Đã về kho VN</span>' ";
             sql += "When 4 then N'<span class=\"white-text badge blue darken-2\">Đã thanh toán</span>' ";
             sql += "when 5 then N'<span class=\"white-text badge teal darken-2\">Đang về kho VN</span>' ";
             sql += "When 6 then N'<span class=\"white-text badge blue darken-2\">Đã giao cho khách</span>' ";
@@ -1291,7 +1301,7 @@ namespace NHST.Controllers
                     entity.CreatedDateString = Convert.ToDateTime(reader["CreatedDate"]).ToString("dd/MM/yyyy HH:mm");
 
                 if (reader["Status"] != DBNull.Value)
-                    entity.Status = reader["Status"].ToString().ToInt(0);                
+                    entity.Status = reader["Status"].ToString().ToInt(0);
 
                 if (reader["StatusString"] != DBNull.Value)
                     entity.StatusString = reader["StatusString"].ToString();
@@ -1433,12 +1443,12 @@ namespace NHST.Controllers
         public static int GetTotalBy_DK(int searchtype, string searchtext, string status, string fd, string td, string ware, bool isNotCode)
         {
             var sql = @"SELECT Total=Count(*) from tbl_SmallPackage ";
-            sql += " Where OrderTransactionCode like N'%" + searchtext + "%' ";            
+            sql += " Where OrderTransactionCode like N'%" + searchtext + "%' ";
             if (searchtype == 1)
                 sql += " OR MainOrderID Like N'%" + searchtext + "%'";
             else if (searchtype == 2)
                 sql += " OR ID Like N'%" + searchtext + "%' ";
-            else if(searchtype == 3)
+            else if (searchtype == 3)
             {
                 if (!string.IsNullOrEmpty(fd))
                 {
@@ -1909,7 +1919,7 @@ namespace NHST.Controllers
 
                 entity.Weight = 0;
                 if (reader["Weight"] != DBNull.Value)
-                    entity.Weight = Convert.ToDouble(reader["Weight"].ToString());               
+                    entity.Weight = Convert.ToDouble(reader["Weight"].ToString());
 
                 if (reader["Status"] != DBNull.Value)
                     entity.Status = reader["Status"].ToString().ToInt(0);
@@ -2031,7 +2041,7 @@ namespace NHST.Controllers
             public int ID { get; set; }
             public int WorkingSessionID { get; set; }
             public int MainOrderID { get; set; }
-            public string OrderTransactionCode { get; set; }           
+            public string OrderTransactionCode { get; set; }
             public double Weight { get; set; }
             public double Length { get; set; }
             public double Height { get; set; }
@@ -2059,7 +2069,7 @@ namespace NHST.Controllers
             public string ProductType { get; set; }
             public string UserNote { get; set; }
             public double FeeShip { get; set; }
-            public double Weight { get; set; }            
+            public double Weight { get; set; }
             public double Volume { get; set; }
             public int Status { get; set; }
             public string StatusString { get; set; }
@@ -2194,7 +2204,7 @@ namespace NHST.Controllers
                 {
                     a.Weight = Weight;
                     a.Status = Status;
-                    a.StaffTQWarehouse = StaffTQWarehouse;                 
+                    a.StaffTQWarehouse = StaffTQWarehouse;
                     a.DateInTQWarehouse = DateInTQWarehouse;
                     a.ModifiedBy = ModifiedBy;
                     a.ModifiedDate = ModifiedDate;
@@ -2215,9 +2225,9 @@ namespace NHST.Controllers
                 if (a != null)
                 {
                     a.Weight = Weight;
-                    a.Status = Status;                   
+                    a.Status = Status;
                     a.ModifiedBy = ModifiedBy;
-                    a.ModifiedDate = ModifiedDate;                 
+                    a.ModifiedDate = ModifiedDate;
                     a.NoExcel = NoExcel;
                     a.DateExcel = ModifiedDate;
                     dbe.SaveChanges();
@@ -2239,7 +2249,7 @@ namespace NHST.Controllers
                     a.StaffVNWarehouse = StaffTQWarehouse;
                     a.DateInLasteWareHouse = DateInTQWarehouse;
                     a.ModifiedBy = ModifiedBy;
-                    a.ModifiedDate = ModifiedDate;                   
+                    a.ModifiedDate = ModifiedDate;
                     a.NoExcel = NoExcel;
                     a.DateExcel = ModifiedDate;
                     dbe.SaveChanges();

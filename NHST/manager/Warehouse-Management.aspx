@@ -36,6 +36,7 @@
                                                     <tr>
                                                         <th>ID</th>
                                                         <th>Mã bao hàng</th>
+                                                        <th>Số kiện</th>
                                                         <th>Cân nặng (kg)</th>
                                                         <th>Khối (m<sup>3</sup>)</th>
                                                         <th>Trạng thái</th>

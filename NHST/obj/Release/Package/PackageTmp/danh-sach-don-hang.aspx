@@ -303,7 +303,7 @@
                                                                     <asp:ListItem Value="0" Text="Chọn loại tìm kiếm"></asp:ListItem>
                                                                     <asp:ListItem Value="1" Text="ID đơn hàng"></asp:ListItem>
                                                                     <asp:ListItem Value="2" Text="Ghi chú sản phẩm"></asp:ListItem>
-                                                                    <asp:ListItem Value="3" Text="Website"></asp:ListItem>
+<%--                                                                    <asp:ListItem Value="3" Text="Website"></asp:ListItem>--%>
                                                                 </asp:DropDownList>
                                                                 <label for="select_by">Tìm kiếm theo</label>
                                                             </div>
@@ -313,7 +313,9 @@
                                                                 <asp:TextBox ID="txtSearhc" placeholder="" runat="server" CssClass="search_name"></asp:TextBox>
                                                                 <label for="search_name">
                                                                     <span>Nhập ID / tên shop / tên
-                                                                    website</span></label>
+<%--                                                                    website--%>
+
+                                                                    </span></label>
                                                             </div>
                                                             <div class="input-field col s12 l6">
                                                                 <asp:DropDownList runat="server" ID="ddlStatus">
@@ -377,20 +379,20 @@
                                                             <%--  <div class="colum right">--%>
 
                                                             <div class="extra-btn">
-                                                                <asp:Button ID="bttnAll" runat="server" Style="--color: red" CssClass="order-status btn-1" OnClick="btnAll_Click" />
-                                                                <asp:Button ID="btn0" runat="server" Style="--color: Violet" CssClass="order-status btn0" OnClick="btn0_Click" />
-                                                                <asp:Button ID="btn1" runat="server" Style="--color: black" CssClass="order-status btn1" OnClick="btn1_Click" />
-                                                                <asp:Button ID="btn2" runat="server" Style="--color: Indigo" CssClass="order-status btn2" OnClick="btn2_Click" />
-                                                                <asp:Button ID="btn4" runat="server" Style="--color: Green" CssClass="order-status btn4" OnClick="btn4_Click" />
-                                                                <asp:Button ID="btn5" runat="server" Style="--color: Teal" CssClass="order-status btn5" OnClick="btn5_Click" />
-                                                                <asp:Button ID="btn3" runat="server" Style="--color: Aqua" CssClass="order-status btn3" OnClick="btn3_Click" />
-                                                                <asp:Button ID="btn6" runat="server" Style="--color: SteelBlue" CssClass="order-status btn6" OnClick="btn6_Click" />
-                                                                <asp:Button ID="btn7" runat="server" Style="--color: Navy" CssClass="order-status btn7" OnClick="btn7_Click" />
-                                                                <asp:Button ID="btn8" runat="server" Style="--color: GoldenRod" CssClass="order-status btn8" OnClick="btn8_Click" />
-                                                                <asp:Button ID="btn11" runat="server" Style="--color: Chocolate" CssClass="order-status btn11" OnClick="btn11_Click" />
-                                                                <asp:Button ID="btn9" runat="server" Style="--color: RosyBrown" CssClass="order-status btn9" OnClick="btn9_Click" />
-                                                                <asp:Button ID="btn10" runat="server" Style="--color: blue" CssClass="order-status btn10" OnClick="btn10_Click" />
-                                                                <asp:Button ID="btn12" runat="server" Style="--color: SaddleBrown" CssClass="order-status btn12" OnClick="btn12_Click" />
+                                                                <asp:Button ID="bttnAll" runat="server" Style="--color: red; font-weight:bold; text-transform:uppercase" CssClass="order-status btn-1" OnClick="btnAll_Click" />
+                                                                <asp:Button ID="btn0" runat="server" Style="--color: Violet; font-weight:bold; text-transform:uppercase" CssClass="order-status btn0" OnClick="btn0_Click" />
+                                                                <asp:Button ID="btn1" runat="server" Style="--color: black; font-weight:bold; text-transform:uppercase" CssClass="order-status btn1" OnClick="btn1_Click" />
+                                                                <asp:Button ID="btn2" runat="server" Style="--color: Indigo; font-weight:bold; text-transform:uppercase" CssClass="order-status btn2" OnClick="btn2_Click" />
+                                                                <asp:Button ID="btn4" runat="server" Style="--color: Green; font-weight:bold; text-transform:uppercase" CssClass="order-status btn4" OnClick="btn4_Click" />
+                                                                <asp:Button ID="btn5" runat="server" Style="--color: Teal; font-weight:bold; text-transform:uppercase" CssClass="order-status btn5" OnClick="btn5_Click" />
+                                                                <asp:Button ID="btn3" runat="server" Style="--color: Aqua; font-weight:bold; text-transform:uppercase" CssClass="order-status btn3" OnClick="btn3_Click" />
+                                                                <asp:Button ID="btn6" runat="server" Style="--color: SteelBlue; font-weight:bold; text-transform:uppercase" CssClass="order-status btn6" OnClick="btn6_Click" />
+                                                                <asp:Button ID="btn7" runat="server" Style="--color: Navy; font-weight:bold; text-transform:uppercase" CssClass="order-status btn7" OnClick="btn7_Click" />
+                                                                <asp:Button ID="btn8" runat="server" Style="--color: GoldenRod; font-weight:bold; text-transform:uppercase" CssClass="order-status btn8" OnClick="btn8_Click" />
+                                                                <asp:Button ID="btn11" runat="server" Style="--color: Chocolate; font-weight:bold; text-transform:uppercase" CssClass="order-status btn11" OnClick="btn11_Click" />
+                                                                <asp:Button ID="btn9" runat="server" Style="--color: RosyBrown; font-weight:bold; text-transform:uppercase" CssClass="order-status btn9" OnClick="btn9_Click" />
+                                                                <asp:Button ID="btn10" runat="server" Style="--color: blue; font-weight:bold; text-transform:uppercase" CssClass="order-status btn10" OnClick="btn10_Click" />
+                                                                <asp:Button ID="btn12" runat="server" Style="--color: SaddleBrown; font-weight:bold; text-transform:uppercase" CssClass="order-status btn12" OnClick="btn12_Click" />
                                                                 <%--   </div>--%>
                                                             </div>
                                                         </div>
@@ -411,7 +413,7 @@
                                                                         <br />
                                                                         sản phẩm</th>
                                                                     <%-- <th>Tổng link</th>--%>
-                                                                    <th>Website</th>
+<%--                                                                    <th>Website</th>--%>
                                                                     <th>Tỷ giá</th>
                                                                     <th>Tổng tiền</th>
                                                                     <%-- <th>Cọc 100%</th>--%>

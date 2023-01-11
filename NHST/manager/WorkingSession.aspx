@@ -13,7 +13,7 @@
 
         .isvekho td .tb-block .black-text {
             color: #fff !important;
-        }       
+        }
     </style>
     <link rel="stylesheet" type="text/css" href="/App_Themes/AdminNew45/assets/js/lightgallery/css/lightgallery.min.css">
 </asp:Content>
@@ -46,10 +46,13 @@
 
                     <div style="margin-top: 20px;">
                         <a href="javascript:;" onclick="UpdateAll()" class="btn">Cập nhật hết tất cả kiện</a>
-                        <a class="btn" href="javascript:;" onclick="btnCompletedSession()" style="background-color: blue; float:right">Kết thúc Phiên làm việc</a>
+                        <a class="btn" href="javascript:;" onclick="btnCompletedSession()" style="background-color: blue; float: right">Kết thúc Phiên làm việc</a>
                         <asp:Button ID="btnConfirm" runat="server" Text="Kết thúc" CssClass="btn primary-btn" Style="display: none" ValidationGroup="Group" OnClick="btnCompleted_Click" UseSubmitBehavior="false" />
                     </div>
-
+                    <div class="count-small" style="margin-top: 20px;">
+                        <label style="font-size: 18px; display: none">Số lượng kiện ở kho VN: <span id="txtTotalNotScan">0</span></label>
+                        <label style="font-size: 18px;">Số lượng kiện đã scan: <span id="txtTotalScan">0</span></label>
+                    </div>
                     <div class="list-package">
                         <div class="package-wrap accent-2">
                             <div class="row">
@@ -83,8 +86,8 @@
                     <label for="kg_weight">Mã Phiên Mới</label>
                 </div>
 
-                 <div class="input-field col s12 m12">
-                    <asp:TextBox runat="server" ID="txtPackageNote" CssClass="validate" TextMode="MultiLine"></asp:TextBox>                  
+                <div class="input-field col s12 m12">
+                    <asp:TextBox runat="server" ID="txtPackageNote" CssClass="validate" TextMode="MultiLine"></asp:TextBox>
                     <label for="kg_weight">Ghi chú Phiên làm việc</label>
                 </div>
 
@@ -101,6 +104,10 @@
 
     <script src="/App_Themes/AdminNew45/assets/js/lightgallery/js/lightgallery-all.min.js" type="text/javascript"></script>
     <script type="text/javascript">
+        function CountPackageScan() {
+            var totalpackage = $(".package-row").length
+            $("#txtTotalScan").html(totalpackage);
+        }
 
         function isEmpty(str) {
             return !str.replace(/^\s+/g, '').length; // boolean (`true` if field is empty)
@@ -659,6 +666,8 @@
                                                         html += "</div>";
 
                                                         $("#listpackage").prepend(html);
+                                                        CountPackageScan();
+
                                                         // moveOnTopPackage(packageID);
                                                     }
                                                     else {
@@ -802,6 +811,8 @@
                                                                 html += "</tr>";
 
                                                                 $("." + data.MainorderID + "").parent().append(html);
+                                                                CountPackageScan();
+
                                                             }
                                                             else {
                                                                 var html = '';
@@ -942,6 +953,8 @@
                                                                 html += "</tbody>";
 
                                                                 $(".orderid" + UID + "").parent().prepend(html);
+                                                                CountPackageScan();
+
                                                                 // moveOnTopPackage(packageID);
                                                             }
                                                         }
@@ -1084,6 +1097,8 @@
 
                                                             $(".orderid" + UID + "").parent().prepend(html);
                                                             moveOnTopPackage(packageID);
+                                                            CountPackageScan();
+
                                                         }
                                                     }
                                                     $('select').formSelect();
@@ -1330,6 +1345,8 @@
 
                                                     $("#listpackage").prepend(html);
                                                     moveOnTopPackage(packageID);
+                                                    CountPackageScan();
+
                                                 }
                                                 else {
                                                     var MainID = $(".orderid" + UID + "").attr('data-orderid');
@@ -1485,6 +1502,8 @@
                                                             html += "</tr>";
 
                                                             $("." + data.MainorderID + "").parent().append(html);
+                                                            CountPackageScan();
+
                                                         }
                                                         else {
                                                             var html = '';
@@ -1640,6 +1659,8 @@
 
                                                             $(".orderid" + UID + "").parent().prepend(html);
                                                             moveOnTopPackage(packageID);
+                                                            CountPackageScan();
+
                                                         }
                                                     }
                                                     else {
@@ -1795,6 +1816,8 @@
 
                                                         $(".orderid" + UID + "").parent().prepend(html);
                                                         moveOnTopPackage(packageID);
+                                                        CountPackageScan();
+
                                                     }
                                                 }
                                                 $('select').formSelect();
@@ -1805,6 +1828,8 @@
                                                 var r = confirm('Mã này đã scan rồi, bạn có muốn tạo thêm kiện?');
                                                 if (r) {
                                                     AddPackageSame(bc);
+                                                    CountPackageScan();
+
                                                 }
 
                                                 //addLoading();
@@ -1823,6 +1848,8 @@
                                         }
                                     }
                                     obj.val("");
+                                    CountPackageScan();
+
                                 }
 
                                 $('.tooltipped')
@@ -1919,6 +1946,7 @@
             var r = confirm("Bạn muốn tắt tất cả kiện của " + username + "?");
             if (r == true) {
                 $("#" + UID + "").remove();
+                CountPackageScan();
             }
         }
 
@@ -2004,7 +2032,7 @@
                 listbarcode = listbarcode.replace(id, "");
                 $("#<%=hdfListBarcode.ClientID%>").val(listbarcode);--%>
                 obj.parent().parent().parent().remove();
-
+                CountPackageScan();
                 if ($(".dh" + mainorderid + " tr").length == 1) {
                     $(".dh" + mainorderid + "").remove();
                 }

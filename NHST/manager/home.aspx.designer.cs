@@ -7,11 +7,31 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace NHST.manager {
-    
-    
-    public partial class home {
-        
+namespace NHST.manager
+{
+
+
+    public partial class home
+    {
+
+        /// <summary>
+        /// excel1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button excel1;
+
+        /// <summary>
+        /// excel2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button excel2;
+
         /// <summary>
         /// ltrTotalWalletInPercent control.
         /// </summary>
@@ -20,7 +40,7 @@ namespace NHST.manager {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal ltrTotalWalletInPercent;
-        
+
         /// <summary>
         /// lblTotalInWeek control.
         /// </summary>
@@ -29,7 +49,7 @@ namespace NHST.manager {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblTotalInWeek;
-        
+
         /// <summary>
         /// ltrUserAddNewWallet control.
         /// </summary>
@@ -38,7 +58,7 @@ namespace NHST.manager {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal ltrUserAddNewWallet;
-        
+
         /// <summary>
         /// ltrTop10RickUser control.
         /// </summary>
@@ -47,7 +67,7 @@ namespace NHST.manager {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal ltrTop10RickUser;
-        
+
         /// <summary>
         /// ltrTop10UserHasAlotOrder control.
         /// </summary>
@@ -56,7 +76,7 @@ namespace NHST.manager {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal ltrTop10UserHasAlotOrder;
-        
+
         /// <summary>
         /// ltrTop10NewOrder control.
         /// </summary>
@@ -65,7 +85,7 @@ namespace NHST.manager {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal ltrTop10NewOrder;
-        
+
         /// <summary>
         /// ltrTop10TransportOrder control.
         /// </summary>
@@ -74,7 +94,7 @@ namespace NHST.manager {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal ltrTop10TransportOrder;
-        
+
         /// <summary>
         /// ltrTop10PayHelpOrder control.
         /// </summary>
@@ -83,7 +103,7 @@ namespace NHST.manager {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal ltrTop10PayHelpOrder;
-        
+
         /// <summary>
         /// hdfTotalOrderWeek control.
         /// </summary>
@@ -92,7 +112,7 @@ namespace NHST.manager {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HiddenField hdfTotalOrderWeek;
-        
+
         /// <summary>
         /// hdfTotalWalletInWeek control.
         /// </summary>
@@ -101,7 +121,7 @@ namespace NHST.manager {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HiddenField hdfTotalWalletInWeek;
-        
+
         /// <summary>
         /// hdfRationBuyPro control.
         /// </summary>

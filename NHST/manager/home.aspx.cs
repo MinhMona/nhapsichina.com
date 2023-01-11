@@ -30,15 +30,25 @@ namespace NHST.manager
                 else
                 {
                     string username_current = Session["userLoginSystem"].ToString();
+                    if (username_current.Equals("admin"))
+                    {
+                        excel1.Enabled = true;
+                        excel2.Enabled = true;
+                    }
+                    else
+                    {
+                        excel1.Enabled = false;
+                        excel2.Enabled = false;
+                    }
                     tbl_Account ac = AccountController.GetByUsername(username_current);
                     if (ac.RoleID == 0)
                     {
                         LoadOrder();
-                    }    
+                    }
                     else
                     {
                         Response.Redirect("/manager/orderlist.aspx");
-                    }    
+                    }
                 }
             }
         }
@@ -373,7 +383,7 @@ namespace NHST.manager
                         html.Append("<tr>");
                         html.Append("    <td>" + username + "</td>");
                         html.Append("    <td>" + string.Format("{0:N0}", item.BarCode) + "</td>");
-                     
+
                         html.Append("    <td>" + PJUtils.GeneralTransportationOrderNewStatus(item.Status.Value) + "</td>");
                         html.Append("    <td class=\"center-align\"><a href=\"/manager/chi-tiet-vch.aspx?id=" + item.ID + "\"><i class=\"material-icons teal-text text-darken-4\">remove_red_eye</i></a>");
                         html.Append("    </td>");
@@ -766,11 +776,11 @@ namespace NHST.manager
 
                 if (reader["Username"] != DBNull.Value)
                     entity.Username = reader["Username"].ToString();
-              
+
                 if (reader["CreatedDate"] != DBNull.Value)
                     entity.CreatedDate = Convert.ToDateTime(reader["CreatedDate"].ToString());
 
-             
+
                 list.Add(entity);
             }
             reader.Close();
@@ -884,7 +894,7 @@ namespace NHST.manager
         [WebMethod]
         public static string getcountnoti()
         {
-            string username = HttpContext.Current.Session["userLoginSystem"].ToString();          
+            string username = HttpContext.Current.Session["userLoginSystem"].ToString();
             var obj_user = AccountController.GetByUsername(username);
             if (obj_user != null)
             {
@@ -918,7 +928,7 @@ namespace NHST.manager
                                 break;
                             case 2:
                                 html.Append("<a class=\"grey-text text-darken-2\" onclick=\"checkisRead('" + item.ID + "','/manager/HistorySendWallet')\">");
-                                break;                            
+                                break;
                             case 5:
                                 html.Append("<a class=\"grey-text text-darken-2\" onclick=\"checkisRead('" + item.ID + "','/manager/ComplainList')\">");
                                 break;
@@ -946,7 +956,7 @@ namespace NHST.manager
         [WebMethod]
         public static string getnotitc()
         {
-            string username = HttpContext.Current.Session["userLoginSystem"].ToString();          
+            string username = HttpContext.Current.Session["userLoginSystem"].ToString();
             var obj_user = AccountController.GetByUsername(username);
             if (obj_user != null)
             {
@@ -978,7 +988,7 @@ namespace NHST.manager
         [WebMethod]
         public static string getnotimessage()
         {
-            string username = HttpContext.Current.Session["userLoginSystem"].ToString();           
+            string username = HttpContext.Current.Session["userLoginSystem"].ToString();
             var obj_user = AccountController.GetByUsername(username);
             if (obj_user != null)
             {
@@ -1010,7 +1020,7 @@ namespace NHST.manager
         [WebMethod]
         public static string getnotiorder()
         {
-            string username = HttpContext.Current.Session["userLoginSystem"].ToString();           
+            string username = HttpContext.Current.Session["userLoginSystem"].ToString();
             var obj_user = AccountController.GetByUsername(username);
             if (obj_user != null)
             {
@@ -1042,7 +1052,7 @@ namespace NHST.manager
         [WebMethod]
         public static string getnotireport()
         {
-            string username = HttpContext.Current.Session["userLoginSystem"].ToString();           
+            string username = HttpContext.Current.Session["userLoginSystem"].ToString();
             var obj_user = AccountController.GetByUsername(username);
             if (obj_user != null)
             {
@@ -1069,6 +1079,94 @@ namespace NHST.manager
             }
             else
                 return "";
+        }
+
+        protected void btnExcel1_Click(object sender, EventArgs e)
+        {
+            var listRickUser = GetTop10UserRick();
+            StringBuilder StrExport = new StringBuilder();
+            StrExport.Append(@"<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:excel' xmlns='http://www.w3.org/TR/REC-html40'><head><title>Time</title>");
+            StrExport.Append(@"<body lang=EN-US style='mso-element:header' id=h1><span style='mso--code:DATE'></span><div class=Section1>");
+            StrExport.Append("<DIV  style='font-size:15px;'>");
+            StrExport.Append("<table border=\"1\">");
+            StrExport.Append("  <tr>");
+            StrExport.Append("      <th><strong>STT</strong></th>");
+            StrExport.Append("      <th><strong>Username</strong></th>");
+            StrExport.Append("      <th><strong>Số dư hiện tại</strong></th>");
+            StrExport.Append("      <th><strong>Tổng nạp</strong></th>");
+            StrExport.Append("  </tr>");
+            int stt = 1;
+            foreach (var item in listRickUser)
+            {
+                StrExport.Append("  <tr>");
+                StrExport.Append("      <td>" + stt + "</td>");
+                StrExport.Append("      <td>" + item.Username + "</td>");
+                StrExport.Append("      <td>" + item.Wallet + "</td>");
+                StrExport.Append("      <td>" + item.TotalDonate + "</td>");
+                StrExport.Append("  </tr>");
+                stt++;
+            }
+            StrExport.Append("</table>");
+            StrExport.Append("</div></body></html>");
+            string strFile = "Khacg" +
+                "Khach_co_so_du_nhieu_nhat.xls";
+            string strcontentType = "application/vnd.ms-excel";
+            Response.ClearContent();
+            Response.ClearHeaders();
+            Response.BufferOutput = true;
+            Response.ContentType = strcontentType;
+            Response.AddHeader("Content-Disposition", "attachment; filename=" + strFile);
+            Response.Write(StrExport.ToString());
+            Response.Flush();
+            //Response.Close();
+            Response.End();
+        }
+
+        protected void btnExcel2_Click(object sender, EventArgs e)
+        {
+            var listUserManyOrder = GetTop10UserHasAlotOrder();
+
+            StringBuilder StrExport = new StringBuilder();
+            StrExport.Append(@"<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:excel' xmlns='http://www.w3.org/TR/REC-html40'><head><title>Time</title>");
+            StrExport.Append(@"<body lang=EN-US style='mso-element:header' id=h1><span style='mso--code:DATE'></span><div class=Section1>");
+            StrExport.Append("<DIV  style='font-size:15px;'>");
+            StrExport.Append("<table border=\"1\">");
+            StrExport.Append("  <tr>");
+            StrExport.Append("      <th><strong>STT</strong></th>");
+            StrExport.Append("      <th><strong>Username</strong></th>");
+            StrExport.Append("      <th><strong>Số dư (VNĐ)</strong></th>");
+            StrExport.Append("      <th><strong>Tổng đơn</strong></th>");
+            StrExport.Append("      <th><strong>Mua hộ</strong></th>");
+            StrExport.Append("      <th><strong>VC hộ</strong></th>");
+            StrExport.Append("      <th><strong>TT hộ</strong></th>");
+            StrExport.Append("  </tr>");
+            int stt = 1;
+            foreach (var item in listUserManyOrder)
+            {
+                StrExport.Append("  <tr>");
+                StrExport.Append("      <td>" + item.ID + "</td>");
+                StrExport.Append("    <td>" + item.Username + "</td>");
+                StrExport.Append("    <td>" + string.Format("{0:N0}", item.Wallet) + "</td>");
+                StrExport.Append("    <td>" + item.TotalAll + "</td>");
+                StrExport.Append("    <td>" + item.TotalMHH + "</td>");
+                StrExport.Append("    <td>" + item.TotalVCH + "</td>");
+                StrExport.Append("    <td>" + item.TotalTTH + "</td>");
+                StrExport.Append("  </tr>");
+                stt++;
+            }
+            StrExport.Append("</table>");
+            StrExport.Append("</div></body></html>");
+            string strFile = "Khach_co_nhieu_don_nhat.xls";
+            string strcontentType = "application/vnd.ms-excel";
+            Response.ClearContent();
+            Response.ClearHeaders();
+            Response.BufferOutput = true;
+            Response.ContentType = strcontentType;
+            Response.AddHeader("Content-Disposition", "attachment; filename=" + strFile);
+            Response.Write(StrExport.ToString());
+            Response.Flush();
+            //Response.Close();
+            Response.End();
         }
     }
 }

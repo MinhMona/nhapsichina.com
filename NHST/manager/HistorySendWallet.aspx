@@ -66,8 +66,10 @@
                             <div class="input-field col s12 l6">
                                 <asp:ListBox runat="server" ID="lbBank">
                                     <asp:ListItem Value="0" Selected="True">Tất cả</asp:ListItem>
-                                    <asp:ListItem Value="1">Vietcombank</asp:ListItem>
-                                    <asp:ListItem Value="2">Techcombank</asp:ListItem>
+                                    <asp:ListItem Value="9">VietinBank - HOÀNG VĂN NGUYÊN</asp:ListItem>
+                                    <asp:ListItem Value="8">TPBANK - HOÀNG VĂN NGUYÊN</asp:ListItem>
+                                    <asp:ListItem Value="6">TECHCOMBANK - LE THAC NAM</asp:ListItem>
+                                    <asp:ListItem Value="5">TPBANK - LE THAC NAM</asp:ListItem>
                                 </asp:ListBox>
                                 <label for="select_by">Ngân hàng</label>
                             </div>

@@ -6,6 +6,8 @@
     <link rel="stylesheet" type="text/css" href="/App_Themes/AdminNew45/assets/css/pages/dashboard-modern.css">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
+    <asp:Button runat="server" ID="excel1" UseSubmitBehavior="false" OnClick="btnExcel1_Click" />
+    <asp:Button runat="server" ID="excel2" UseSubmitBehavior="false" OnClick="btnExcel2_Click" />
     <div id="main" class="main-full">
         <div class="row">
             <div class="content-wrapper-before bg-dark-gradient"></div>
@@ -136,10 +138,11 @@
                         </div>
                         <div class="col s12 m12 l6">
                             <div class="card-panel animate fadeRight">
-                                <div class="card-content pb-1">
+                                <div class="card-content pb-1" style="display: flex; justify-content: space-between; align-items: center;">
                                     <h6 class="card-title mb-2 font-weight-400">Khách hàng có số dư nhiều nhất</h6>
-                                    <hr />
+                                    <a class="btn" id="excel-btn1" onclick="ExportExcel1()">Xuất excel</a>
                                 </div>
+                                <hr />
                                 <div class="responsive-tb">
                                     <table class=" table highlight striped">
                                         <thead>
@@ -162,10 +165,11 @@
                     <div class="row">
                         <div class="col s12 m12 l6">
                             <div class="card-panel animate fadeRight">
-                                <div class="card-content pb-1">
+                                <div class="card-content pb-1" style="display: flex; justify-content: space-between; align-items: center;">
                                     <h6 class="card-title mb-2 font-weight-400">Khách hàng có nhiều đơn hàng</h6>
-                                    <hr />
+                                    <a class="btn" id="excel-btn2" onclick="ExportExcel2()">Xuất excel</a>
                                 </div>
+                                <hr />
                                 <div class="responsive-tb">
                                     <table class="  table    highlight striped">
                                         <thead>
@@ -272,6 +276,12 @@
     <asp:HiddenField runat="server" ID="hdfTotalWalletInWeek" />
     <asp:HiddenField runat="server" ID="hdfRationBuyPro" />
     <script>
+        function ExportExcel1() {
+            $('#<%=excel1.ClientID%>').click();
+        }
+        function ExportExcel2() {
+            $('#<%=excel2.ClientID%>').click();
+        }
         // Dashboard - Modern
         //----------------------
         window.onload = function () {

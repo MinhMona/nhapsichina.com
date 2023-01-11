@@ -604,7 +604,7 @@ namespace NHST
                         }
                         html.Append("<td>" + item.ID + "</td>");
                         html.Append("<td><img class=\"materialboxed\" src=\"" + item.anhsanpham + "\" alt=\"\" width=\"75\" /></td>");
-                        html.Append("<td>" + item.Site + "</td>");
+                        //html.Append("<td>" + item.Site + "</td>");
                         html.Append("<td>" + string.Format("{0:N0}", Convert.ToDouble(item.CurrentCNYVN)) + "</td>");
                         html.Append("<td>" + string.Format("{0:N0}", Convert.ToDouble(item.TotalPriceVND)) + "</td>");
                         html.Append("<td>" + string.Format("{0:N0}", Convert.ToDouble(item.PriceVND) * 0.9) + "</td>");
